@@ -206,7 +206,7 @@ Generate Content
 
 {result && (
 
-<div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+<div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8">
 
 <div className="flex items-center justify-between mb-4">
 
@@ -245,16 +245,8 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 
 <p>
 Our free <strong>{tool.name}</strong> allows you to generate high-quality content in seconds.
-Simply enter your requirements in the form above, and our advanced AI will handle the rest.
+Simply enter your requirements in the form above.
 </p>
-
-<h3>Why use this tool?</h3>
-
-<ul>
-<li><strong>Fast & Free:</strong> No registration required.</li>
-<li><strong>High Quality:</strong> Powered by advanced AI models.</li>
-<li><strong>Easy to Use:</strong> Simple interface for everyone.</li>
-</ul>
 
 </div>
 
