@@ -7,6 +7,7 @@ import { ToolPage } from './pages/ToolPage';
 import { DynamicSEOPage } from './pages/DynamicSEOPage';
 import { AboutPage, ContactPage, PrivacyPage, TermsPage, DisclaimerPage } from './pages/StaticPages';
 import { SitemapPage } from './pages/SitemapPage';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   return (
