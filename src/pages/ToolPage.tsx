@@ -66,21 +66,23 @@ if (missingFields.length > 0) {
 throw new Error(`Please fill in all fields: ${missingFields.join(", ")}`);
 }
 
-/* -------- IMAGE GENERATOR -------- */
+/* IMAGE GENERATOR */
 
 if (tool.id === "ai-image-generator") {
 
-const imageData = await generateImage(prompt);
+const imageUrl = await generateImage(prompt);
 
-setImage(imageData?.output?.[0] || "");
+if (!imageUrl) {
+throw new Error("Image generation failed");
+}
 
+setImage(imageUrl);
 setIsLoading(false);
-
 return;
 
 }
 
-/* -------- TEXT GENERATOR -------- */
+/* TEXT GENERATOR */
 
 const generatedText = await generateContent(prompt);
 
@@ -138,6 +140,8 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 
 <div className="max-w-4xl mx-auto">
 
+{/* Header */}
+
 <div className="text-center mb-8">
 
 <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
@@ -153,6 +157,8 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 </p>
 
 </div>
+
+{/* Form */}
 
 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
@@ -293,8 +299,17 @@ Generated Image
 
 <img
 src={image}
-className="rounded-xl border border-slate-200"
+alt="AI Generated"
+className="rounded-xl border border-slate-200 w-full"
 />
+
+<a
+href={image}
+download
+className="mt-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg"
+>
+Download Image
+</a>
 
 </div>
 
