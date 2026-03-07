@@ -4,40 +4,49 @@ import { generateGrok } from "./providers/grok";
 
 export default async function handler(req, res) {
 
-const prompt = req.body.prompt;
+  const prompt = req.body.prompt;
 
-try {
+  try {
 
-return res.json({
-result: await generateGemini(prompt)
-});
+    const result = await generateGemini(prompt);
 
-} catch (err1) {
+    return res.json({
+      provider: "gemini",
+      result
+    });
 
-try {
+  } catch (err1) {
 
-return res.json({
-result: await generateOpenAI(prompt)
-});
+    try {
 
-} catch (err2) {
+      const result = await generateOpenAI(prompt);
 
-try {
+      return res.json({
+        provider: "openai",
+        result
+      });
 
-return res.json({
-result: await generateGrok(prompt)
-});
+    } catch (err2) {
 
-} catch (err3) {
+      try {
 
-return res.status(500).json({
-error: "All AI providers failed"
-});
+        const result = await generateGrok(prompt);
 
-}
+        return res.json({
+          provider: "grok",
+          result
+        });
 
-}
+      } catch (err3) {
 
-}
+        return res.status(500).json({
+          error: "All AI providers failed"
+        });
+
+      }
+
+    }
+
+  }
 
 }
