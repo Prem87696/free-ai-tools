@@ -5,6 +5,7 @@ import { generateContent } from "../services/gemini";
 import { SEOHead } from "../components/SEOHead";
 import { AdPlaceholder } from "../components/AdPlaceholder";
 import { Loader2, Copy, Check, AlertCircle, Sparkles } from "lucide-react";
+import { generateImage } from "../services/imageGenerator";
 
 export function ToolPage() {
 
