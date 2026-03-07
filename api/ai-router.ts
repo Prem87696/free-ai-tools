@@ -5,72 +5,62 @@ import { generateGrok } from "./providers/grok";
 export default async function handler(req, res) {
 
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { prompt } = req.body;
 
   if (!prompt) {
-    return res.status(400).json({
-      error: "Prompt is required"
-    });
+    return res.status(400).json({ error: "Prompt required" });
   }
 
-  /* ---------- TRY GEMINI ---------- */
+  /* GEMINI */
 
   try {
 
     const result = await generateGemini(prompt);
 
-    return res.status(200).json({
+    return res.json({
       provider: "gemini",
       result
     });
 
-  } catch (err1) {
-
-    console.log("Gemini failed → switching to OpenAI");
-
+  } catch (err) {
+    console.log("Gemini failed");
   }
 
-  /* ---------- TRY OPENAI ---------- */
+  /* OPENAI */
 
   try {
 
     const result = await generateOpenAI(prompt);
 
-    return res.status(200).json({
+    return res.json({
       provider: "openai",
       result
     });
 
-  } catch (err2) {
-
-    console.log("OpenAI failed → switching to Grok");
-
+  } catch (err) {
+    console.log("OpenAI failed");
   }
 
-  /* ---------- TRY GROK ---------- */
+  /* GROK */
 
   try {
 
     const result = await generateGrok(prompt);
 
-    return res.status(200).json({
+    return res.json({
       provider: "grok",
       result
     });
 
-  } catch (err3) {
-
-    console.log("All providers failed");
-
+  } catch (err) {
+    console.log("Grok failed");
   }
 
   return res.status(500).json({
-    error: "All AI providers failed"
+    error: "All providers failed"
   });
 
 }
