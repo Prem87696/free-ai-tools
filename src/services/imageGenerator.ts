@@ -17,7 +17,7 @@ export async function generateImage(prompt: string) {
 
     await new Promise(r => setTimeout(r, 2000));
 
-    const res = await fetch(`/api/prediction/${prediction.id}`);
+    const res = await fetch(`/api/get-prediction?id=${prediction.id}`)
     result = await res.json();
 
     status = result.status;
