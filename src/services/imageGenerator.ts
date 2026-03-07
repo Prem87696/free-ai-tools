@@ -1,28 +1,22 @@
-export async function generateImage(prompt:string){
+export async function generateImage(prompt: string) {
 
-const response = await fetch("https://api.replicate.com/v1/predictions",{
+  const response = await fetch("https://api.replicate.com/v1/predictions", {
+    method: "POST",
 
-method:"POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Token ${import.meta.env.VITE_REPLICATE_API_KEY}`
+    },
 
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Token YOUR_API_KEY"
-},
+    body: JSON.stringify({
+      version: "black-forest-labs/flux-1.1-pro",
+      input: {
+        prompt: prompt
+      }
+    })
+  });
 
-body:JSON.stringify({
+  const data = await response.json();
 
-version:"stability-ai/sdxl",
-
-input:{
-prompt:prompt
-}
-
-})
-
-});
-
-const data = await response.json();
-
-return data;
-
+  return data;
 }
