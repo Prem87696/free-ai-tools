@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Menu, X, Bot, FileText, Mail, PenTool, Hash, ShoppingBag, User } from 'lucide-react';
 import { AdPlaceholder } from './AdPlaceholder';
+import ScrollToTop from './ScrollToTop';
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
