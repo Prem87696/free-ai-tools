@@ -2,295 +2,312 @@ import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { tools } from "../data/tools";
 import { generateContent } from "../services/gemini";
+import { generateImage } from "../services/imageGenerator";
 import { SEOHead } from "../components/SEOHead";
 import { AdPlaceholder } from "../components/AdPlaceholder";
 import { Loader2, Copy, Check, AlertCircle, Sparkles } from "lucide-react";
-import { generateImage } from "../services/imageGenerator";
 
 export function ToolPage() {
 
-  const { toolId } = useParams();
+const { toolId } = useParams();
 
-  const tool = tools.find((t) => t.id === toolId);
+const tool = tools.find((t) => t.id === toolId);
 
-  const [formData, setFormData] = useState<Record<string, string>>({});
-  const [result, setResult] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+const [formData, setFormData] = useState<Record<string, string>>({});
+const [result, setResult] = useState("");
+const [image, setImage] = useState("");
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState("");
+const [copied, setCopied] = useState(false);
 
-  if (!tool) {
-    return <Navigate to="/404" replace />;
-  }
+if (!tool) {
+return <Navigate to="/404" replace />;
+}
 
-  const Icon = tool.icon;
+const Icon = tool.icon;
 
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+const handleInputChange = (name: string, value: string) => {
+setFormData((prev) => ({
+...prev,
+[name]: value
+}));
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
 
-    e.preventDefault();
+e.preventDefault();
 
-    setIsLoading(true);
-    setError("");
-    setResult("");
+setIsLoading(true);
+setError("");
+setResult("");
+setImage("");
 
-    try {
+try {
 
-      let prompt = tool.promptTemplate;
+let prompt = tool.promptTemplate;
 
-      const missingFields: string[] = [];
+const missingFields: string[] = [];
 
-      tool.inputs.forEach((input) => {
+tool.inputs.forEach((input) => {
 
-        const value = formData[input.name];
+const value = formData[input.name];
 
-        if (!value || value.trim() === "") {
-          missingFields.push(input.label);
-        }
+if (!value || value.trim() === "") {
+missingFields.push(input.label);
+}
 
-        const regex = new RegExp(`{{${input.name}}}`, "g");
+const regex = new RegExp(`{{${input.name}}}`, "g");
 
-        prompt = prompt.replace(regex, value || "");
+prompt = prompt.replace(regex, value || "");
 
-      });
+});
 
-      if (missingFields.length > 0) {
-        throw new Error(`Please fill in all fields: ${missingFields.join(", ")}`);
-      }
+if (missingFields.length > 0) {
+throw new Error(`Please fill in all fields: ${missingFields.join(", ")}`);
+}
 
-      const generatedText = await generateContent(prompt);
+/* -------- IMAGE GENERATOR -------- */
 
-      if (!generatedText) {
-        throw new Error("AI failed to generate content");
-      }
+if (tool.id === "ai-image-generator") {
 
-      setResult(generatedText);
+const imageData = await generateImage(prompt);
 
-    } catch (err: any) {
+setImage(imageData?.output?.[0] || "");
 
-      setError(err?.message || "Something went wrong");
+setIsLoading(false);
 
-    } finally {
+return;
 
-      setIsLoading(false);
+}
 
-    }
+/* -------- TEXT GENERATOR -------- */
 
-  };
+const generatedText = await generateContent(prompt);
 
-  const copyToClipboard = async () => {
+if (!generatedText) {
+throw new Error("AI failed to generate content");
+}
 
-    try {
+setResult(generatedText);
 
-      await navigator.clipboard.writeText(result);
+}
 
-      setCopied(true);
+catch (err: any) {
 
-      setTimeout(() => setCopied(false), 2000);
+setError(err?.message || "Something went wrong");
 
-    } catch {
+}
 
-      setError("Failed to copy text");
+finally {
 
-    }
+setIsLoading(false);
 
-  };
+}
 
-  return (
+};
 
-    <>
+const copyToClipboard = async () => {
 
-      <SEOHead
-        title={`${tool.name} - Free AI Tool`}
-        description={tool.description}
-        keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
-      />
+try {
 
-      <div className="max-w-4xl mx-auto">
+await navigator.clipboard.writeText(result);
 
-        {/* Header */}
+setCopied(true);
 
-        <div className="text-center mb-8">
+setTimeout(() => setCopied(false), 2000);
 
-          <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
-            <Icon className="w-8 h-8" />
-          </div>
+}
 
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-            {tool.name}
-          </h1>
+catch {
 
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            {tool.description}
-          </p>
+setError("Failed to copy text");
 
-        </div>
+}
 
-        {/* Tool Form */}
+};
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+return (
 
-          <div className="p-6 md:p-8">
+<>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+<SEOHead
+title={`${tool.name} - Free AI Tool`}
+description={tool.description}
+keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
+/>
 
-              <div className="grid grid-cols-1 gap-6">
+<div className="max-w-4xl mx-auto">
 
-                {tool.inputs.map((input) => (
+<div className="text-center mb-8">
 
-                  <div key={input.name}>
+<div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
+<Icon className="w-8 h-8" />
+</div>
 
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      {input.label}
-                    </label>
+<h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+{tool.name}
+</h1>
 
-                    {input.type === "textarea" ? (
+<p className="text-slate-600 text-lg max-w-2xl mx-auto">
+{tool.description}
+</p>
 
-                      <textarea
-                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors min-h-[120px]"
-                        placeholder={input.placeholder}
-                        value={formData[input.name] || ""}
-                        onChange={(e) => handleInputChange(input.name, e.target.value)}
-                      />
+</div>
 
-                    ) : input.type === "select" ? (
+<div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
-                      <select
-                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white"
-                        value={formData[input.name] || ""}
-                        onChange={(e) => handleInputChange(input.name, e.target.value)}
-                      >
+<div className="p-6 md:p-8">
 
-                        <option value="">Select an option</option>
+<form onSubmit={handleSubmit} className="space-y-6">
 
-                        {input.options?.map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
+<div className="grid grid-cols-1 gap-6">
 
-                      </select>
+{tool.inputs.map((input) => (
 
-                    ) : (
+<div key={input.name}>
 
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                        placeholder={input.placeholder}
-                        value={formData[input.name] || ""}
-                        onChange={(e) => handleInputChange(input.name, e.target.value)}
-                      />
+<label className="block text-sm font-medium text-slate-700 mb-2">
+{input.label}
+</label>
 
-                    )}
+{input.type === "textarea" ? (
 
-                  </div>
+<textarea
+className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors min-h-[120px]"
+placeholder={input.placeholder}
+value={formData[input.name] || ""}
+onChange={(e) => handleInputChange(input.name, e.target.value)}
+/>
 
-                ))}
+) : input.type === "select" ? (
 
-              </div>
+<select
+className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white"
+value={formData[input.name] || ""}
+onChange={(e) => handleInputChange(input.name, e.target.value)}
+>
 
-              {error && (
+<option value="">Select an option</option>
 
-                <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  {error}
-                </div>
+{input.options?.map((opt) => (
+<option key={opt} value={opt}>
+{opt}
+</option>
+))}
 
-              )}
+</select>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed"
-              >
+) : (
 
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Generate Content
-                  </>
-                )}
+<input
+type="text"
+className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+placeholder={input.placeholder}
+value={formData[input.name] || ""}
+onChange={(e) => handleInputChange(input.name, e.target.value)}
+/>
 
-              </button>
+)}
 
-            </form>
+</div>
 
-          </div>
+))}
 
-          {/* Result */}
+</div>
 
-          {result && (
+{error && (
 
-            <div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8">
+<div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
+<AlertCircle className="w-4 h-4 flex-shrink-0" />
+{error}
+</div>
 
-              <div className="flex items-center justify-between mb-4">
+)}
 
-                <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  Generated Result
-                </h3>
+<button
+type="submit"
+disabled={isLoading}
+className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2"
+>
 
-                <button
-                  onClick={copyToClipboard}
-                  className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm font-medium transition-colors"
-                >
+{isLoading ? (
+<>
+<Loader2 className="w-5 h-5 animate-spin" />
+Generating...
+</>
+) : (
+<>
+<Sparkles className="w-5 h-5" />
+Generate Content
+</>
+)}
 
-                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+</button>
 
-                  {copied ? "Copied!" : "Copy Text"}
+</form>
 
-                </button>
+</div>
 
-              </div>
+{/* TEXT RESULT */}
 
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm whitespace-pre-wrap font-mono text-sm text-slate-700 leading-relaxed">
-                {result}
-              </div>
+{result && (
 
-            </div>
+<div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8">
 
-          )}
+<div className="flex items-center justify-between mb-4">
 
-        </div>
+<h3 className="font-bold text-slate-800 flex items-center gap-2">
+<Check className="w-5 h-5 text-green-500" />
+Generated Result
+</h3>
 
-        <AdPlaceholder slot="content" className="mt-8" />
+<button
+onClick={copyToClipboard}
+className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm"
+>
 
-        {/* SEO Content */}
+{copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+{copied ? "Copied!" : "Copy Text"}
 
-        <div className="mt-12 prose prose-slate max-w-none">
+</button>
 
-          <h2>How to use the {tool.name}</h2>
+</div>
 
-          <p>
-            Our free <strong>{tool.name}</strong> allows you to generate high-quality content in seconds.
-            Simply enter your requirements in the form above.
-          </p>
+<div className="bg-white p-6 rounded-xl border border-slate-200 whitespace-pre-wrap text-sm">
+{result}
+</div>
 
-          <h3>Why use this tool?</h3>
+</div>
 
-          <ul>
-            <li><strong>Fast & Free:</strong> No registration required.</li>
-            <li><strong>High Quality:</strong> Powered by advanced AI models.</li>
-            <li><strong>Easy to Use:</strong> Simple interface for everyone.</li>
-          </ul>
+)}
 
-        </div>
+{/* IMAGE RESULT */}
 
-      </div>
+{image && (
 
-    </>
+<div className="border-t border-slate-100 bg-slate-50 p-6">
 
-  );
+<h3 className="font-bold text-slate-800 mb-4">
+Generated Image
+</h3>
+
+<img
+src={image}
+className="rounded-xl border border-slate-200"
+/>
+
+</div>
+
+)}
+
+</div>
+
+<AdPlaceholder slot="content" className="mt-8" />
+
+</div>
+
+</>
+
+);
 
 }
