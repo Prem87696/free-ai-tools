@@ -7,16 +7,19 @@ export default function ScrollToTop() {
 
   useEffect(() => {
 
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant"
-    });
+    const main = document.querySelector("main");
 
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    if (main) {
+      main.scrollTo({
+        top: 0,
+        behavior: "instant"
+      });
+    }
+
+    window.scrollTo(0,0);
 
   }, [pathname]);
 
   return null;
+
 }
