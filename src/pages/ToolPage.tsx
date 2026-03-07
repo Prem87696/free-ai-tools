@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { tools } from "../data/tools";
-import { generateContent } from "../services/gemini";
+import { generateAI } from "../services/aiRouter";
 import { generateImage } from "../services/imageGenerator";
 import { SEOHead } from "../components/SEOHead";
 import { AdPlaceholder } from "../components/AdPlaceholder";
@@ -89,9 +89,9 @@ return;
 
 }
 
-/* TEXT GENERATOR */
+/* TEXT GENERATOR (AI Router) */
 
-const generatedText = await generateContent(prompt);
+const generatedText = await generateAI(prompt);
 
 if (!generatedText) {
 throw new Error("AI failed to generate content");
@@ -141,8 +141,6 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 
 <div className="max-w-4xl mx-auto">
 
-{/* Header */}
-
 <div className="text-center mb-8">
 
 <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
@@ -158,8 +156,6 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 </p>
 
 </div>
-
-{/* FORM */}
 
 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
