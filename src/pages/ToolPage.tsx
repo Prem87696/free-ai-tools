@@ -1,318 +1,295 @@
-import React, { useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { tools } from '../data/tools';
-import { generateContent } from '../services/gemini';
-import { SEOHead } from '../components/SEOHead';
-import { AdPlaceholder } from '../components/AdPlaceholder';
-import { Loader2, Copy, Check, AlertCircle, Sparkles } from 'lucide-react';
+import React, { useState } from "react";
+import { useParams, Navigate } from "react-router-dom";
+import { tools } from "../data/tools";
+import { generateContent } from "../services/gemini";
+import { SEOHead } from "../components/SEOHead";
+import { AdPlaceholder } from "../components/AdPlaceholder";
+import { Loader2, Copy, Check, AlertCircle, Sparkles } from "lucide-react";
 
 export function ToolPage() {
 
-const { toolId } = useParams();
+  const { toolId } = useParams();
 
-const tool = tools.find(t => t.id === toolId);
+  const tool = tools.find((t) => t.id === toolId);
 
-const [formData, setFormData] = useState<Record<string, string>>({});
-const [result, setResult] = useState('');
-const [isLoading, setIsLoading] = useState(false);
-const [error, setError] = useState('');
-const [copied, setCopied] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [result, setResult] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
 
-if (!tool) {
-return <Navigate to="/404" />;
-}
+  if (!tool) {
+    return <Navigate to="/404" replace />;
+  }
 
-const Icon = tool.icon;
+  const Icon = tool.icon;
 
-const handleInputChange = (name: string, value: string) => {
+  const handleInputChange = (name: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-setFormData(prev => ({
-...prev,
-[name]: value
-}));
+  const handleSubmit = async (e: React.FormEvent) => {
 
-};
+    e.preventDefault();
 
-const handleSubmit = async (e: React.FormEvent) => {
+    setIsLoading(true);
+    setError("");
+    setResult("");
 
-e.preventDefault();
+    try {
 
-setIsLoading(true);
-setError('');
-setResult('');
+      let prompt = tool.promptTemplate;
 
-try {
+      const missingFields: string[] = [];
 
-let prompt = tool.promptTemplate;
+      tool.inputs.forEach((input) => {
 
-let missingFields: string[] = [];
+        const value = formData[input.name];
 
-tool.inputs.forEach(input => {
+        if (!value || value.trim() === "") {
+          missingFields.push(input.label);
+        }
 
-const value = formData[input.name];
+        const regex = new RegExp(`{{${input.name}}}`, "g");
 
-if (!value) {
-missingFields.push(input.label);
-}
+        prompt = prompt.replace(regex, value || "");
 
-prompt = prompt.replace(`{{${input.name}}}`, value || '');
+      });
 
-});
+      if (missingFields.length > 0) {
+        throw new Error(`Please fill in all fields: ${missingFields.join(", ")}`);
+      }
 
-if (missingFields.length > 0) {
+      const generatedText = await generateContent(prompt);
 
-throw new Error(`Please fill in all fields: ${missingFields.join(', ')}`);
+      if (!generatedText) {
+        throw new Error("AI failed to generate content");
+      }
 
-}
+      setResult(generatedText);
 
-const generatedText = await generateContent(prompt);
+    } catch (err: any) {
 
-setResult(generatedText);
+      setError(err?.message || "Something went wrong");
 
-}
+    } finally {
 
-catch (err: any) {
+      setIsLoading(false);
 
-setError(err.message || 'Something went wrong');
+    }
 
-}
+  };
 
-finally {
+  const copyToClipboard = async () => {
 
-setIsLoading(false);
+    try {
 
-}
+      await navigator.clipboard.writeText(result);
 
-};
+      setCopied(true);
 
-const copyToClipboard = () => {
+      setTimeout(() => setCopied(false), 2000);
 
-navigator.clipboard.writeText(result);
+    } catch {
 
-setCopied(true);
+      setError("Failed to copy text");
 
-setTimeout(() => setCopied(false), 2000);
+    }
 
-};
+  };
 
-return (
+  return (
 
-<>
+    <>
 
-<SEOHead
-title={`${tool.name} - Free AI Tool`}
-description={tool.description}
-keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
-/>
+      <SEOHead
+        title={`${tool.name} - Free AI Tool`}
+        description={tool.description}
+        keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
+      />
 
-<div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto">
 
-{/* Header */}
+        {/* Header */}
 
-<div className="text-center mb-8">
+        <div className="text-center mb-8">
 
-<div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
+          <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
+            <Icon className="w-8 h-8" />
+          </div>
 
-<Icon className="w-8 h-8" />
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+            {tool.name}
+          </h1>
 
-</div>
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+            {tool.description}
+          </p>
 
-<h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-{tool.name}
-</h1>
+        </div>
 
-<p className="text-slate-600 text-lg max-w-2xl mx-auto">
-{tool.description}
-</p>
+        {/* Tool Form */}
 
-</div>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
-{/* Tool Card */}
+          <div className="p-6 md:p-8">
 
-<div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <form onSubmit={handleSubmit} className="space-y-6">
 
-<div className="p-6 md:p-8">
+              <div className="grid grid-cols-1 gap-6">
 
-<form onSubmit={handleSubmit} className="space-y-6">
+                {tool.inputs.map((input) => (
 
-<div className="grid grid-cols-1 gap-6">
+                  <div key={input.name}>
 
-{tool.inputs.map((input) => (
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      {input.label}
+                    </label>
 
-<div key={input.name}>
+                    {input.type === "textarea" ? (
 
-<label className="block text-sm font-medium text-slate-700 mb-2">
-{input.label}
-</label>
+                      <textarea
+                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors min-h-[120px]"
+                        placeholder={input.placeholder}
+                        value={formData[input.name] || ""}
+                        onChange={(e) => handleInputChange(input.name, e.target.value)}
+                      />
 
-{input.type === 'textarea' ? (
+                    ) : input.type === "select" ? (
 
-<textarea
-className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors min-h-[120px]"
-placeholder={input.placeholder}
-value={formData[input.name] || ''}
-onChange={(e) => handleInputChange(input.name, e.target.value)}
-/>
+                      <select
+                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white"
+                        value={formData[input.name] || ""}
+                        onChange={(e) => handleInputChange(input.name, e.target.value)}
+                      >
 
-) : input.type === 'select' ? (
+                        <option value="">Select an option</option>
 
-<select
-className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white"
-value={formData[input.name] || ''}
-onChange={(e) => handleInputChange(input.name, e.target.value)}
->
+                        {input.options?.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
 
-<option value="">Select an option</option>
+                      </select>
 
-{input.options?.map(opt => (
+                    ) : (
 
-<option key={opt} value={opt}>
-{opt}
-</option>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                        placeholder={input.placeholder}
+                        value={formData[input.name] || ""}
+                        onChange={(e) => handleInputChange(input.name, e.target.value)}
+                      />
 
-))}
+                    )}
 
-</select>
+                  </div>
 
-) : (
+                ))}
 
-<input
-type="text"
-className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-placeholder={input.placeholder}
-value={formData[input.name] || ''}
-onChange={(e) => handleInputChange(input.name, e.target.value)}
-/>
+              </div>
 
-)}
+              {error && (
 
-</div>
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  {error}
+                </div>
 
-))}
+              )}
 
-</div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
 
-{error && (
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    Generate Content
+                  </>
+                )}
 
-<div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
+              </button>
 
-<AlertCircle className="w-4 h-4 flex-shrink-0" />
+            </form>
 
-{error}
+          </div>
 
-</div>
+          {/* Result */}
 
-)}
+          {result && (
 
-<button
-type="submit"
-disabled={isLoading}
-className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed"
->
+            <div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8">
 
-{isLoading ? (
+              <div className="flex items-center justify-between mb-4">
 
-<>
+                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                  <Check className="w-5 h-5 text-green-500" />
+                  Generated Result
+                </h3>
 
-<Loader2 className="w-5 h-5 animate-spin" />
+                <button
+                  onClick={copyToClipboard}
+                  className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm font-medium transition-colors"
+                >
 
-Generating...
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
 
-</>
+                  {copied ? "Copied!" : "Copy Text"}
 
-) : (
+                </button>
 
-<>
+              </div>
 
-<Sparkles className="w-5 h-5" />
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm whitespace-pre-wrap font-mono text-sm text-slate-700 leading-relaxed">
+                {result}
+              </div>
 
-Generate Content
+            </div>
 
-</>
+          )}
 
-)}
+        </div>
 
-</button>
+        <AdPlaceholder slot="content" className="mt-8" />
 
-</form>
+        {/* SEO Content */}
 
-</div>
+        <div className="mt-12 prose prose-slate max-w-none">
 
-{/* Result */}
+          <h2>How to use the {tool.name}</h2>
 
-{result && (
+          <p>
+            Our free <strong>{tool.name}</strong> allows you to generate high-quality content in seconds.
+            Simply enter your requirements in the form above.
+          </p>
 
-<div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8">
+          <h3>Why use this tool?</h3>
 
-<div className="flex items-center justify-between mb-4">
+          <ul>
+            <li><strong>Fast & Free:</strong> No registration required.</li>
+            <li><strong>High Quality:</strong> Powered by advanced AI models.</li>
+            <li><strong>Easy to Use:</strong> Simple interface for everyone.</li>
+          </ul>
 
-<h3 className="font-bold text-slate-800 flex items-center gap-2">
+        </div>
 
-<Check className="w-5 h-5 text-green-500" />
+      </div>
 
-Generated Result
+    </>
 
-</h3>
-
-<button
-onClick={copyToClipboard}
-className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm font-medium transition-colors"
->
-
-{copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-
-{copied ? 'Copied!' : 'Copy Text'}
-
-</button>
-
-</div>
-
-<div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm whitespace-pre-wrap font-mono text-sm text-slate-700 leading-relaxed">
-
-{result}
-
-</div>
-
-</div>
-
-)}
-
-</div>
-
-<AdPlaceholder slot="content" className="mt-8" />
-
-{/* SEO Section */}
-
-<div className="mt-12 prose prose-slate max-w-none">
-
-<h2>How to use the {tool.name}</h2>
-
-<p>
-
-Our free <strong>{tool.name}</strong> allows you to generate high-quality content in seconds.
-
-Simply enter your requirements in the form above.
-
-</p>
-
-<h3>Why use this tool?</h3>
-
-<ul>
-
-<li><strong>Fast & Free:</strong> No registration required.</li>
-
-<li><strong>High Quality:</strong> Powered by advanced AI models.</li>
-
-<li><strong>Easy to Use:</strong> Simple interface for everyone.</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</>
-
-);
+  );
 
 }
