@@ -1,6 +1,6 @@
 export async function generateImage(prompt: string) {
 
-  const res = await fetch("/api/generate-image", {
+  const create = await fetch("/api/generate-image", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -8,8 +8,26 @@ export async function generateImage(prompt: string) {
     body: JSON.stringify({ prompt })
   });
 
-  const data = await res.json();
+  const prediction = await create.json();
 
-  return data;
+  let status = prediction.status;
+  let result = prediction;
+
+  while (status !== "succeeded" && status !== "failed") {
+
+    await new Promise(r => setTimeout(r, 2000));
+
+    const res = await fetch(`/api/prediction/${prediction.id}`);
+    result = await res.json();
+
+    status = result.status;
+
+  }
+
+  if (status === "succeeded") {
+    return result.output[0];
+  }
+
+  throw new Error("Image generation failed");
 
 }
