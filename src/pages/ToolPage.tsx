@@ -10,7 +10,6 @@ import { Loader2, Copy, Check, AlertCircle, Sparkles } from "lucide-react";
 export function ToolPage() {
 
 const { toolId } = useParams();
-
 const tool = tools.find((t) => t.id === toolId);
 
 const [formData, setFormData] = useState<Record<string, string>>({});
@@ -57,7 +56,6 @@ missingFields.push(input.label);
 }
 
 const regex = new RegExp(`{{${input.name}}}`, "g");
-
 prompt = prompt.replace(regex, value || "");
 
 });
@@ -70,14 +68,23 @@ throw new Error(`Please fill in all fields: ${missingFields.join(", ")}`);
 
 if (tool.id === "ai-image-generator") {
 
-const imageUrl = await generateImage(prompt);
+const imageData = await generateImage(prompt);
 
-if (!imageUrl) {
+if (!imageData) {
 throw new Error("Image generation failed");
 }
 
-setImage(imageUrl);
-setIsLoading(false);
+let url = "";
+
+if (typeof imageData === "string") {
+url = imageData;
+} else if (Array.isArray(imageData.output)) {
+url = imageData.output[0];
+} else {
+url = imageData.output;
+}
+
+setImage(url);
 return;
 
 }
@@ -95,15 +102,11 @@ setResult(generatedText);
 }
 
 catch (err: any) {
-
 setError(err?.message || "Something went wrong");
-
 }
 
 finally {
-
 setIsLoading(false);
-
 }
 
 };
@@ -121,9 +124,7 @@ setTimeout(() => setCopied(false), 2000);
 }
 
 catch {
-
 setError("Failed to copy text");
-
 }
 
 };
@@ -158,7 +159,7 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 
 </div>
 
-{/* Form */}
+{/* FORM */}
 
 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
@@ -196,9 +197,7 @@ onChange={(e) => handleInputChange(input.name, e.target.value)}
 <option value="">Select an option</option>
 
 {input.options?.map((opt) => (
-<option key={opt} value={opt}>
-{opt}
-</option>
+<option key={opt} value={opt}>{opt}</option>
 ))}
 
 </select>
@@ -222,12 +221,10 @@ onChange={(e) => handleInputChange(input.name, e.target.value)}
 </div>
 
 {error && (
-
 <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
 <AlertCircle className="w-4 h-4 flex-shrink-0" />
 {error}
 </div>
-
 )}
 
 <button
@@ -271,10 +268,8 @@ Generated Result
 onClick={copyToClipboard}
 className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm"
 >
-
 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
 {copied ? "Copied!" : "Copy Text"}
-
 </button>
 
 </div>
