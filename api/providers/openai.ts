@@ -6,20 +6,17 @@ export async function generateOpenAI(prompt: string) {
 
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
     },
 
     body: JSON.stringify({
-
       model: "gpt-4o-mini",
-
       messages: [
         {
           role: "user",
           content: prompt
         }
       ]
-
     })
 
   });
