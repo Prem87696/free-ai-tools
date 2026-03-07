@@ -9,6 +9,7 @@ import { Loader2, Copy, Check, AlertCircle, Sparkles } from 'lucide-react';
 export function ToolPage() {
 
 const { toolId } = useParams();
+
 const tool = tools.find(t => t.id === toolId);
 
 const [formData, setFormData] = useState<Record<string, string>>({});
@@ -21,16 +22,21 @@ if (!tool) {
 return <Navigate to="/404" />;
 }
 
+const Icon = tool.icon;
+
 const handleInputChange = (name: string, value: string) => {
+
 setFormData(prev => ({
 ...prev,
 [name]: value
 }));
+
 };
 
 const handleSubmit = async (e: React.FormEvent) => {
 
 e.preventDefault();
+
 setIsLoading(true);
 setError('');
 setResult('');
@@ -38,7 +44,8 @@ setResult('');
 try {
 
 let prompt = tool.promptTemplate;
-let missingFields:any = [];
+
+let missingFields: string[] = [];
 
 tool.inputs.forEach(input => {
 
@@ -53,18 +60,24 @@ prompt = prompt.replace(`{{${input.name}}}`, value || '');
 });
 
 if (missingFields.length > 0) {
+
 throw new Error(`Please fill in all fields: ${missingFields.join(', ')}`);
+
 }
 
 const generatedText = await generateContent(prompt);
 
 setResult(generatedText);
 
-} catch (err:any) {
+}
+
+catch (err: any) {
 
 setError(err.message || 'Something went wrong');
 
-} finally {
+}
+
+finally {
 
 setIsLoading(false);
 
@@ -75,7 +88,9 @@ setIsLoading(false);
 const copyToClipboard = () => {
 
 navigator.clipboard.writeText(result);
+
 setCopied(true);
+
 setTimeout(() => setCopied(false), 2000);
 
 };
@@ -92,10 +107,14 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 
 <div className="max-w-4xl mx-auto">
 
+{/* Header */}
+
 <div className="text-center mb-8">
 
 <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
-<tool.icon className="w-8 h-8" />
+
+<Icon className="w-8 h-8" />
+
 </div>
 
 <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
@@ -107,6 +126,8 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 </p>
 
 </div>
+
+{/* Tool Card */}
 
 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
@@ -144,7 +165,11 @@ onChange={(e) => handleInputChange(input.name, e.target.value)}
 <option value="">Select an option</option>
 
 {input.options?.map(opt => (
-<option key={opt} value={opt}>{opt}</option>
+
+<option key={opt} value={opt}>
+{opt}
+</option>
+
 ))}
 
 </select>
@@ -170,8 +195,11 @@ onChange={(e) => handleInputChange(input.name, e.target.value)}
 {error && (
 
 <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
+
 <AlertCircle className="w-4 h-4 flex-shrink-0" />
+
 {error}
+
 </div>
 
 )}
@@ -185,15 +213,21 @@ className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-
 {isLoading ? (
 
 <>
+
 <Loader2 className="w-5 h-5 animate-spin" />
+
 Generating...
+
 </>
 
 ) : (
 
 <>
+
 <Sparkles className="w-5 h-5" />
+
 Generate Content
+
 </>
 
 )}
@@ -204,6 +238,8 @@ Generate Content
 
 </div>
 
+{/* Result */}
+
 {result && (
 
 <div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8">
@@ -211,8 +247,11 @@ Generate Content
 <div className="flex items-center justify-between mb-4">
 
 <h3 className="font-bold text-slate-800 flex items-center gap-2">
+
 <Check className="w-5 h-5 text-green-500" />
+
 Generated Result
+
 </h3>
 
 <button
@@ -221,6 +260,7 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 >
 
 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+
 {copied ? 'Copied!' : 'Copy Text'}
 
 </button>
@@ -228,7 +268,9 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 </div>
 
 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm whitespace-pre-wrap font-mono text-sm text-slate-700 leading-relaxed">
+
 {result}
+
 </div>
 
 </div>
@@ -239,14 +281,31 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 
 <AdPlaceholder slot="content" className="mt-8" />
 
+{/* SEO Section */}
+
 <div className="mt-12 prose prose-slate max-w-none">
 
 <h2>How to use the {tool.name}</h2>
 
 <p>
+
 Our free <strong>{tool.name}</strong> allows you to generate high-quality content in seconds.
+
 Simply enter your requirements in the form above.
+
 </p>
+
+<h3>Why use this tool?</h3>
+
+<ul>
+
+<li><strong>Fast & Free:</strong> No registration required.</li>
+
+<li><strong>High Quality:</strong> Powered by advanced AI models.</li>
+
+<li><strong>Easy to Use:</strong> Simple interface for everyone.</li>
+
+</ul>
 
 </div>
 
