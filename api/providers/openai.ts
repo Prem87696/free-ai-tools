@@ -1,28 +1,37 @@
 export async function generateOpenAI(prompt: string) {
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  try {
 
-    method: "POST",
+    const res = await fetch(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "user",
+              content: prompt
+            }
+          ]
+        })
+      }
+    );
 
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-    },
+    const data = await res.json();
 
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
-    })
+    return data?.choices?.[0]?.message?.content || null;
 
-  });
+  } catch (error) {
 
-  const data = await response.json();
+    console.error("OpenAI error:", error);
 
-  return data.choices?.[0]?.message?.content || "";
+    return null;
+
+  }
 
 }
