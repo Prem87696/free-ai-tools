@@ -15,7 +15,7 @@ body=JSON.parse(body)
 const {prompt}=body||{}
 
 const response=await fetch(
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
 {
 method:"POST",
 headers:{
@@ -33,19 +33,16 @@ parts:[{text:prompt}]
 
 const data=await response.json()
 
-const result=data?.candidates?.[0]?.content?.parts?.[0]?.text||"No response"
+const result =
+data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response"
 
-return res.json({
-result
-})
+return res.json({result})
 
 }catch(err){
 
 console.error(err)
 
-return res.status(500).json({
-error:"AI generation failed"
-})
+return res.status(500).json({error:"AI generation failed"})
 
 }
 
