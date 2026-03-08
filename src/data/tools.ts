@@ -7,7 +7,9 @@ Hash,
 ShoppingBag,
 User,
 Image,
-Sparkles
+Sparkles,
+FileImage,
+FilePlus
 } from "lucide-react";
 
 import { LucideIcon } from "lucide-react";
@@ -39,8 +41,7 @@ name: "AI Chatbot",
 description: "Ask anything and get instant AI answers.",
 icon: Bot,
 path: "/tools/ai-chatbot",
-promptTemplate:
-"You are a helpful AI assistant. Answer the following question: {{query}}",
+promptTemplate: "You are a helpful AI assistant. Answer: {{query}}",
 inputs: [
 {
 name: "query",
@@ -55,11 +56,11 @@ category: "general"
 {
 id: "ai-caption-generator",
 name: "AI Caption Generator",
-description: "Generate engaging captions for Instagram and social media.",
+description: "Generate engaging captions for social media.",
 icon: Image,
 path: "/tools/ai-caption-generator",
 promptTemplate:
-"Generate 5 engaging captions for {{platform}} about {{topic}} with a {{tone}} tone.",
+"Generate captions for {{platform}} about {{topic}} with {{tone}} tone.",
 inputs: [
 {
 name: "topic",
@@ -86,11 +87,11 @@ category: "social"
 {
 id: "ai-resume-builder",
 name: "AI Resume Builder",
-description: "Create professional resume summaries and achievements.",
+description: "Create professional resume summaries.",
 icon: User,
 path: "/tools/ai-resume-builder",
 promptTemplate:
-"Write a professional resume summary for a {{jobTitle}} with skills in {{skills}}.",
+"Write resume summary for {{jobTitle}} with skills {{skills}}.",
 inputs: [
 {
 name: "jobTitle",
@@ -102,7 +103,7 @@ placeholder: "Example: Software Developer"
 name: "skills",
 label: "Skills",
 type: "textarea",
-placeholder: "Example: React, NodeJS, Leadership"
+placeholder: "Example: React, NodeJS"
 }
 ],
 category: "business"
@@ -115,13 +116,12 @@ description: "Generate professional emails instantly.",
 icon: Mail,
 path: "/tools/ai-email-writer",
 promptTemplate:
-"Write a {{type}} email to {{recipient}} about {{subject}}. Include: {{points}}.",
+"Write a {{type}} email to {{recipient}} about {{subject}}.",
 inputs: [
 {
 name: "recipient",
 label: "Recipient",
-type: "text",
-placeholder: "Example: Hiring Manager"
+type: "text"
 },
 {
 name: "type",
@@ -132,14 +132,7 @@ options: ["Formal", "Casual", "Follow-up", "Cold Outreach"]
 {
 name: "subject",
 label: "Subject",
-type: "text",
-placeholder: "Example: Job Application"
-},
-{
-name: "points",
-label: "Key Points",
-type: "textarea",
-placeholder: "Explain what should be included"
+type: "text"
 }
 ],
 category: "business"
@@ -152,19 +145,17 @@ description: "Generate blog outlines and articles.",
 icon: PenTool,
 path: "/tools/ai-blog-writer",
 promptTemplate:
-"Write a blog outline and introduction for '{{title}}' targeting {{audience}}.",
+"Write blog outline about {{title}} for {{audience}}.",
 inputs: [
 {
 name: "title",
 label: "Blog Title",
-type: "text",
-placeholder: "Example: SEO Tips for Beginners"
+type: "text"
 },
 {
 name: "audience",
 label: "Target Audience",
-type: "text",
-placeholder: "Example: Bloggers"
+type: "text"
 }
 ],
 category: "writing"
@@ -177,13 +168,12 @@ description: "Generate creative stories.",
 icon: Sparkles,
 path: "/tools/ai-story-generator",
 promptTemplate:
-"Write a creative {{genre}} story about {{topic}}.",
+"Write a {{genre}} story about {{topic}}.",
 inputs: [
 {
 name: "topic",
 label: "Story Topic",
-type: "textarea",
-placeholder: "Example: Robot falling in love"
+type: "textarea"
 },
 {
 name: "genre",
@@ -196,44 +186,18 @@ category: "writing"
 },
 
 {
-id: "ai-bio-generator",
-name: "AI Bio Generator",
-description: "Generate social media bio.",
-icon: User,
-path: "/tools/ai-bio-generator",
-promptTemplate:
-"Write a professional bio for a {{role}} interested in {{interests}}.",
-inputs: [
-{
-name: "role",
-label: "Your Role",
-type: "text",
-placeholder: "Example: Digital Artist"
-},
-{
-name: "interests",
-label: "Interests",
-type: "textarea",
-placeholder: "Example: Travel, Photography"
-}
-],
-category: "social"
-},
-
-{
 id: "ai-hashtag-generator",
 name: "AI Hashtag Generator",
 description: "Generate viral hashtags.",
 icon: Hash,
 path: "/tools/ai-hashtag-generator",
 promptTemplate:
-"Generate 30 trending hashtags about {{topic}}.",
+"Generate hashtags about {{topic}}.",
 inputs: [
 {
 name: "topic",
 label: "Post Topic",
-type: "textarea",
-placeholder: "Example: Fitness workout"
+type: "textarea"
 }
 ],
 category: "social"
@@ -242,44 +206,122 @@ category: "social"
 {
 id: "ai-product-description-generator",
 name: "AI Product Description",
-description: "Generate product descriptions for ecommerce.",
+description: "Generate product descriptions.",
 icon: ShoppingBag,
 path: "/tools/ai-product-description-generator",
 promptTemplate:
-"Write a product description for {{productName}} with features: {{features}}.",
+"Write product description for {{productName}}.",
 inputs: [
 {
 name: "productName",
 label: "Product Name",
-type: "text",
-placeholder: "Example: Wireless Earbuds"
-},
-{
-name: "features",
-label: "Features",
-type: "textarea",
-placeholder: "Example: Noise cancellation, 20h battery"
+type: "text"
 }
 ],
 category: "business"
+},
+
+/* ---------- IMAGE TOOLS ---------- */
+
+{
+id: "svg-to-png",
+name: "SVG to PNG",
+description: "Convert SVG image to PNG.",
+icon: FileImage,
+path: "/tools/svg-to-png",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "png-to-jpg",
+name: "PNG to JPG",
+description: "Convert PNG image to JPG.",
+icon: FileImage,
+path: "/tools/png-to-jpg",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "webp-to-png",
+name: "WEBP to PNG",
+description: "Convert WEBP image to PNG.",
+icon: FileImage,
+path: "/tools/webp-to-png",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "image-compressor",
+name: "Image Compressor",
+description: "Compress image size online.",
+icon: FileImage,
+path: "/tools/image-compressor",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+/* ---------- PDF TOOLS ---------- */
+
+{
+id: "image-to-pdf",
+name: "Image to PDF",
+description: "Convert image to PDF.",
+icon: FilePlus,
+path: "/tools/image-to-pdf",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "jpg-to-pdf",
+name: "JPG to PDF",
+description: "Convert JPG image to PDF.",
+icon: FilePlus,
+path: "/tools/jpg-to-pdf",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "merge-pdf",
+name: "Merge PDF",
+description: "Merge multiple PDF files.",
+icon: FilePlus,
+path: "/tools/merge-pdf",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "split-pdf",
+name: "Split PDF",
+description: "Split PDF pages.",
+icon: FilePlus,
+path: "/tools/split-pdf",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "pdf-to-image",
+name: "PDF to Image",
+description: "Convert PDF pages to images.",
+icon: FilePlus,
+path: "/tools/pdf-to-image",
+promptTemplate: "",
+inputs: [],
+category: "general"
 }
 
 ];
-
-export const seoModifiers = {
-'caption-generator': [
-{ slug: 'instagram', name: 'Instagram', context: 'for Instagram posts' },
-{ slug: 'reels', name: 'Reels', context: 'for Instagram reels' },
-{ slug: 'travel', name: 'Travel', context: 'for travel photos' }
-],
-
-'resume-builder': [
-{ slug: 'freshers', name: 'Freshers', context: 'for entry level candidates' },
-{ slug: 'students', name: 'Students', context: 'for college students' }
-],
-
-'email-writer': [
-{ slug: 'business', name: 'Business', context: 'for business emails' },
-{ slug: 'sales', name: 'Sales', context: 'for sales outreach emails' }
-]
-};
