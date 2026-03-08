@@ -1,32 +1,42 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
-import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
-import { ToolPage } from './pages/ToolPage';
-import { DynamicSEOPage } from './pages/DynamicSEOPage';
-import { AboutPage, ContactPage, PrivacyPage, TermsPage, DisclaimerPage } from './pages/StaticPages';
-import { SitemapPage } from './pages/SitemapPage';
-import ScrollToTop from './components/ScrollToTop';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+
+import { Layout } from "./components/Layout";
+import { HomePage } from "./pages/HomePage";
+import { ToolPage } from "./pages/ToolPage";
+import { DynamicSEOPage } from "./pages/DynamicSEOPage";
+
+import {
+  AboutPage,
+  ContactPage,
+  PrivacyPage,
+  TermsPage,
+  DisclaimerPage,
+} from "./pages/StaticPages";
+
+import { SitemapPage } from "./pages/SitemapPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   return (
     <HelmetProvider>
       <BrowserRouter>
 
-        {/* Scroll reset on page change */}
+        {/* Scroll reset */}
         <ScrollToTop />
 
         <Routes>
+
           <Route path="/" element={<Layout />}>
 
+            {/* HOME */}
             <Route index element={<HomePage />} />
 
-            {/* Core Tool Routes */}
-            <Route path="tools" element={<Navigate to="/" replace />} />
+            {/* TOOL ROUTES */}
             <Route path="tools/:toolId" element={<ToolPage />} />
 
-            {/* Static Pages */}
+            {/* STATIC PAGES */}
             <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="privacy-policy" element={<PrivacyPage />} />
@@ -34,7 +44,7 @@ export default function App() {
             <Route path="disclaimer" element={<DisclaimerPage />} />
             <Route path="sitemap" element={<SitemapPage />} />
 
-            {/* Programmatic SEO Routes */}
+            {/* PROGRAMMATIC SEO */}
             <Route path=":slug" element={<DynamicSEOPage />} />
 
             {/* 404 */}
@@ -52,9 +62,11 @@ export default function App() {
               }
             />
 
+            {/* FALLBACK */}
             <Route path="*" element={<Navigate to="/404" />} />
 
           </Route>
+
         </Routes>
 
       </BrowserRouter>
