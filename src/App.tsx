@@ -8,68 +8,59 @@ import { ToolPage } from "./pages/ToolPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
 
 import {
-  AboutPage,
-  ContactPage,
-  PrivacyPage,
-  TermsPage,
-  DisclaimerPage,
+AboutPage,
+ContactPage,
+PrivacyPage,
+TermsPage,
+DisclaimerPage
 } from "./pages/StaticPages";
 
 import { SitemapPage } from "./pages/SitemapPage";
 import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
-  return (
-    <HelmetProvider>
-      <BrowserRouter>
 
-        {/* Scroll reset */}
-        <ScrollToTop />
+return (
 
-        <Routes>
+<HelmetProvider>
 
-          <Route path="/" element={<Layout />}>
+<BrowserRouter>
 
-            {/* HOME */}
-            <Route index element={<HomePage />} />
+<ScrollToTop />
 
-            {/* TOOL ROUTES */}
-            <Route path="tools/:toolId" element={<ToolPage />} />
+<Routes>
 
-            {/* STATIC PAGES */}
-            <Route path="about" element={<AboutPage />} />
-            <Route path="contact" element={<ContactPage />} />
-            <Route path="privacy-policy" element={<PrivacyPage />} />
-            <Route path="terms-and-conditions" element={<TermsPage />} />
-            <Route path="disclaimer" element={<DisclaimerPage />} />
-            <Route path="sitemap" element={<SitemapPage />} />
+<Route path="/" element={<Layout />}>
 
-            {/* PROGRAMMATIC SEO */}
-            <Route path=":slug" element={<DynamicSEOPage />} />
+<Route index element={<HomePage />} />
 
-            {/* 404 */}
-            <Route
-              path="404"
-              element={
-                <div className="text-center py-20">
-                  <h1 className="text-4xl font-bold text-slate-900 mb-4">
-                    404 - Page Not Found
-                  </h1>
-                  <p className="text-slate-600">
-                    The page you are looking for does not exist.
-                  </p>
-                </div>
-              }
-            />
+{/* TOOL PAGE */}
+<Route path="tools/:toolId" element={<ToolPage />} />
 
-            {/* FALLBACK */}
-            <Route path="*" element={<Navigate to="/404" />} />
+{/* STATIC PAGES */}
+<Route path="about" element={<AboutPage />} />
+<Route path="contact" element={<ContactPage />} />
+<Route path="privacy-policy" element={<PrivacyPage />} />
+<Route path="terms-and-conditions" element={<TermsPage />} />
+<Route path="disclaimer" element={<DisclaimerPage />} />
+<Route path="sitemap" element={<SitemapPage />} />
 
-          </Route>
+{/* SEO PAGES */}
+<Route path="ai-:slug" element={<DynamicSEOPage />} />
 
-        </Routes>
+{/* 404 */}
+<Route path="404" element={<h1>404 Page Not Found</h1>} />
 
-      </BrowserRouter>
-    </HelmetProvider>
-  );
+<Route path="*" element={<Navigate to="/404" />} />
+
+</Route>
+
+</Routes>
+
+</BrowserRouter>
+
+</HelmetProvider>
+
+);
+
 }
