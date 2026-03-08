@@ -1,6 +1,6 @@
-import { generateGemini } from "./providers/gemini.ts";
-import { generateOpenAI } from "./providers/openai.ts";
-import { generateGrok } from "./providers/grok.ts";
+import { generateGemini } from "./providers/gemini.js";
+import { generateOpenAI } from "./providers/openai.js";
+import { generateGrok } from "./providers/grok.js";
 
 export default async function handler(req: any, res: any) {
 
