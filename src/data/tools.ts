@@ -325,3 +325,23 @@ category: "general"
 }
 
 ];
+
+export const seoModifiers = {
+
+"caption-generator": [
+{ slug: "instagram", name: "Instagram", context: "for Instagram posts" },
+{ slug: "reels", name: "Reels", context: "for Instagram reels" },
+{ slug: "travel", name: "Travel", context: "for travel photos" }
+],
+
+"resume-builder": [
+{ slug: "freshers", name: "Freshers", context: "for entry level candidates" },
+{ slug: "students", name: "Students", context: "for college students" }
+],
+
+"email-writer": [
+{ slug: "business", name: "Business", context: "for business emails" },
+{ slug: "sales", name: "Sales", context: "for sales outreach emails" }
+]
+
+};
