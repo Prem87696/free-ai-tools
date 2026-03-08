@@ -1,13 +1,8 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-
 import { generateGemini } from "./providers/gemini";
 import { generateOpenAI } from "./providers/openai";
 import { generateGrok } from "./providers/grok";
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
+export default async function handler(req: any, res: any) {
 
   /* METHOD CHECK */
 
@@ -21,13 +16,13 @@ export default async function handler(
 
     /* BODY PARSE */
 
-    let body: any = req.body;
+    let body = req.body;
 
     if (typeof body === "string") {
       body = JSON.parse(body);
     }
 
-    const { prompt } = body;
+    const { prompt } = body || {};
 
     if (!prompt) {
       return res.status(400).json({
