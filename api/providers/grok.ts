@@ -1,28 +1,37 @@
 export async function generateGrok(prompt: string) {
 
-  const response = await fetch("https://api.x.ai/v1/chat/completions", {
+  try {
 
-    method: "POST",
+    const res = await fetch(
+      "https://api.x.ai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GROK_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "grok-2-latest",
+          messages: [
+            {
+              role: "user",
+              content: prompt
+            }
+          ]
+        })
+      }
+    );
 
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.GROK_API_KEY}`
-    },
+    const data = await res.json();
 
-    body: JSON.stringify({
-      model: "grok-beta",
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
-    })
+    return data?.choices?.[0]?.message?.content || null;
 
-  });
+  } catch (error) {
 
-  const data = await response.json();
+    console.error("Grok error:", error);
 
-  return data.choices?.[0]?.message?.content || "";
+    return null;
+
+  }
 
 }
