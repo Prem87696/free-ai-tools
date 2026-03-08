@@ -2,8 +2,8 @@ export async function generateGemini(prompt: string) {
 
   try {
 
-    const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + process.env.GEMINI_API_KEY,
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: {
@@ -12,26 +12,25 @@ export async function generateGemini(prompt: string) {
         body: JSON.stringify({
           contents: [
             {
-              parts: [
-                { text: prompt }
-              ]
+              parts: [{ text: prompt }]
             }
           ]
         })
       }
     );
 
-    const data = await res.json();
+    if (!response.ok) {
+      console.error("Gemini API error:", await response.text());
+      return null;
+    }
 
-    const text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+    const data = await response.json();
 
-    return text;
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
 
   } catch (error) {
 
-    console.error("Gemini error:", error);
-
+    console.error("Gemini failed:", error);
     return null;
 
   }
