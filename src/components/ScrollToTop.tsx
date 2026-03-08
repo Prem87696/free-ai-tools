@@ -6,20 +6,8 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-
-    const main = document.querySelector("main");
-
-    if (main) {
-      main.scrollTo({
-        top: 0,
-        behavior: "instant"
-      });
-    }
-
-    window.scrollTo(0,0);
-
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   return null;
-
 }
