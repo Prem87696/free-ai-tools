@@ -281,9 +281,106 @@ className="flex items-center gap-3 text-slate-600 hover:text-indigo-600"
 
 <footer className="bg-white border-t border-slate-200 py-12 mt-8">
 
-<div className="container mx-auto px-4 text-center text-sm text-slate-400">
+<div className="container mx-auto px-4">
+
+<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+
+{/* Brand */}
+<div className="col-span-1 md:col-span-2">
+
+<h3 className="text-xl font-bold text-indigo-600 mb-3">
+AI Tools Platform
+</h3>
+
+<p className="text-slate-500 text-sm max-w-md">
+Free AI Tools Platform provides powerful artificial intelligence tools
+for creators, students, and professionals. Generate text, images and
+content instantly.
+</p>
+
+</div>
+
+{/* Tools */}
+<div>
+
+<h4 className="font-bold text-slate-900 mb-4">
+Popular Tools
+</h4>
+
+<ul className="space-y-2 text-sm text-slate-500">
+
+<li>
+<a href="/tools/ai-chatbot" className="hover:text-indigo-600">
+AI Chatbot
+</a>
+</li>
+
+<li>
+<a href="/tools/ai-caption-generator" className="hover:text-indigo-600">
+Caption Generator
+</a>
+</li>
+
+<li>
+<a href="/tools/ai-blog-writer" className="hover:text-indigo-600">
+Blog Writer
+</a>
+</li>
+
+<li>
+<a href="/tools/ai-hashtag-generator" className="hover:text-indigo-600">
+Hashtag Generator
+</a>
+</li>
+
+</ul>
+
+</div>
+
+{/* Legal */}
+<div>
+
+<h4 className="font-bold text-slate-900 mb-4">
+Legal
+</h4>
+
+<ul className="space-y-2 text-sm text-slate-500">
+
+<li>
+<a href="/privacy-policy" className="hover:text-indigo-600">
+Privacy Policy
+</a>
+</li>
+
+<li>
+<a href="/terms-and-conditions" className="hover:text-indigo-600">
+Terms & Conditions
+</a>
+</li>
+
+<li>
+<a href="/disclaimer" className="hover:text-indigo-600">
+Disclaimer
+</a>
+</li>
+
+<li>
+<a href="/contact" className="hover:text-indigo-600">
+Contact
+</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div className="border-t border-slate-100 pt-8 text-center text-slate-400 text-sm">
 
 © {new Date().getFullYear()} AI Tools Platform
+
+</div>
 
 </div>
 
