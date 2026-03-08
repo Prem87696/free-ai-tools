@@ -117,7 +117,7 @@ export function Layout() {
         )}
       </header>
 
-      {/* AdSense Header */}
+      {/* Header Ads */}
       <div className="container mx-auto px-4">
         <AdPlaceholder slot="header" />
       </div>
@@ -193,6 +193,7 @@ export function Layout() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 
+            {/* Brand */}
             <div className="col-span-1 md:col-span-2">
 
               <Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-600 mb-4">
@@ -201,16 +202,99 @@ export function Layout() {
               </Link>
 
               <p className="text-slate-500 text-sm leading-relaxed max-w-md">
-                Free AI Tools Platform provides cutting-edge artificial intelligence utilities.
+                Free AI Tools Platform provides cutting-edge artificial intelligence utilities
+                for creators, students, and professionals.
               </p>
+
+            </div>
+
+            {/* Tools */}
+            <div>
+
+              <h4 className="font-bold text-slate-900 mb-4">
+                Tools
+              </h4>
+
+              <ul className="space-y-2 text-sm text-slate-500">
+
+                <li>
+                  <Link to="/tools/ai-caption-generator" className="hover:text-indigo-600">
+                    Caption Generator
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/tools/ai-resume-builder" className="hover:text-indigo-600">
+                    Resume Builder
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/tools/ai-email-writer" className="hover:text-indigo-600">
+                    Email Writer
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/tools/ai-blog-writer" className="hover:text-indigo-600">
+                    Blog Writer
+                  </Link>
+                </li>
+
+              </ul>
+
+            </div>
+
+            {/* Legal */}
+            <div>
+
+              <h4 className="font-bold text-slate-900 mb-4">
+                Legal
+              </h4>
+
+              <ul className="space-y-2 text-sm text-slate-500">
+
+                <li>
+                  <Link to="/privacy-policy" className="hover:text-indigo-600">
+                    Privacy Policy
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/terms-and-conditions" className="hover:text-indigo-600">
+                    Terms & Conditions
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/disclaimer" className="hover:text-indigo-600">
+                    Disclaimer
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/contact" className="hover:text-indigo-600">
+                    Contact
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/sitemap" className="hover:text-indigo-600">
+                    Sitemap
+                  </Link>
+                </li>
+
+              </ul>
 
             </div>
 
           </div>
 
-          <div className="border-t border-slate-100 pt-8 text-center text-slate-400 text-sm">
+          <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
 
-            © {new Date().getFullYear()} AI Tools Platform
+            <p className="text-slate-400 text-sm">
+              © {new Date().getFullYear()} AI Tools Platform. All rights reserved.
+            </p>
 
           </div>
 
