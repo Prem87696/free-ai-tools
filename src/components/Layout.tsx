@@ -1,307 +1,296 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { Menu, X, Bot, FileText, Mail, PenTool, Hash, User } from 'lucide-react';
+import {
+Menu,
+X,
+Bot,
+FileText,
+Mail,
+PenTool,
+Hash,
+User,
+Image,
+FileImage,
+File,
+Scissors
+} from 'lucide-react';
+
 import { AdPlaceholder } from './AdPlaceholder';
 import PageTransition from './PageTransition';
 
 export function Layout() {
 
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Tools', path: '/tools' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
-  ];
-
-  const tools = [
-    { name: 'Chatbot', icon: Bot, path: '/tools/ai-chatbot' },
-    { name: 'Caption Generator', icon: FileText, path: '/tools/ai-caption-generator' },
-    { name: 'Resume Builder', icon: User, path: '/tools/ai-resume-builder' },
-    { name: 'Email Writer', icon: Mail, path: '/tools/ai-email-writer' },
-    { name: 'Blog Writer', icon: PenTool, path: '/tools/ai-blog-writer' },
-    { name: 'Hashtag Generator', icon: Hash, path: '/tools/ai-hashtag-generator' },
-  ];
-
-  return (
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
-
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-600">
-            <Bot className="w-8 h-8" />
-            <span>AI Tools Platform</span>
-          </Link>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-
-            <Link
-              to="/tools"
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-            >
-              Get Started
-            </Link>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-          >
-            {isMenuOpen ? <X /> : <Menu />}
-          </button>
-
-        </div>
-
-        {/* Mobile Nav */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-slate-200 p-4 absolute w-full shadow-lg">
+const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-            <nav className="flex flex-col gap-4">
+const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-slate-600 hover:text-indigo-600 font-medium py-2 border-b border-slate-100 last:border-0"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
+const navLinks = [
+{ name: 'Home', path: '/' },
+{ name: 'Tools', path: '/tools' },
+{ name: 'About', path: '/about' },
+{ name: 'Contact', path: '/contact' },
+];
 
-              <div className="pt-2">
+const tools = [
 
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  Popular Tools
-                </p>
+{ name: 'AI Chatbot', icon: Bot, path: '/tools/ai-chatbot' },
+{ name: 'Caption Generator', icon: FileText, path: '/tools/ai-caption-generator' },
+{ name: 'Resume Builder', icon: User, path: '/tools/ai-resume-builder' },
+{ name: 'Email Writer', icon: Mail, path: '/tools/ai-email-writer' },
+{ name: 'Blog Writer', icon: PenTool, path: '/tools/ai-blog-writer' },
+{ name: 'Hashtag Generator', icon: Hash, path: '/tools/ai-hashtag-generator' },
 
-                <div className="grid grid-cols-2 gap-2">
+{ name: 'SVG to PNG', icon: Image, path: '/tools/svg-to-png' },
+{ name: 'PNG to JPG', icon: Image, path: '/tools/png-to-jpg' },
+{ name: 'WEBP to PNG', icon: Image, path: '/tools/webp-to-png' },
+{ name: 'Image Compressor', icon: FileImage, path: '/tools/image-compressor' },
 
-                  {tools.slice(0, 4).map((tool) => (
+{ name: 'Image to PDF', icon: File, path: '/tools/image-to-pdf' },
+{ name: 'JPG to PDF', icon: File, path: '/tools/jpg-to-pdf' },
+{ name: 'Merge PDF', icon: File, path: '/tools/merge-pdf' },
+{ name: 'Split PDF', icon: Scissors, path: '/tools/split-pdf' },
+{ name: 'PDF to Image', icon: FileImage, path: '/tools/pdf-to-image' }
 
-                    <Link
-                      key={tool.name}
-                      to={tool.path}
-                      className="flex items-center gap-2 text-sm text-slate-600 hover:text-indigo-600 p-2 rounded hover:bg-slate-50"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <tool.icon className="w-4 h-4" />
-                      {tool.name}
-                    </Link>
+];
 
-                  ))}
+return (
 
-                </div>
+<div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
 
-              </div>
+{/* Header */}
 
-            </nav>
+<header className="bg-white border-b border-slate-200 sticky top-0 z-50">
 
-          </div>
-        )}
-      </header>
+<div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
-      {/* Header Ads */}
-      <div className="container mx-auto px-4">
-        <AdPlaceholder slot="header" />
-      </div>
+<Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-600">
 
-      {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 py-8">
+<Bot className="w-8 h-8" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<span>AI Tools Platform</span>
 
-          {/* Content Area */}
-          <div className="lg:col-span-9">
+</Link>
 
-            <PageTransition>
-              <Outlet />
-            </PageTransition>
+{/* Desktop Nav */}
 
-          </div>
+<nav className="hidden md:flex items-center gap-6">
 
-          {/* Sidebar */}
-          <aside className="lg:col-span-3 space-y-8">
+{navLinks.map((link) => (
 
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<Link
 
-              <h3 className="font-bold text-lg mb-4 text-slate-800">
-                Popular Tools
-              </h3>
+key={link.name}
 
-              <ul className="space-y-3">
+to={link.path}
 
-                {tools.map((tool) => (
+className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
 
-                  <li key={tool.name}>
+>
 
-                    <Link
-                      to={tool.path}
-                      className="flex items-center gap-3 text-slate-600 hover:text-indigo-600 group"
-                    >
-                      <div className="p-2 bg-slate-100 rounded-lg group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                        <tool.icon className="w-4 h-4" />
-                      </div>
+{link.name}
 
-                      <span className="font-medium text-sm">
-                        {tool.name}
-                      </span>
+</Link>
 
-                    </Link>
+))}
 
-                  </li>
+<Link
 
-                ))}
+to="/tools"
 
-              </ul>
+className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
 
-            </div>
+>
 
-            <AdPlaceholder slot="sidebar" />
+Get Started
 
-          </aside>
+</Link>
 
-        </div>
+</nav>
 
-      </main>
+{/* Mobile Menu */}
 
-      {/* Footer Ads */}
-      <div className="container mx-auto px-4">
-        <AdPlaceholder slot="footer" />
-      </div>
+<button
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-12 mt-8">
+onClick={toggleMenu}
 
-        <div className="container mx-auto px-4">
+className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+>
 
-            {/* Brand */}
-            <div className="col-span-1 md:col-span-2">
+{isMenuOpen ? <X /> : <Menu />}
 
-              <Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-600 mb-4">
-                <Bot className="w-6 h-6" />
-                <span>AI Tools Platform</span>
-              </Link>
+</button>
 
-              <p className="text-slate-500 text-sm leading-relaxed max-w-md">
-                Free AI Tools Platform provides cutting-edge artificial intelligence utilities
-                for creators, students, and professionals.
-              </p>
+</div>
 
-            </div>
+{/* Mobile Nav */}
 
-            {/* Tools */}
-            <div>
+{isMenuOpen && (
 
-              <h4 className="font-bold text-slate-900 mb-4">
-                Tools
-              </h4>
+<div className="md:hidden bg-white border-t border-slate-200 p-4 absolute w-full shadow-lg">
 
-              <ul className="space-y-2 text-sm text-slate-500">
+<nav className="flex flex-col gap-4">
 
-                <li>
-                  <Link to="/tools/ai-caption-generator" className="hover:text-indigo-600">
-                    Caption Generator
-                  </Link>
-                </li>
+{navLinks.map((link) => (
 
-                <li>
-                  <Link to="/tools/ai-resume-builder" className="hover:text-indigo-600">
-                    Resume Builder
-                  </Link>
-                </li>
+<Link
 
-                <li>
-                  <Link to="/tools/ai-email-writer" className="hover:text-indigo-600">
-                    Email Writer
-                  </Link>
-                </li>
+key={link.name}
 
-                <li>
-                  <Link to="/tools/ai-blog-writer" className="hover:text-indigo-600">
-                    Blog Writer
-                  </Link>
-                </li>
+to={link.path}
 
-              </ul>
+className="text-slate-600 hover:text-indigo-600 font-medium py-2"
 
-            </div>
+onClick={() => setIsMenuOpen(false)}
 
-            {/* Legal */}
-            <div>
+>
 
-              <h4 className="font-bold text-slate-900 mb-4">
-                Legal
-              </h4>
+{link.name}
 
-              <ul className="space-y-2 text-sm text-slate-500">
+</Link>
 
-                <li>
-                  <Link to="/privacy-policy" className="hover:text-indigo-600">
-                    Privacy Policy
-                  </Link>
-                </li>
+))}
 
-                <li>
-                  <Link to="/terms-and-conditions" className="hover:text-indigo-600">
-                    Terms & Conditions
-                  </Link>
-                </li>
+<p className="text-xs font-semibold text-slate-400 uppercase mt-3">
 
-                <li>
-                  <Link to="/disclaimer" className="hover:text-indigo-600">
-                    Disclaimer
-                  </Link>
-                </li>
+Popular Tools
 
-                <li>
-                  <Link to="/contact" className="hover:text-indigo-600">
-                    Contact
-                  </Link>
-                </li>
+</p>
 
-                <li>
-                  <Link to="/sitemap" className="hover:text-indigo-600">
-                    Sitemap
-                  </Link>
-                </li>
+<div className="grid grid-cols-2 gap-2">
 
-              </ul>
+{tools.slice(0, 6).map((tool) => (
 
-            </div>
+<Link
 
-          </div>
+key={tool.name}
 
-          <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+to={tool.path}
 
-            <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} AI Tools Platform. All rights reserved.
-            </p>
+className="flex items-center gap-2 text-sm text-slate-600 hover:text-indigo-600"
 
-          </div>
+onClick={() => setIsMenuOpen(false)}
 
-        </div>
+>
 
-      </footer>
+<tool.icon className="w-4 h-4" />
 
-    </div>
-  );
+{tool.name}
+
+</Link>
+
+))}
+
+</div>
+
+</nav>
+
+</div>
+
+)}
+
+</header>
+
+{/* Header Ads */}
+
+<div className="container mx-auto px-4">
+
+<AdPlaceholder slot="header" />
+
+</div>
+
+{/* Main */}
+
+<main className="flex-grow container mx-auto px-4 py-8">
+
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+{/* Content */}
+
+<div className="lg:col-span-9">
+
+<PageTransition>
+
+<Outlet />
+
+</PageTransition>
+
+</div>
+
+{/* Sidebar */}
+
+<aside className="lg:col-span-3 space-y-8">
+
+<div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+
+<h3 className="font-bold text-lg mb-4">
+
+Popular Tools
+
+</h3>
+
+<ul className="space-y-3">
+
+{tools.map((tool) => (
+
+<li key={tool.name}>
+
+<Link
+
+to={tool.path}
+
+className="flex items-center gap-3 text-slate-600 hover:text-indigo-600"
+
+>
+
+<tool.icon className="w-4 h-4" />
+
+<span className="text-sm">
+
+{tool.name}
+
+</span>
+
+</Link>
+
+</li>
+
+))}
+
+</ul>
+
+</div>
+
+<AdPlaceholder slot="sidebar" />
+
+</aside>
+
+</div>
+
+</main>
+
+{/* Footer Ads */}
+
+<div className="container mx-auto px-4">
+
+<AdPlaceholder slot="footer" />
+
+</div>
+
+{/* Footer */}
+
+<footer className="bg-white border-t border-slate-200 py-12 mt-8">
+
+<div className="container mx-auto px-4 text-center text-sm text-slate-400">
+
+© {new Date().getFullYear()} AI Tools Platform
+
+</div>
+
+</footer>
+
+</div>
+
+);
+
 }
