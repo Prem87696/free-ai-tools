@@ -18,11 +18,11 @@ import SplitPdf from "../components/tools/SplitPdf";
 import PdfToImage from "../components/tools/PdfToImage";
 
 import {
-Loader2,
-Copy,
-Check,
-AlertCircle,
-Sparkles
+  Loader2,
+  Copy,
+  Check,
+  AlertCircle,
+  Sparkles
 } from "lucide-react";
 
 export function ToolPage() {
@@ -38,11 +38,9 @@ const [error, setError] = useState("");
 const [copied, setCopied] = useState(false);
 
 useEffect(() => {
-
 setFormData({});
 setResult("");
 setError("");
-
 }, [toolId]);
 
 /* TOOL NOT FOUND */
@@ -51,18 +49,36 @@ if (!tool) {
 return <Navigate to="/404" />;
 }
 
-/* FILE TOOL ROUTING */
+/* FILE TOOL ROUTER */
 
-if (tool.id === "svg-to-png") return <SvgToPng />;
-if (tool.id === "png-to-jpg") return <PngToJpg />;
-if (tool.id === "webp-to-png") return <WebpToPng />;
-if (tool.id === "image-compressor") return <ImageCompressor />;
+const fileToolMap:any = {
+"svg-to-png": <SvgToPng />,
+"png-to-jpg": <PngToJpg />,
+"webp-to-png": <WebpToPng />,
+"image-compressor": <ImageCompressor />,
+"image-to-pdf": <ImageToPdf />,
+"jpg-to-pdf": <JpgToPdf />,
+"merge-pdf": <MergePdf />,
+"split-pdf": <SplitPdf />,
+"pdf-to-image": <PdfToImage />
+};
 
-if (tool.id === "image-to-pdf") return <ImageToPdf />;
-if (tool.id === "jpg-to-pdf") return <JpgToPdf />;
-if (tool.id === "merge-pdf") return <MergePdf />;
-if (tool.id === "split-pdf") return <SplitPdf />;
-if (tool.id === "pdf-to-image") return <PdfToImage />;
+if (fileToolMap[tool.id]) {
+
+return (
+<>
+<SEOHead
+title={`${tool.name} - Free Tool`}
+description={tool.description}
+/>
+
+<div className="max-w-4xl mx-auto">
+{fileToolMap[tool.id]}
+</div>
+</>
+);
+
+}
 
 /* INPUT CHANGE */
 
@@ -135,7 +151,7 @@ setTimeout(() => setCopied(false), 2000);
 
 };
 
-/* UI */
+/* AI TOOL UI */
 
 return (
 
