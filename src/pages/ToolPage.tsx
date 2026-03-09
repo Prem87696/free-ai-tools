@@ -8,13 +8,21 @@ import { AdPlaceholder } from "../components/AdPlaceholder";
 
 /* FILE TOOLS */
 import JpgToPdf from "../components/tools/JpgToPdf";
+import SvgToPng from "../components/tools/SvgToPng";
+import PngToJpg from "../components/tools/PngToJpg";
+import WebpToPng from "../components/tools/WebpToPng";
+import ImageCompressor from "../components/tools/ImageCompressor";
+import ImageToPdf from "../components/tools/ImageToPdf";
+import MergePdf from "../components/tools/MergePdf";
+import SplitPdf from "../components/tools/SplitPdf";
+import PdfToImage from "../components/tools/PdfToImage";
 
 import {
-  Loader2,
-  Copy,
-  Check,
-  AlertCircle,
-  Sparkles
+Loader2,
+Copy,
+Check,
+AlertCircle,
+Sparkles
 } from "lucide-react";
 
 export function ToolPage() {
@@ -45,9 +53,16 @@ return <Navigate to="/404" />;
 
 /* FILE TOOL ROUTING */
 
-if (tool.id === "jpg-to-pdf") {
-return <JpgToPdf />;
-}
+if (tool.id === "svg-to-png") return <SvgToPng />;
+if (tool.id === "png-to-jpg") return <PngToJpg />;
+if (tool.id === "webp-to-png") return <WebpToPng />;
+if (tool.id === "image-compressor") return <ImageCompressor />;
+
+if (tool.id === "image-to-pdf") return <ImageToPdf />;
+if (tool.id === "jpg-to-pdf") return <JpgToPdf />;
+if (tool.id === "merge-pdf") return <MergePdf />;
+if (tool.id === "split-pdf") return <SplitPdf />;
+if (tool.id === "pdf-to-image") return <PdfToImage />;
 
 /* INPUT CHANGE */
 
@@ -137,21 +152,15 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 <div className="text-center mb-8">
 
 <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
-
 <tool.icon className="w-8 h-8" />
-
 </div>
 
 <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-
 {tool.name}
-
 </h1>
 
 <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-
 {tool.description}
-
 </p>
 
 </div>
@@ -169,9 +178,7 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 <div key={input.name}>
 
 <label className="block text-sm font-medium text-slate-700 mb-2">
-
 {input.label}
-
 </label>
 
 {input.type === "textarea" ? (
@@ -198,11 +205,9 @@ handleInputChange(input.name, e.target.value)
 <option value="">Select an option</option>
 
 {input.options?.map((opt) => (
-
 <option key={opt} value={opt}>
 {opt}
 </option>
-
 ))}
 
 </select>
@@ -230,11 +235,8 @@ handleInputChange(input.name, e.target.value)
 {error && (
 
 <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
-
 <AlertCircle className="w-4 h-4" />
-
 {error}
-
 </div>
 
 )}
@@ -274,11 +276,8 @@ Generate Content
 <div className="flex items-center justify-between mb-4">
 
 <h3 className="font-bold text-slate-800 flex items-center gap-2">
-
 <Check className="w-5 h-5 text-green-500" />
-
 Generated Result
-
 </h3>
 
 <button
@@ -287,7 +286,6 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 >
 
 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-
 {copied ? "Copied!" : "Copy Text"}
 
 </button>
@@ -295,9 +293,7 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 </div>
 
 <div className="bg-white p-6 rounded-xl border border-slate-200 whitespace-pre-wrap text-sm text-slate-700">
-
 {result}
-
 </div>
 
 </div>
