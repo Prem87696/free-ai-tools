@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useRef,useState} from "react"
 
 export default function FileToolUI({
 title,
@@ -8,7 +8,45 @@ onFileChange,
 onConvert,
 downloadUrl,
 multiple
-}: any){
+}:any){
+
+const fileRef=useRef<any>(null)
+
+const [preview,setPreview]=useState<string | null>(null)
+
+const handleFile=(e:any)=>{
+
+const file=e.target.files[0]
+
+if(!file)return
+
+onFileChange(e)
+
+const reader=new FileReader()
+
+reader.onload=()=>{
+
+setPreview(reader.result as string)
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+const handleDrop=(e:any)=>{
+
+e.preventDefault()
+
+const file=e.dataTransfer.files[0]
+
+if(!file)return
+
+const event={target:{files:[file]}}
+
+handleFile(event)
+
+}
 
 return(
 
@@ -22,13 +60,48 @@ return(
 {description}
 </p>
 
+{/* Drag Drop Area */}
+
+<div
+onDragOver={(e)=>e.preventDefault()}
+onDrop={handleDrop}
+onClick={()=>fileRef.current.click()}
+className="border-2 border-dashed border-slate-300 rounded-xl p-10 text-center cursor-pointer hover:border-indigo-500 mb-6"
+>
+
+<p className="text-slate-500">
+Drag & Drop file here or click to upload
+</p>
+
 <input
 type="file"
 accept={accept}
 multiple={multiple}
-onChange={onFileChange}
-className="block mb-6"
+ref={fileRef}
+onChange={handleFile}
+className="hidden"
 />
+
+</div>
+
+{/* Preview Uploaded */}
+
+{preview && (
+
+<div className="mb-6">
+
+<p className="font-semibold mb-2">Uploaded File</p>
+
+<img
+src={preview}
+className="max-h-64 rounded-lg border"
+/>
+
+</div>
+
+)}
+
+{/* Convert Button */}
 
 {onConvert && (
 
@@ -43,17 +116,30 @@ Convert
 
 )}
 
+{/* Converted Preview */}
+
 {downloadUrl && (
+
+<div className="mt-6">
+
+<p className="font-semibold mb-2">Converted Result</p>
+
+<img
+src={downloadUrl}
+className="max-h-64 rounded-lg border mb-4"
+/>
 
 <a
 href={downloadUrl}
 download
-className="ml-4 bg-green-600 text-white px-6 py-3 rounded-lg"
+className="bg-green-600 text-white px-6 py-3 rounded-lg"
 >
 
 Download
 
 </a>
+
+</div>
 
 )}
 
