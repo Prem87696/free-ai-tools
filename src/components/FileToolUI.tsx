@@ -1,4 +1,4 @@
-import React,{useRef,useState} from "react"
+import React,{useRef,useState,useEffect} from "react"
 import { Upload, X, Loader2 } from "lucide-react"
 
 export default function FileToolUI({
@@ -14,13 +14,25 @@ multiple
 const fileRef=useRef<any>(null)
 
 const [preview,setPreview]=useState<string | null>(null)
+const [fileSize,setFileSize]=useState<number | null>(null)
+const [convertedSize,setConvertedSize]=useState<number | null>(null)
+
 const [loading,setLoading]=useState(false)
+const [progress,setProgress]=useState(0)
+
+const formatSize=(bytes:number)=>{
+if(bytes<1024) return bytes+" B"
+if(bytes<1024*1024) return (bytes/1024).toFixed(2)+" KB"
+return (bytes/(1024*1024)).toFixed(2)+" MB"
+}
 
 const handleFile=(e:any)=>{
 
 const file=e.target.files[0]
 
 if(!file)return
+
+setFileSize(file.size)
 
 onFileChange(e)
 
@@ -53,6 +65,8 @@ handleFile(event)
 const removeFile=()=>{
 
 setPreview(null)
+setFileSize(null)
+setConvertedSize(null)
 
 }
 
@@ -61,10 +75,40 @@ const convert=async()=>{
 if(!onConvert)return
 
 setLoading(true)
+setProgress(30)
+
+await new Promise(r=>setTimeout(r,200))
+
+setProgress(60)
 
 await onConvert()
 
+setProgress(100)
 setLoading(false)
+
+}
+
+useEffect(()=>{
+
+if(downloadUrl){
+
+fetch(downloadUrl)
+.then(r=>r.blob())
+.then(blob=>{
+setConvertedSize(blob.size)
+})
+
+}
+
+},[downloadUrl])
+
+const compressionPercent=()=>{
+
+if(!fileSize || !convertedSize) return null
+
+const saved=fileSize-convertedSize
+
+return ((saved/fileSize)*100).toFixed(1)
 
 }
 
@@ -80,7 +124,7 @@ return(
 {description}
 </p>
 
-{/* Upload Area */}
+{/* Upload */}
 
 {!preview && (
 
@@ -88,10 +132,10 @@ return(
 onDragOver={(e)=>e.preventDefault()}
 onDrop={handleDrop}
 onClick={()=>fileRef.current.click()}
-className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-indigo-500 transition mb-6"
+className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-indigo-500 mb-8"
 >
 
-<Upload className="mx-auto mb-3 text-slate-400" size={40} />
+<Upload className="mx-auto mb-3 text-slate-400" size={40}/>
 
 <p className="text-slate-500">
 Drag & Drop file here or click to upload
@@ -110,37 +154,94 @@ className="hidden"
 
 )}
 
-{/* Uploaded Preview */}
+{/* Preview */}
 
 {preview && (
 
-<div className="mb-6 relative">
+<div className="grid md:grid-cols-2 gap-10 items-start mb-6">
+
+{/* Before */}
+
+<div className="text-center relative">
+
+<p className="font-semibold mb-3">
+Uploaded File
+</p>
 
 <img
 src={preview}
-className="max-h-64 mx-auto rounded-lg border"
+className="max-h-72 mx-auto rounded-lg border"
 />
+
+{fileSize && (
+
+<p className="text-sm text-slate-500 mt-2">
+Size: {formatSize(fileSize)}
+</p>
+
+)}
 
 <button
 onClick={removeFile}
 className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
 >
 
-<X size={16}/>
+<X size={14}/>
 
 </button>
 
 </div>
 
+{/* After */}
+
+<div className="text-center">
+
+{downloadUrl ? (
+
+<>
+
+<p className="font-semibold mb-3">
+Converted Result
+</p>
+
+<img
+src={downloadUrl}
+className="max-h-72 mx-auto rounded-lg border"
+/>
+
+{convertedSize && (
+
+<p className="text-sm text-slate-500 mt-2">
+Size: {formatSize(convertedSize)}
+</p>
+
 )}
 
-{/* Convert Button */}
+{compressionPercent() && (
 
-{preview && onConvert && !downloadUrl && (
+<p className="text-green-600 font-semibold mt-2">
+Saved {compressionPercent()}%
+</p>
+
+)}
+
+<a
+href={downloadUrl}
+download
+className="inline-block mt-4 bg-green-600 text-white px-6 py-3 rounded-lg"
+>
+
+Download File
+
+</a>
+
+</>
+
+) : (
 
 <button
 onClick={convert}
-className="bg-indigo-600 text-white px-6 py-3 rounded-lg flex items-center gap-2"
+className="bg-indigo-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 mt-16"
 >
 
 {loading ? <Loader2 className="animate-spin" size={18}/> : null}
@@ -151,30 +252,22 @@ Convert
 
 )}
 
-{/* Converted Result */}
+</div>
 
-{downloadUrl && (
+</div>
 
-<div className="mt-6 text-center">
+)}
 
-<p className="font-semibold mb-3">
-Converted Result
-</p>
+{/* Progress */}
 
-<img
-src={downloadUrl}
-className="max-h-64 mx-auto rounded-lg border mb-4"
+{loading && (
+
+<div className="w-full bg-slate-200 rounded-full h-2">
+
+<div
+style={{width:`${progress}%`}}
+className="bg-indigo-600 h-2 rounded-full transition-all"
 />
-
-<a
-href={downloadUrl}
-download
-className="bg-green-600 text-white px-6 py-3 rounded-lg"
->
-
-Download File
-
-</a>
 
 </div>
 
