@@ -1,95 +1,104 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { tools } from '../data/tools';
-import { generateContent } from '../services/gemini';
+import React, { useState, useEffect } from "react";
+import { useParams, Navigate } from "react-router-dom";
+import { tools } from "../data/tools";
+import { generateContent } from "../services/gemini";
 
-import { SEOHead } from '../components/SEOHead';
-import { AdPlaceholder } from '../components/AdPlaceholder';
+import { SEOHead } from "../components/SEOHead";
+import { AdPlaceholder } from "../components/AdPlaceholder";
+
+/* FILE TOOLS */
+import JpgToPdf from "../components/tools/JpgToPdf";
 
 import {
-Loader2,
-Copy,
-Check,
-AlertCircle,
-Sparkles
-} from 'lucide-react';
+  Loader2,
+  Copy,
+  Check,
+  AlertCircle,
+  Sparkles
+} from "lucide-react";
 
 export function ToolPage() {
 
 const { toolId } = useParams();
 
-const tool = tools.find(t => t.id === toolId);
+const tool = tools.find((t) => t.id === toolId);
 
 const [formData, setFormData] = useState<Record<string, string>>({});
-const [result, setResult] = useState('');
+const [result, setResult] = useState("");
 const [isLoading, setIsLoading] = useState(false);
-const [error, setError] = useState('');
+const [error, setError] = useState("");
 const [copied, setCopied] = useState(false);
 
 useEffect(() => {
 
 setFormData({});
-setResult('');
-setError('');
+setResult("");
+setError("");
 
 }, [toolId]);
 
+/* TOOL NOT FOUND */
+
 if (!tool) {
-
 return <Navigate to="/404" />;
-
 }
+
+/* FILE TOOL ROUTING */
+
+if (tool.id === "jpg-to-pdf") {
+return <JpgToPdf />;
+}
+
+/* INPUT CHANGE */
 
 const handleInputChange = (name: string, value: string) => {
 
-setFormData(prev => ({
+setFormData((prev) => ({
 ...prev,
 [name]: value
 }));
 
 };
 
+/* SUBMIT */
+
 const handleSubmit = async (e: React.FormEvent) => {
 
 e.preventDefault();
 
 setIsLoading(true);
-setError('');
-setResult('');
+setError("");
+setResult("");
 
 try {
 
 let prompt = tool.promptTemplate;
 
-let missingFields:string[] = [];
+let missingFields: string[] = [];
 
-tool.inputs?.forEach(input => {
+tool.inputs?.forEach((input) => {
 
 const value = formData[input.name];
 
 if (!value) {
-
 missingFields.push(input.label);
-
 }
 
-prompt = prompt.replace(`{{${input.name}}}`, value || '');
+prompt = prompt.replace(`{{${input.name}}}`, value || "");
 
 });
 
 if (missingFields.length > 0) {
-
-throw new Error(`Please fill in all fields: ${missingFields.join(', ')}`);
-
+throw new Error(`Please fill in all fields: ${missingFields.join(", ")}`);
 }
 
 const generatedText = await generateContent(prompt);
 
 setResult(generatedText);
 
-} catch (err:any) {
+} catch (err: any) {
 
-setError(err.message || 'Something went wrong');
+setError(err.message || "Something went wrong");
 
 } finally {
 
@@ -98,6 +107,8 @@ setIsLoading(false);
 }
 
 };
+
+/* COPY RESULT */
 
 const copyToClipboard = () => {
 
@@ -108,6 +119,8 @@ setCopied(true);
 setTimeout(() => setCopied(false), 2000);
 
 };
+
+/* UI */
 
 return (
 
@@ -161,22 +174,22 @@ keywords={`ai tool, ${tool.name.toLowerCase()}, free ai generator`}
 
 </label>
 
-{input.type === 'textarea' ? (
+{input.type === "textarea" ? (
 
 <textarea
 className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500"
 placeholder={input.placeholder}
-value={formData[input.name] || ''}
+value={formData[input.name] || ""}
 onChange={(e) =>
 handleInputChange(input.name, e.target.value)
 }
 />
 
-) : input.type === 'select' ? (
+) : input.type === "select" ? (
 
 <select
 className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500"
-value={formData[input.name] || ''}
+value={formData[input.name] || ""}
 onChange={(e) =>
 handleInputChange(input.name, e.target.value)
 }
@@ -184,12 +197,10 @@ handleInputChange(input.name, e.target.value)
 
 <option value="">Select an option</option>
 
-{input.options?.map(opt => (
+{input.options?.map((opt) => (
 
 <option key={opt} value={opt}>
-
 {opt}
-
 </option>
 
 ))}
@@ -202,7 +213,7 @@ handleInputChange(input.name, e.target.value)
 type="text"
 className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500"
 placeholder={input.placeholder}
-value={formData[input.name] || ''}
+value={formData[input.name] || ""}
 onChange={(e) =>
 handleInputChange(input.name, e.target.value)
 }
@@ -237,21 +248,15 @@ className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-
 {isLoading ? (
 
 <>
-
 <Loader2 className="w-5 h-5 animate-spin" />
-
 Generating...
-
 </>
 
 ) : (
 
 <>
-
 <Sparkles className="w-5 h-5" />
-
 Generate Content
-
 </>
 
 )}
@@ -283,7 +288,7 @@ className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm 
 
 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
 
-{copied ? 'Copied!' : 'Copy Text'}
+{copied ? "Copied!" : "Copy Text"}
 
 </button>
 
