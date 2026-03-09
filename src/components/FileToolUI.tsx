@@ -6,7 +6,8 @@ description,
 accept,
 onFileChange,
 onConvert,
-downloadUrl
+downloadUrl,
+multiple
 }: any){
 
 return(
@@ -24,16 +25,23 @@ return(
 <input
 type="file"
 accept={accept}
+multiple={multiple}
 onChange={onFileChange}
 className="block mb-6"
 />
+
+{onConvert && (
 
 <button
 onClick={onConvert}
 className="bg-indigo-600 text-white px-6 py-3 rounded-lg"
 >
+
 Convert
+
 </button>
+
+)}
 
 {downloadUrl && (
 
@@ -42,7 +50,9 @@ href={downloadUrl}
 download
 className="ml-4 bg-green-600 text-white px-6 py-3 rounded-lg"
 >
+
 Download
+
 </a>
 
 )}
