@@ -1,6 +1,6 @@
 import React,{useState} from "react";
-import {jsPDF} from "jspdf";
-import FileToolUI from "../components/FileToolUI";
+import { jsPDF } from "jspdf";
+import FileToolUI from "../FileToolUI";
 
 export default function JpgToPdf(){
 
@@ -18,6 +18,8 @@ reader.readAsDataURL(e.target.files[0])
 }
 
 const convert=()=>{
+
+if(!img) return
 
 const pdfDoc=new jsPDF()
 
