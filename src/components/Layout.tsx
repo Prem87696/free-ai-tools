@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
 import {
 Menu,
 X,
@@ -13,10 +13,10 @@ Image,
 FileImage,
 File,
 Scissors
-} from 'lucide-react';
+} from "lucide-react";
 
-import { AdPlaceholder } from './AdPlaceholder';
-import PageTransition from './PageTransition';
+import { AdPlaceholder } from "./AdPlaceholder";
+import PageTransition from "./PageTransition";
 
 export function Layout() {
 
@@ -25,31 +25,31 @@ const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
 const navLinks = [
-{ name: 'Home', path: '/' },
-{ name: 'Tools', path: '/tools' },
-{ name: 'About', path: '/about' },
-{ name: 'Contact', path: '/contact' },
+{ name: "Home", path: "/" },
+{ name: "Tools", path: "/tools" },
+{ name: "About", path: "/about" },
+{ name: "Contact", path: "/contact" }
 ];
 
 const tools = [
 
-{ name: 'AI Chatbot', icon: Bot, path: '/tools/ai-chatbot' },
-{ name: 'Caption Generator', icon: FileText, path: '/tools/ai-caption-generator' },
-{ name: 'Resume Builder', icon: User, path: '/tools/ai-resume-builder' },
-{ name: 'Email Writer', icon: Mail, path: '/tools/ai-email-writer' },
-{ name: 'Blog Writer', icon: PenTool, path: '/tools/ai-blog-writer' },
-{ name: 'Hashtag Generator', icon: Hash, path: '/tools/ai-hashtag-generator' },
+{ name: "AI Chatbot", icon: Bot, path: "/tools/ai-chatbot" },
+{ name: "Caption Generator", icon: FileText, path: "/tools/ai-caption-generator" },
+{ name: "Resume Builder", icon: User, path: "/tools/ai-resume-builder" },
+{ name: "Email Writer", icon: Mail, path: "/tools/ai-email-writer" },
+{ name: "Blog Writer", icon: PenTool, path: "/tools/ai-blog-writer" },
+{ name: "Hashtag Generator", icon: Hash, path: "/tools/ai-hashtag-generator" },
 
-{ name: 'SVG to PNG', icon: Image, path: '/tools/svg-to-png' },
-{ name: 'PNG to JPG', icon: Image, path: '/tools/png-to-jpg' },
-{ name: 'WEBP to PNG', icon: Image, path: '/tools/webp-to-png' },
-{ name: 'Image Compressor', icon: FileImage, path: '/tools/image-compressor' },
+{ name: "SVG to PNG", icon: Image, path: "/tools/svg-to-png" },
+{ name: "PNG to JPG", icon: Image, path: "/tools/png-to-jpg" },
+{ name: "WEBP to PNG", icon: Image, path: "/tools/webp-to-png" },
+{ name: "Image Compressor", icon: FileImage, path: "/tools/image-compressor" },
 
-{ name: 'Image to PDF', icon: File, path: '/tools/image-to-pdf' },
-{ name: 'JPG to PDF', icon: File, path: '/tools/jpg-to-pdf' },
-{ name: 'Merge PDF', icon: File, path: '/tools/merge-pdf' },
-{ name: 'Split PDF', icon: Scissors, path: '/tools/split-pdf' },
-{ name: 'PDF to Image', icon: FileImage, path: '/tools/pdf-to-image' }
+{ name: "Image to PDF", icon: File, path: "/tools/image-to-pdf" },
+{ name: "JPG to PDF", icon: File, path: "/tools/jpg-to-pdf" },
+{ name: "Merge PDF", icon: File, path: "/tools/merge-pdf" },
+{ name: "Split PDF", icon: Scissors, path: "/tools/split-pdf" },
+{ name: "PDF to Image", icon: FileImage, path: "/tools/pdf-to-image" }
 
 ];
 
@@ -78,13 +78,9 @@ return (
 {navLinks.map((link) => (
 
 <Link
-
 key={link.name}
-
 to={link.path}
-
 className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
-
 >
 
 {link.name}
@@ -94,11 +90,8 @@ className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
 ))}
 
 <Link
-
 to="/tools"
-
 className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-
 >
 
 Get Started
@@ -110,11 +103,8 @@ Get Started
 {/* Mobile Menu */}
 
 <button
-
 onClick={toggleMenu}
-
 className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-
 >
 
 {isMenuOpen ? <X /> : <Menu />}
@@ -134,15 +124,10 @@ className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
 {navLinks.map((link) => (
 
 <Link
-
 key={link.name}
-
 to={link.path}
-
 className="text-slate-600 hover:text-indigo-600 font-medium py-2"
-
 onClick={() => setIsMenuOpen(false)}
-
 >
 
 {link.name}
@@ -152,9 +137,7 @@ onClick={() => setIsMenuOpen(false)}
 ))}
 
 <p className="text-xs font-semibold text-slate-400 uppercase mt-3">
-
 Popular Tools
-
 </p>
 
 <div className="grid grid-cols-2 gap-2">
@@ -162,15 +145,10 @@ Popular Tools
 {tools.slice(0, 6).map((tool) => (
 
 <Link
-
 key={tool.name}
-
 to={tool.path}
-
 className="flex items-center gap-2 text-sm text-slate-600 hover:text-indigo-600"
-
 onClick={() => setIsMenuOpen(false)}
-
 >
 
 <tool.icon className="w-4 h-4" />
@@ -194,9 +172,7 @@ onClick={() => setIsMenuOpen(false)}
 {/* Header Ads */}
 
 <div className="container mx-auto px-4">
-
 <AdPlaceholder slot="header" />
-
 </div>
 
 {/* Main */}
@@ -210,9 +186,7 @@ onClick={() => setIsMenuOpen(false)}
 <div className="lg:col-span-9">
 
 <PageTransition>
-
 <Outlet />
-
 </PageTransition>
 
 </div>
@@ -221,31 +195,29 @@ onClick={() => setIsMenuOpen(false)}
 
 <aside className="lg:col-span-3 space-y-8">
 
-<div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-slate-200 shadow-sm">
 
-<h3 className="font-bold text-lg mb-4">
-
+<h3 className="font-bold text-lg mb-5 text-slate-900">
 Popular Tools
-
 </h3>
 
-<ul className="space-y-3">
+<div className="space-y-2">
 
 {tools.map((tool) => (
 
-<li key={tool.name}>
-
 <Link
-
+key={tool.name}
 to={tool.path}
-
-className="flex items-center gap-3 text-slate-600 hover:text-indigo-600"
-
+className="flex items-center gap-3 p-3 rounded-xl transition group hover:bg-indigo-50"
 >
+
+<div className="p-2 rounded-lg bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition">
 
 <tool.icon className="w-4 h-4" />
 
-<span className="text-sm">
+</div>
+
+<span className="text-sm font-medium text-slate-700 group-hover:text-indigo-600 transition">
 
 {tool.name}
 
@@ -253,11 +225,9 @@ className="flex items-center gap-3 text-slate-600 hover:text-indigo-600"
 
 </Link>
 
-</li>
-
 ))}
 
-</ul>
+</div>
 
 </div>
 
@@ -272,9 +242,7 @@ className="flex items-center gap-3 text-slate-600 hover:text-indigo-600"
 {/* Footer Ads */}
 
 <div className="container mx-auto px-4">
-
 <AdPlaceholder slot="footer" />
-
 </div>
 
 {/* Footer */}
@@ -285,7 +253,6 @@ className="flex items-center gap-3 text-slate-600 hover:text-indigo-600"
 
 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 
-{/* Brand */}
 <div className="col-span-1 md:col-span-2">
 
 <h3 className="text-xl font-bold text-indigo-600 mb-3">
@@ -300,7 +267,6 @@ content instantly.
 
 </div>
 
-{/* Tools */}
 <div>
 
 <h4 className="font-bold text-slate-900 mb-4">
@@ -337,7 +303,6 @@ Hashtag Generator
 
 </div>
 
-{/* Legal */}
 <div>
 
 <h4 className="font-bold text-slate-900 mb-4">
