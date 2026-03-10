@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { tools } from "../data/tools";
-import { generateContent } from "../services/gemini";
+import { generateContent } from "../services/aiRouter"
 
 import { SEOHead } from "../components/SEOHead";
 import { AdPlaceholder } from "../components/AdPlaceholder";
