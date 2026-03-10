@@ -1,21 +1,27 @@
-export async function generateAI(prompt: string) {
+import { geminiGenerate } from "./gemini"
+import { openaiGenerate } from "./openai"
+import { grokGenerate } from "./grok"
+import { replicateGenerate } from "./replicate"
+import { getCache,setCache } from "./cache"
 
-  const res = await fetch("/api/ai-router", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      prompt: prompt
-    })
-  });
+export async function generateContent(prompt:string){
 
-  const data = await res.json();
+const cached = getCache(prompt)
 
-  if (!data.result) {
-    throw new Error("AI generation failed");
-  }
+if(cached) return cached
 
-  return data.result;
+let result = await geminiGenerate(prompt)
+
+if(!result) result = await openaiGenerate(prompt)
+
+if(!result) result = await grokGenerate(prompt)
+
+if(!result) result = await replicateGenerate(prompt)
+
+if(!result) result = "Server busy. Please try again."
+
+setCache(prompt,result)
+
+return result
 
 }
