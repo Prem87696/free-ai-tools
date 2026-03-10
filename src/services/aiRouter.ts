@@ -1,24 +1,35 @@
 import { geminiGenerate } from "./gemini"
 import { openaiGenerate } from "./openai"
-import { grokGenerate } from "./grok"
-import { replicateGenerate } from "./replicate"
-import { getCache,setCache } from "./cache"
+import { grokGenerate } from "./groq"
+import { getCache, setCache } from "./cache"
 
-export async function generateContent(prompt:string){
+export async function generateContent(prompt: string){
 
 const cached = getCache(prompt)
 
 if(cached) return cached
 
-let result = await geminiGenerate(prompt)
+let result:any = null
 
-if(!result) result = await openaiGenerate(prompt)
+try{
+result = await geminiGenerate(prompt)
+}catch{}
 
-if(!result) result = await grokGenerate(prompt)
+if(!result){
+try{
+result = await openaiGenerate(prompt)
+}catch{}
+}
 
-if(!result) result = await replicateGenerate(prompt)
+if(!result){
+try{
+result = await grokGenerate(prompt)
+}catch{}
+}
 
-if(!result) result = "Server busy. Please try again."
+if(!result){
+result = "Server busy. Please try again."
+}
 
 setCache(prompt,result)
 
