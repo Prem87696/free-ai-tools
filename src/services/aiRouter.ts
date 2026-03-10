@@ -1,6 +1,5 @@
 import { geminiGenerate } from "./gemini"
-import { openaiGenerate } from "./openai"
-import { grokGenerate } from "./groq"
+ 
 import { getCache, setCache } from "./cache"
 
 export async function generateContent(prompt: string){
