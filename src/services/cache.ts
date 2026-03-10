@@ -1,6 +1,6 @@
-const cache = new Map<string, { result: string, time: number }>();
+const cache = new Map<string, { result: string; time: number }>();
 
-const CACHE_TIME = 24 * 60 * 60 * 1000; // 24 hours
+const CACHE_TIME = 24 * 60 * 60 * 1000;
 
 export function getCache(prompt: string) {
 
