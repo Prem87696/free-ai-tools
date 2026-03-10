@@ -18,6 +18,9 @@ const {prompt}=body||{}
 
 const result = await generateContent(prompt)
 
+// ✅ Vercel edge cache
+res.setHeader("Cache-Control","s-maxage=86400, stale-while-revalidate")
+
 return res.json({
 provider:"ai-router",
 result
