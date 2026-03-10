@@ -1,4 +1,4 @@
-import { generateContent } from "../services/aiRouter"
+import { generateContent } from "../src/services/aiRouter"
 
 export default async function handler(req:any,res:any){
 
