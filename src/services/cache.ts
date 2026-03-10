@@ -1,4 +1,4 @@
-const cache = new Map<string, {data:string,expiry:number}>()
+const cache = new Map<string,{data:string,expiry:number}>()
 
 export function getCache(prompt:string){
 
@@ -6,7 +6,7 @@ const item = cache.get(prompt)
 
 if(!item) return null
 
-if(Date.now() > item.expiry){
+if(Date.now()>item.expiry){
 
 cache.delete(prompt)
 
