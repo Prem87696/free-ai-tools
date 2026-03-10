@@ -1,28 +1,26 @@
-const cache = new Map<string,{data:string,expiry:number}>()
+const cache = new Map<string, { result: string, time: number }>();
 
-export function getCache(prompt:string){
+const CACHE_TIME = 24 * 60 * 60 * 1000; // 24 hours
 
-const item = cache.get(prompt)
+export function getCache(prompt: string) {
 
-if(!item) return null
+  const data = cache.get(prompt);
 
-if(Date.now()>item.expiry){
+  if (!data) return null;
 
-cache.delete(prompt)
+  if (Date.now() - data.time > CACHE_TIME) {
+    cache.delete(prompt);
+    return null;
+  }
 
-return null
-
+  return data.result;
 }
 
-return item.data
+export function setCache(prompt: string, result: string) {
 
-}
-
-export function setCache(prompt:string,data:string){
-
-cache.set(prompt,{
-data,
-expiry:Date.now()+86400000
-})
+  cache.set(prompt, {
+    result,
+    time: Date.now()
+  });
 
 }
