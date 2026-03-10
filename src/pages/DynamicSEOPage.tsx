@@ -1,11 +1,10 @@
 import React from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { tools, seoModifiers } from '../data/tools';
-import { generateContent } from '../services/gemini';
+import { generateContent } from '../services/aiRouter';  // ✅ FIXED
 import { SEOHead } from '../components/SEOHead';
 import { AdPlaceholder } from '../components/AdPlaceholder';
 import { Loader2, Copy, Check, AlertCircle, Sparkles } from 'lucide-react';
-
 export function DynamicSEOPage() {
   const { slug } = useParams();
   
