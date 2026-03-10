@@ -3,23 +3,27 @@ import { getCache, setCache } from "./cache"
 
 export async function generateContent(prompt: string){
 
-  const cached = getCache(prompt)
+const cached = getCache(prompt)
 
-  if (cached) return cached
+if(cached){
+console.log("CACHE HIT")
+return cached
+}
 
-  let result: any = null
+console.log("CACHE MISS")
 
-  try {
-    result = await geminiGenerate(prompt)
-  } catch (e) {
-    console.error("Gemini error:", e)
-  }
+let result:any = null
 
-  if (!result) {
-    result = "Server busy. Please try again."
-  }
+try{
+result = await geminiGenerate(prompt)
+}catch{}
 
-  setCache(prompt, result)
+if(!result){
+result = "Server busy. Please try again."
+}
 
-  return result
+setCache(prompt,result)
+
+return result
+
 }
