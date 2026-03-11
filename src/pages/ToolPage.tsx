@@ -2,328 +2,363 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { tools } from "../data/tools";
 import { generateContent } from "../services/aiRouter";
-
 import { toolEngine } from "../engine/toolEngine";
-
 import { SEOHead } from "../components/SEOHead";
 import { AdPlaceholder } from "../components/AdPlaceholder";
-
 import { Loader2, Copy, Check, Sparkles } from "lucide-react";
 
-export function ToolPage(){
+type Msg = { role: "user" | "ai"; text: string };
 
-const { toolId } = useParams();
+export function ToolPage() {
 
-const tool = tools.find(t => t.id === toolId);
+  const { toolId } = useParams();
+  const tool = tools.find(t => t.id === toolId);
+  const ToolComponent = toolId ? toolEngine[toolId] : null;
 
-const ToolComponent = toolId ? toolEngine[toolId] : null;
+  const [formData,setFormData] = useState<Record<string,string>>({});
+  const [messages,setMessages] = useState<Msg[]>([]);
+  const [result,setResult] = useState("");
+  const [loading,setLoading] = useState(false);
+  const [copied,setCopied] = useState<number | null>(null);
 
-const [formData,setFormData] = useState<Record<string,string>>({});
-const [messages,setMessages] = useState<{role:"user"|"ai",text:string}[]>([]);
-const [result,setResult] = useState("");
-const [loading,setLoading] = useState(false);
-const [copied,setCopied] = useState(false);
+  const chatRef = useRef<HTMLDivElement>(null);
 
-const chatRef = useRef<HTMLDivElement>(null);
+  useEffect(()=>{
+    setFormData({});
+    setMessages([]);
+    setResult("");
+  },[toolId]);
 
-useEffect(()=>{
-setFormData({});
-setMessages([]);
-setResult("");
-},[toolId]);
+  useEffect(()=>{
+    chatRef.current?.scrollTo({
+      top:chatRef.current.scrollHeight,
+      behavior:"smooth"
+    });
+  },[messages]);
 
-useEffect(()=>{
-chatRef.current?.scrollTo({
-top:chatRef.current.scrollHeight,
-behavior:"smooth"
-});
-},[messages]);
+  if(!tool) return <Navigate to="/404"/>;
 
-if(!tool) return <Navigate to="/404"/>;
+  /* FILE TOOL */
 
-/* FILE TOOL */
+  if(ToolComponent){
+    return(
+      <>
+        <SEOHead title={`${tool.name} - Free Tool`} description={tool.description}/>
+        <div className="max-w-4xl mx-auto">
+          <ToolComponent/>
+        </div>
+      </>
+    )
+  }
 
-if(ToolComponent){
+  /* INPUT CHANGE */
 
-return(
+  const change=(name:string,value:string)=>{
+    setFormData(p=>({...p,[name]:value}));
+  };
 
-<>
-<SEOHead
-title={`${tool.name} - Free Tool`}
-description={tool.description}
-/>
+  /* GENERATOR */
 
-<div className="max-w-4xl mx-auto">
+  const submit=async(e:React.FormEvent)=>{
 
-<ToolComponent/>
+    e.preventDefault();
 
-</div>
+    setLoading(true);
+    setResult("");
 
-</>
+    try{
 
-)
+      let prompt = tool.promptTemplate;
 
-}
+      tool.inputs?.forEach(input=>{
+        prompt = prompt.replace(`{{${input.name}}}`,formData[input.name] || "");
+      });
 
-/* INPUT */
+      const res = await generateContent(prompt);
 
-const change=(name:string,value:string)=>{
-setFormData(p=>({...p,[name]:value}));
-};
+      setResult(res);
 
-/* GENERATOR */
+    }catch{
 
-const submit=async(e:React.FormEvent)=>{
+      setResult("Something went wrong");
 
-e.preventDefault();
+    }
 
-setLoading(true);
-setResult("");
+    setLoading(false);
 
-try{
+  };
 
-let prompt = tool.promptTemplate;
+  /* CHAT WITH MEMORY */
 
-tool.inputs?.forEach(input=>{
-prompt = prompt.replace(`{{${input.name}}}`,formData[input.name] || "");
-});
+  const chat=async(e:React.FormEvent)=>{
 
-const res = await generateContent(prompt);
+    e.preventDefault();
 
-setResult(res);
+    const msg=formData["message"] || "";
 
-}catch{
+    if(!msg.trim()) return;
 
-setResult("Something went wrong");
+    setMessages(p=>[...p,{role:"user",text:msg}]);
+    setFormData({message:""});
+    setLoading(true);
 
-}
+    try{
 
-setLoading(false);
+      /* BUILD HISTORY (LAST 10 MESSAGES) */
 
-};
+      let history="";
 
-/* CHAT */
+      messages.slice(-10).forEach(m=>{
+        history += `${m.role==="user" ? "User" : "AI"}: ${m.text}\n`;
+      });
 
-const chat=async(e:React.FormEvent)=>{
+      history += `User: ${msg}\nAI:`;
 
-e.preventDefault();
+      const res = await generateContent(history);
 
-const msg=formData["message"] || "";
+      setMessages(p=>[...p,{role:"ai",text:res}]);
 
-if(!msg.trim()) return;
+    }catch{
 
-setMessages(p=>[...p,{role:"user",text:msg}]);
+      setMessages(p=>[...p,{role:"ai",text:"Error generating response"}]);
 
-setLoading(true);
+    }
 
-try{
+    setLoading(false);
 
-const res = await generateContent(msg);
+  };
 
-setMessages(p=>[...p,{role:"ai",text:res}]);
+  const copy=(t:string,i:number)=>{
+    navigator.clipboard.writeText(t);
+    setCopied(i);
+    setTimeout(()=>setCopied(null),2000);
+  };
 
-}catch{
+  /* CHATBOT UI */
 
-setMessages(p=>[...p,{role:"ai",text:"Error generating response"}]);
+  if(tool.id==="ai-chatbot"){
 
-}
+    const Icon = tool.icon;
 
-setFormData({message:""});
-setLoading(false);
+    return(
 
-};
+      <>
+        <SEOHead title={tool.name} description={tool.description}/>
 
-const copy=(t:string)=>{
-navigator.clipboard.writeText(t);
-setCopied(true);
-setTimeout(()=>setCopied(false),2000);
-};
+        <div className="max-w-4xl mx-auto">
 
-/* CHATBOT */
+          <div className="text-center mb-8">
 
-if(tool.id==="ai-chatbot"){
+            <div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
+              <Icon className="w-8 h-8"/>
+            </div>
 
-const Icon = tool.icon;
+            <h1 className="text-3xl font-bold">{tool.name}</h1>
 
-return(
+            <p className="text-slate-600">{tool.description}</p>
 
-<>
-<SEOHead title={tool.name} description={tool.description}/>
+          </div>
 
-<div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-sm flex flex-col h-[520px]">
 
-<div className="text-center mb-8">
+            <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
 
-<div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
-<Icon className="w-8 h-8"/>
-</div>
+              {messages.length===0 &&(
 
-<h1 className="text-3xl font-bold">{tool.name}</h1>
+                <div className="flex flex-wrap gap-2">
 
-<p className="text-slate-600">{tool.description}</p>
+                  <button
+                    onClick={()=>change("message","Write a blog about AI")}
+                    className="px-3 py-2 bg-white border rounded-lg text-sm hover:bg-slate-50"
+                  >
+                    Write blog
+                  </button>
 
-</div>
+                  <button
+                    onClick={()=>change("message","Explain quantum computing")}
+                    className="px-3 py-2 bg-white border rounded-lg text-sm hover:bg-slate-50"
+                  >
+                    Explain quantum computing
+                  </button>
 
-<div className="bg-white border rounded-2xl flex flex-col h-[520px]">
+                  <button
+                    onClick={()=>change("message","Create marketing caption")}
+                    className="px-3 py-2 bg-white border rounded-lg text-sm hover:bg-slate-50"
+                  >
+                    Marketing caption
+                  </button>
 
-<div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+                </div>
 
-{messages.length===0 &&(
+              )}
 
-<div className="text-center text-slate-400 text-sm">
-Start chatting with AI
-</div>
+              {messages.map((m,i)=>(
 
-)}
+                <div
+                  key={i}
+                  className={`max-w-[75%] px-4 py-3 rounded-xl text-sm ${
+                    m.role==="user"
+                      ? "ml-auto bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow"
+                      : "bg-white shadow-sm"
+                  }`}
+                >
 
-{messages.map((m,i)=>(
-<div key={i}
-className={`max-w-[75%] px-4 py-3 rounded-xl text-sm ${
-m.role==="user"
-? "ml-auto bg-indigo-600 text-white"
-: "bg-white border"
-}`}
->
+                  {m.text}
 
-{m.text}
+                  <button
+                    onClick={()=>copy(m.text,i)}
+                    className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
+                  >
+                    {copied===i ? <Check size={14}/> : <Copy size={14}/>}
+                  </button>
 
-<button
-onClick={()=>copy(m.text)}
-className="text-xs mt-2 flex gap-1"
->
-{copied ? <Check size={14}/> : <Copy size={14}/>}
-</button>
+                </div>
 
-</div>
-))}
+              ))}
 
-{loading &&(
+              {loading &&(
 
-<div className="flex gap-2 text-sm text-slate-500">
-<Loader2 className="w-4 h-4 animate-spin"/>
-AI is thinking...
-</div>
+                <div className="flex gap-2 items-center text-sm text-slate-500">
 
-)}
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                  </div>
 
-</div>
+                  AI is typing...
 
-<form onSubmit={chat} className="border-t p-4 flex gap-3">
+                </div>
 
-<textarea
-rows={1}
-value={formData["message"] || ""}
-onChange={(e)=>change("message",e.target.value)}
-className="flex-1 border rounded-lg px-4 py-3"
-/>
+              )}
 
-<button className="bg-indigo-600 text-white px-6 rounded-lg">
-Send
-</button>
+            </div>
 
-</form>
+            <form onSubmit={chat} className="p-4 flex gap-3 bg-white">
 
-</div>
+              <textarea
+                rows={1}
+                value={formData["message"] || ""}
+                onChange={(e)=>change("message",e.target.value)}
+                placeholder="Ask anything..."
+                className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
+                onKeyDown={(e)=>{
+                  if(e.key==="Enter" && !e.shiftKey){
+                    e.preventDefault();
+                    chat(e as any);
+                  }
+                }}
+              />
 
-</div>
+              <button className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 rounded-xl shadow">
+                Send
+              </button>
 
-</>
+            </form>
 
-)
+          </div>
 
-}
+        </div>
 
-/* GENERATOR */
+      </>
 
-const Icon = tool.icon;
+    )
 
-return(
+  }
 
-<>
-<SEOHead title={tool.name} description={tool.description}/>
+  /* GENERATOR TOOL UI */
 
-<div className="max-w-4xl mx-auto">
+  const Icon = tool.icon;
 
-<div className="text-center mb-8">
+  return(
 
-<div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
-<Icon className="w-8 h-8"/>
-</div>
+    <>
+      <SEOHead title={tool.name} description={tool.description}/>
 
-<h1 className="text-3xl font-bold">{tool.name}</h1>
+      <div className="max-w-4xl mx-auto">
 
-<p className="text-slate-600">{tool.description}</p>
+        <div className="text-center mb-8">
 
-</div>
+          <div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
+            <Icon className="w-8 h-8"/>
+          </div>
 
-<div className="bg-white border rounded-2xl p-8">
+          <h1 className="text-3xl font-bold">{tool.name}</h1>
 
-<form onSubmit={submit} className="space-y-6">
+          <p className="text-slate-600">{tool.description}</p>
 
-{tool.inputs?.map(input=>(
-<div key={input.name}>
+        </div>
 
-<label className="block text-sm mb-2">
-{input.label}
-</label>
+        <div className="bg-white border rounded-2xl p-8">
 
-<textarea
-className="w-full border rounded-lg px-4 py-3"
-value={formData[input.name] || ""}
-onChange={(e)=>change(input.name,e.target.value)}
-/>
+          <form onSubmit={submit} className="space-y-6">
 
-</div>
-))}
+            {tool.inputs?.map(input=>(
 
-<button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center gap-2">
+              <div key={input.name}>
 
-{loading ? (
-<>
-<Loader2 className="w-5 h-5 animate-spin"/>
-Generating...
-</>
-):(
-<>
-<Sparkles className="w-5 h-5"/>
-Generate Content
-</>
-)}
+                <label className="block text-sm mb-2">
+                  {input.label}
+                </label>
 
-</button>
+                <textarea
+                  className="w-full border rounded-lg px-4 py-3"
+                  value={formData[input.name] || ""}
+                  onChange={(e)=>change(input.name,e.target.value)}
+                />
 
-</form>
+              </div>
 
-{result &&(
+            ))}
 
-<div className="mt-6 border bg-slate-50 p-6 rounded-xl">
+            <button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center gap-2">
 
-<div className="flex justify-between mb-3">
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin"/>
+                  Generating...
+                </>
+              ):(
+                <>
+                  <Sparkles className="w-5 h-5"/>
+                  Generate Content
+                </>
+              )}
 
-<strong>Generated Result</strong>
+            </button>
 
-<button onClick={()=>copy(result)}>
-{copied ? <Check size={16}/> : <Copy size={16}/>}
-</button>
+          </form>
 
-</div>
+          {result &&(
 
-<div className="text-sm whitespace-pre-wrap">
-{result}
-</div>
+            <div className="mt-6 border bg-slate-50 p-6 rounded-xl">
 
-</div>
+              <div className="flex justify-between mb-3">
 
-)}
+                <strong>Generated Result</strong>
 
-</div>
+                <button onClick={()=>copy(result,0)}>
+                  {copied===0 ? <Check size={16}/> : <Copy size={16}/>}
+                </button>
 
-<AdPlaceholder slot="content" className="mt-8"/>
+              </div>
 
-</div>
+              <div className="text-sm whitespace-pre-wrap">
+                {result}
+              </div>
 
-</>
+            </div>
 
-)
+          )}
+
+        </div>
+
+        <AdPlaceholder slot="content" className="mt-8"/>
+
+      </div>
+
+    </>
+
+  )
 
 }
