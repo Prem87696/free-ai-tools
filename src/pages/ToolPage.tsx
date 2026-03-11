@@ -16,6 +16,7 @@ import ImageToPdf from "../components/tools/ImageToPdf";
 import MergePdf from "../components/tools/MergePdf";
 import SplitPdf from "../components/tools/SplitPdf";
 import PdfToImage from "../components/tools/PdfToImage";
+import ImageToWebp from "../components/tools/ImageToWebp";
 
 import { Loader2, Copy, Check, AlertCircle, Sparkles } from "lucide-react";
 
