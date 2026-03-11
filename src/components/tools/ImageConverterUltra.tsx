@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import JSZip from "jszip"
 
 type Img = {
@@ -14,6 +14,18 @@ const [images,setImages] = useState<Img[]>([])
 const [format,setFormat] = useState("webp")
 const [quality,setQuality] = useState(0.9)
 const [width,setWidth] = useState<number | null>(null)
+
+const fileInputRef = useRef<HTMLInputElement>(null)
+
+/* open file picker */
+
+const openPicker = ()=>{
+if(fileInputRef.current){
+fileInputRef.current.click()
+}
+}
+
+/* handle files */
 
 const handleFiles = (files:FileList)=>{
 
@@ -33,6 +45,8 @@ preview:URL.createObjectURL(file)
 setImages(prev=>[...prev,...list])
 
 }
+
+/* convert */
 
 const convertImage = async(img:Img)=>{
 
@@ -89,6 +103,8 @@ setImages(updated)
 
 }
 
+/* download */
+
 const download=(data:string,name:string)=>{
 
 const a=document.createElement("a")
@@ -119,10 +135,10 @@ a.click()
 
 }
 
+/* remove image */
+
 const remove=(i:number)=>{
-
 setImages(images.filter((_,x)=>x!==i))
-
 }
 
 return(
@@ -137,6 +153,7 @@ Ultra Image Converter
 
 <div
 className="border-2 border-dashed border-slate-300 rounded-xl p-10 text-center cursor-pointer hover:bg-slate-50"
+onClick={openPicker}
 onDrop={(e)=>{
 e.preventDefault()
 handleFiles(e.dataTransfer.files)
@@ -153,6 +170,7 @@ or click to upload
 </p>
 
 <input
+ref={fileInputRef}
 type="file"
 multiple
 accept="image/*"
@@ -289,9 +307,7 @@ Remove
 onClick={downloadAll}
 className="mt-6 bg-black text-white px-6 py-2 rounded-lg"
 >
-
 Download All (ZIP)
-
 </button>
 
 )}
