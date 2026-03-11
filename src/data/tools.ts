@@ -1,6 +1,5 @@
 import {
 Bot,
-FileText,
 Mail,
 PenTool,
 Hash,
@@ -34,6 +33,8 @@ category: "social" | "business" | "writing" | "general";
 }
 
 export const tools: ToolConfig[] = [
+
+/* ---------- AI TOOLS ---------- */
 
 {
 id: "ai-chatbot",
@@ -257,6 +258,17 @@ category: "general"
 },
 
 {
+id: "image-to-webp",
+name: "Image to WebP",
+description: "Convert PNG, JPG, JPEG, GIF or any image to WebP format.",
+icon: FileImage,
+path: "/tools/image-to-webp",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
 id: "image-compressor",
 name: "Image Compressor",
 description: "Compress image size online.",
@@ -325,6 +337,8 @@ category: "general"
 }
 
 ];
+
+/* ---------- SEO MODIFIERS ---------- */
 
 export const seoModifiers = {
 
