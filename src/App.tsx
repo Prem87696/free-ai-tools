@@ -18,6 +18,7 @@ DisclaimerPage
 import { SitemapPage } from "./pages/SitemapPage";
 import { ToolCategoriesPage } from "./pages/ToolCategoriesPage";
 import { ToolSearchPage } from "./pages/ToolSearchPage";
+import { CategoryPage } from "./pages/CategoryPage";   // ⭐ added
 
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -46,6 +47,9 @@ return (
 
 {/* TOOL CATEGORIES */}
 <Route path="categories" element={<ToolCategoriesPage />} />
+
+{/* CATEGORY PAGE ⭐ */}
+<Route path="category/:category" element={<CategoryPage />} />
 
 {/* STATIC PAGES */}
 <Route path="about" element={<AboutPage />} />
