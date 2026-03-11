@@ -61,6 +61,7 @@ const fileToolMap:any = {
 "svg-to-png": <SvgToPng/>,
 "png-to-jpg": <PngToJpg/>,
 "webp-to-png": <WebpToPng/>,
+"image-to-webp": <ImageToWebp/>,
 "image-compressor": <ImageCompressor/>,
 "image-to-pdf": <ImageToPdf/>,
 "jpg-to-pdf": <JpgToPdf/>,
