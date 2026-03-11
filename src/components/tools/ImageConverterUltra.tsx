@@ -17,17 +17,15 @@ const [width,setWidth] = useState<number | null>(null)
 
 const fileInputRef = useRef<HTMLInputElement>(null)
 
-/* open file picker */
+/* open picker */
 
-const openPicker = ()=>{
-if(fileInputRef.current){
-fileInputRef.current.click()
-}
+const openPicker=()=>{
+fileInputRef.current?.click()
 }
 
 /* handle files */
 
-const handleFiles = (files:FileList)=>{
+const handleFiles=(files:FileList)=>{
 
 const list:Img[]=[]
 
@@ -50,9 +48,8 @@ setImages(prev=>[...prev,...list])
 
 const convertImage = async(img:Img)=>{
 
-const image = new Image()
-
-image.src = img.preview
+const image=new Image()
+image.src=img.preview
 
 await new Promise(res=>image.onload=res)
 
@@ -87,7 +84,9 @@ convertedSize:blob.size
 
 }
 
-const convertAll = async()=>{
+/* convert all */
+
+const convertAll=async()=>{
 
 const updated:Img[]=[]
 
@@ -114,7 +113,9 @@ a.click()
 
 }
 
-const downloadAll = async()=>{
+/* download zip */
+
+const downloadAll=async()=>{
 
 const zip=new JSZip()
 
@@ -126,7 +127,7 @@ zip.file(`image-${i}.${format}`,img.converted.split(",")[1],{base64:true})
 
 })
 
-const blob = await zip.generateAsync({type:"blob"})
+const blob=await zip.generateAsync({type:"blob"})
 
 const a=document.createElement("a")
 a.href=URL.createObjectURL(blob)
@@ -135,7 +136,7 @@ a.click()
 
 }
 
-/* remove image */
+/* remove */
 
 const remove=(i:number)=>{
 setImages(images.filter((_,x)=>x!==i))
@@ -149,10 +150,10 @@ return(
 Ultra Image Converter
 </h2>
 
-{/* Upload */}
+{/* Upload Area */}
 
 <div
-className="border-2 border-dashed border-slate-300 rounded-xl p-10 text-center cursor-pointer hover:bg-slate-50"
+className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition"
 onClick={openPicker}
 onDrop={(e)=>{
 e.preventDefault()
@@ -161,12 +162,18 @@ handleFiles(e.dataTransfer.files)
 onDragOver={(e)=>e.preventDefault()}
 >
 
-<p className="text-slate-500">
-Drag & Drop images here
+<div className="text-5xl mb-4">📁</div>
+
+<h3 className="text-lg font-semibold text-slate-700">
+Upload Images
+</h3>
+
+<p className="text-slate-500 mt-1">
+Drag & Drop OR Click to Upload
 </p>
 
-<p className="text-sm text-slate-400 mt-1">
-or click to upload
+<p className="text-xs text-slate-400 mt-2">
+PNG • JPG • WEBP • GIF
 </p>
 
 <input
@@ -184,7 +191,7 @@ className="hidden"
 
 {/* Controls */}
 
-<div className="grid md:grid-cols-3 gap-6 mt-6">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
 
 <div>
 
@@ -220,7 +227,9 @@ step="0.1"
 value={quality}
 onChange={(e)=>setQuality(Number(e.target.value))}
 className="w-full"
-/>
+>
+
+</input>
 
 </div>
 
@@ -241,26 +250,26 @@ className="w-full border rounded-lg px-3 py-2 mt-1"
 
 </div>
 
-{/* Convert */}
+{/* Convert Button */}
 
 <button
 onClick={convertAll}
-className="mt-6 bg-indigo-600 text-white px-6 py-3 rounded-lg"
+className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg"
 >
 Convert Images
 </button>
 
-{/* Images */}
+{/* Preview Grid */}
 
-<div className="mt-8 grid md:grid-cols-3 gap-6">
+<div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6">
 
 {images.map((img,i)=>(
 
-<div key={i} className="border rounded-xl p-4">
+<div key={i} className="border rounded-xl p-4 shadow-sm">
 
 <img
 src={img.preview}
-className="rounded-lg mb-3"
+className="rounded-lg mb-3 w-full object-cover"
 />
 
 {img.converted &&(
@@ -299,13 +308,13 @@ Remove
 
 </div>
 
-{/* Download All */}
+{/* ZIP */}
 
 {images.some(i=>i.converted) &&(
 
 <button
 onClick={downloadAll}
-className="mt-6 bg-black text-white px-6 py-2 rounded-lg"
+className="mt-8 bg-black text-white px-6 py-2 rounded-lg"
 >
 Download All (ZIP)
 </button>
