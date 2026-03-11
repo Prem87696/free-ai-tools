@@ -16,42 +16,49 @@ DisclaimerPage
 } from "./pages/StaticPages";
 
 import { SitemapPage } from "./pages/SitemapPage";
+
 import ScrollToTop from "./components/ScrollToTop";
 
-export default function App() {
+export default function App(){
 
-return (
+return(
 
 <HelmetProvider>
 
 <BrowserRouter>
 
-<ScrollToTop />
+<ScrollToTop/>
 
 <Routes>
 
-<Route path="/" element={<Layout />}>
+<Route path="/" element={<Layout/>}>
 
-<Route index element={<HomePage />} />
+{/* HOME */}
 
-{/* TOOL PAGE */}
-<Route path="tools/:toolId" element={<ToolPage />} />
+<Route index element={<HomePage/>}/>
+
+{/* TOOL PAGE (AUTO TOOL ENGINE) */}
+
+<Route path="tools/:toolId" element={<ToolPage/>}/>
 
 {/* STATIC PAGES */}
-<Route path="about" element={<AboutPage />} />
-<Route path="contact" element={<ContactPage />} />
-<Route path="privacy-policy" element={<PrivacyPage />} />
-<Route path="terms-and-conditions" element={<TermsPage />} />
-<Route path="disclaimer" element={<DisclaimerPage />} />
-<Route path="sitemap" element={<SitemapPage />} />
 
-{/* SEO PAGES */}
-<Route path="ai-:slug" element={<DynamicSEOPage />} />
+<Route path="about" element={<AboutPage/>}/>
+<Route path="contact" element={<ContactPage/>}/>
+<Route path="privacy-policy" element={<PrivacyPage/>}/>
+<Route path="terms-and-conditions" element={<TermsPage/>}/>
+<Route path="disclaimer" element={<DisclaimerPage/>}/>
+<Route path="sitemap" element={<SitemapPage/>}/>
+
+{/* PROGRAMMATIC SEO PAGES */}
+
+<Route path="ai-:slug" element={<DynamicSEOPage/>}/>
 
 {/* 404 */}
-<Route path="404" element={<h1>404 Page Not Found</h1>} />
 
-<Route path="*" element={<Navigate to="/404" />} />
+<Route path="404" element={<h1 style={{padding:40}}>404 Page Not Found</h1>}/>
+
+<Route path="*" element={<Navigate to="/404" replace/>}/>
 
 </Route>
 
@@ -61,6 +68,6 @@ return (
 
 </HelmetProvider>
 
-);
+)
 
 }
