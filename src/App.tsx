@@ -16,49 +16,52 @@ DisclaimerPage
 } from "./pages/StaticPages";
 
 import { SitemapPage } from "./pages/SitemapPage";
+import { ToolCategoriesPage } from "./pages/ToolCategoriesPage";
+import { ToolSearchPage } from "./pages/ToolSearchPage";
 
 import ScrollToTop from "./components/ScrollToTop";
 
-export default function App(){
+export default function App() {
 
-return(
+return (
 
 <HelmetProvider>
 
 <BrowserRouter>
 
-<ScrollToTop/>
+<ScrollToTop />
 
 <Routes>
 
-<Route path="/" element={<Layout/>}>
+<Route path="/" element={<Layout />}>
 
 {/* HOME */}
+<Route index element={<HomePage />} />
 
-<Route index element={<HomePage/>}/>
+{/* TOOL PAGE */}
+<Route path="tools/:toolId" element={<ToolPage />} />
 
-{/* TOOL PAGE (AUTO TOOL ENGINE) */}
+{/* TOOL SEARCH */}
+<Route path="search" element={<ToolSearchPage />} />
 
-<Route path="tools/:toolId" element={<ToolPage/>}/>
+{/* TOOL CATEGORIES */}
+<Route path="categories" element={<ToolCategoriesPage />} />
 
 {/* STATIC PAGES */}
-
-<Route path="about" element={<AboutPage/>}/>
-<Route path="contact" element={<ContactPage/>}/>
-<Route path="privacy-policy" element={<PrivacyPage/>}/>
-<Route path="terms-and-conditions" element={<TermsPage/>}/>
-<Route path="disclaimer" element={<DisclaimerPage/>}/>
-<Route path="sitemap" element={<SitemapPage/>}/>
+<Route path="about" element={<AboutPage />} />
+<Route path="contact" element={<ContactPage />} />
+<Route path="privacy-policy" element={<PrivacyPage />} />
+<Route path="terms-and-conditions" element={<TermsPage />} />
+<Route path="disclaimer" element={<DisclaimerPage />} />
+<Route path="sitemap" element={<SitemapPage />} />
 
 {/* PROGRAMMATIC SEO PAGES */}
-
-<Route path="ai-:slug" element={<DynamicSEOPage/>}/>
+<Route path="ai-:slug" element={<DynamicSEOPage />} />
 
 {/* 404 */}
+<Route path="404" element={<h1 style={{ padding: 40 }}>404 Page Not Found</h1>} />
 
-<Route path="404" element={<h1 style={{padding:40}}>404 Page Not Found</h1>}/>
-
-<Route path="*" element={<Navigate to="/404" replace/>}/>
+<Route path="*" element={<Navigate to="/404" replace />} />
 
 </Route>
 
@@ -68,6 +71,6 @@ return(
 
 </HelmetProvider>
 
-)
+);
 
 }
