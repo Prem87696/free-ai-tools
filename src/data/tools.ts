@@ -326,6 +326,17 @@ category: "general"
 },
 
 {
+id: "image-converter-ultra",
+name: "Ultra Image Converter",
+description: "Convert PNG, JPG, WebP, GIF images with resize, compression and bulk ZIP download.",
+icon: FileImage,
+path: "/tools/image-converter-ultra",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
 id: "pdf-to-image",
 name: "PDF to Image",
 description: "Convert PDF pages to images.",
