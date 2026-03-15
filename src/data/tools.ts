@@ -279,6 +279,28 @@ inputs: [],
 category: "general"
 },
 
+{
+id: "background-remover",
+name: "Background Remover",
+description: "Remove image background instantly using AI without uploading to any server.",
+icon: FileImage,
+path: "/tools/background-remover",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
+{
+id: "image-converter-ultra",
+name: "Ultra Image Converter",
+description: "Convert PNG, JPG, WebP, GIF images with resize, compression and bulk ZIP download.",
+icon: FileImage,
+path: "/tools/image-converter-ultra",
+promptTemplate: "",
+inputs: [],
+category: "general"
+},
+
 /* ---------- PDF TOOLS ---------- */
 
 {
@@ -320,17 +342,6 @@ name: "Split PDF",
 description: "Split PDF pages.",
 icon: FilePlus,
 path: "/tools/split-pdf",
-promptTemplate: "",
-inputs: [],
-category: "general"
-},
-
-{
-id: "image-converter-ultra",
-name: "Ultra Image Converter",
-description: "Convert PNG, JPG, WebP, GIF images with resize, compression and bulk ZIP download.",
-icon: FileImage,
-path: "/tools/image-converter-ultra",
 promptTemplate: "",
 inputs: [],
 category: "general"
