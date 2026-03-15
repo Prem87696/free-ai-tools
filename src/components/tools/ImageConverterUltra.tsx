@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+ import React, { useState, useRef } from "react"
 import JSZip from "jszip"
 
 type Img = {
@@ -27,7 +27,7 @@ fileInputRef.current?.click()
 
 const handleFiles=(files:FileList)=>{
 
-const list:Img[]=[]
+const list:Img=[]
 
 Array.from(files).forEach(file=>{
 
@@ -88,7 +88,7 @@ convertedSize:blob.size
 
 const convertAll=async()=>{
 
-const updated:Img[]=[]
+const updated:Img=[]
 
 for(const img of images){
 
@@ -203,6 +203,7 @@ Format
 value={format}
 onChange={(e)=>setFormat(e.target.value)}
 className="w-full border rounded-lg px-3 py-2 mt-1"
+
 >
 
 <option value="webp">WebP</option>
@@ -227,9 +228,7 @@ step="0.1"
 value={quality}
 onChange={(e)=>setQuality(Number(e.target.value))}
 className="w-full"
->
-
-</input>
+/>
 
 </div>
 
@@ -250,14 +249,13 @@ className="w-full border rounded-lg px-3 py-2 mt-1"
 
 </div>
 
-{/* Convert Button */}
-
 <button
 onClick={convertAll}
 className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg"
+
 >
-Convert Images
-</button>
+
+Convert Images </button>
 
 {/* Preview Grid */}
 
@@ -287,18 +285,20 @@ Converted {(img.convertedSize!/1024).toFixed(1)} KB
 <button
 onClick={()=>download(img.converted!,`image.${format}`)}
 className="bg-indigo-600 text-white px-3 py-1 rounded"
+
 >
-Download
-</button>
+
+Download </button>
 
 )}
 
 <button
 onClick={()=>remove(i)}
 className="text-red-500 text-sm"
+
 >
-Remove
-</button>
+
+Remove </button>
 
 </div>
 
@@ -315,11 +315,54 @@ Remove
 <button
 onClick={downloadAll}
 className="mt-8 bg-black text-white px-6 py-2 rounded-lg"
+
 >
-Download All (ZIP)
-</button>
+
+Download All (ZIP) </button>
 
 )}
+
+{/* DESCRIPTION + FAQ */}
+
+<section className="mt-16 border-t pt-10">
+
+<h2 className="text-2xl font-bold mb-4">
+About Ultra Image Converter
+</h2>
+
+<p className="text-slate-600 mb-4">
+Ultra Image Converter is a powerful online tool that allows users to convert
+and optimize images directly in the browser. You can easily change image
+formats such as PNG, JPG, and WebP while adjusting quality and resizing
+dimensions.
+</p>
+
+<p className="text-slate-600 mb-6">
+This tool is designed for photographers, designers, developers,
+content creators, and everyday users who want to optimize images
+quickly without installing software.
+</p>
+
+<h3 className="text-xl font-semibold mb-3">
+Frequently Asked Questions
+</h3>
+
+<p className="mb-3">
+<strong>Is this image converter free?</strong><br/>
+Yes, the tool is completely free and works directly in your browser.
+</p>
+
+<p className="mb-3">
+<strong>Are my images uploaded to a server?</strong><br/>
+No. Images are processed locally in your browser and are not stored.
+</p>
+
+<p>
+<strong>Which formats are supported?</strong><br/>
+PNG, JPG, and WebP formats are supported for conversion.
+</p>
+
+</section>
 
 </div>
 
