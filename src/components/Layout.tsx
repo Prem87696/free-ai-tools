@@ -1,4 +1,4 @@
- import React, { useState } from "react";
+import React, { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
 Menu,
@@ -31,28 +31,6 @@ const navLinks = [
 { name: "Contact", path: "/contact" }
 ];
 
-const tools = [
-
-{ name: "AI Chatbot", icon: Bot, path: "/tools/ai-chatbot" },
-{ name: "Caption Generator", icon: FileText, path: "/tools/ai-caption-generator" },
-{ name: "Resume Builder", icon: User, path: "/tools/ai-resume-builder" },
-{ name: "Email Writer", icon: Mail, path: "/tools/ai-email-writer" },
-{ name: "Blog Writer", icon: PenTool, path: "/tools/ai-blog-writer" },
-{ name: "Hashtag Generator", icon: Hash, path: "/tools/ai-hashtag-generator" },
-
-{ name: "SVG to PNG", icon: Image, path: "/tools/svg-to-png" },
-{ name: "PNG to JPG", icon: Image, path: "/tools/png-to-jpg" },
-{ name: "WEBP to PNG", icon: Image, path: "/tools/webp-to-png" },
-{ name: "Image Compressor", icon: FileImage, path: "/tools/image-compressor" },
-
-{ name: "Image to PDF", icon: File, path: "/tools/image-to-pdf" },
-{ name: "JPG to PDF", icon: File, path: "/tools/jpg-to-pdf" },
-{ name: "Merge PDF", icon: File, path: "/tools/merge-pdf" },
-{ name: "Split PDF", icon: Scissors, path: "/tools/split-pdf" },
-{ name: "PDF to Image", icon: FileImage, path: "/tools/pdf-to-image" }
-
-];
-
 return (
 
 <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
@@ -66,12 +44,11 @@ return (
 <Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-600">
 
 <Bot className="w-8 h-8" />
-
 <span>AI Tools Platform</span>
 
 </Link>
 
-{/* Desktop Navigation */}
+{/* Desktop Nav */}
 
 <nav className="hidden md:flex items-center gap-6">
 
@@ -100,7 +77,7 @@ Get Started
 
 </nav>
 
-{/* Mobile Menu Button */}
+{/* Mobile Button */}
 
 <button
 onClick={toggleMenu}
@@ -114,7 +91,7 @@ className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
 
 </div>
 
-{/* Mobile Navigation */}
+{/* Mobile Menu */}
 
 {isMenuOpen && (
 
@@ -137,31 +114,6 @@ onClick={() => setIsMenuOpen(false)}
 
 ))}
 
-<p className="text-xs font-semibold text-slate-400 uppercase mt-3">
-Popular Tools
-</p>
-
-<div className="grid grid-cols-2 gap-2">
-
-{tools.slice(0, 6).map((tool) => (
-
-<Link
-key={tool.name}
-to={tool.path}
-className="flex items-center gap-2 text-sm text-slate-600 hover:text-indigo-600"
-onClick={() => setIsMenuOpen(false)}
->
-
-<tool.icon className="w-4 h-4" />
-
-{tool.name}
-
-</Link>
-
-))}
-
-</div>
-
 </nav>
 
 </div>
@@ -176,13 +128,13 @@ onClick={() => setIsMenuOpen(false)}
 <AdPlaceholder slot="header" />
 </div>
 
-{/* MAIN CONTENT */}
+{/* MAIN */}
 
 <main className="flex-grow container mx-auto px-4 py-8">
 
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-{/* Content Area */}
+{/* PAGE CONTENT */}
 
 <div className="lg:col-span-9">
 
@@ -192,47 +144,133 @@ onClick={() => setIsMenuOpen(false)}
 
 </div>
 
-{/* Sidebar */}
+{/* SIDEBAR */}
 
 <aside className="lg:col-span-3 space-y-8">
+
+{/* AI TOOLS */}
 
 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
 <h3 className="font-bold text-lg mb-5 text-slate-900">
-Popular Tools
+AI Tools
 </h3>
 
 <div className="space-y-2">
 
-{tools.map((tool) => (
-
-<Link
-key={tool.name}
-to={tool.path}
-className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50"
->
-
-<div className="p-2 rounded-lg bg-slate-100">
-
-<tool.icon className="w-4 h-4" />
-
-</div>
-
-<span className="text-sm font-medium text-slate-700">
-
-{tool.name}
-
-</span>
-
+<Link to="/tools/ai-chatbot" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Bot className="w-4 h-4"/>
+<span className="text-sm font-medium">AI Chatbot</span>
 </Link>
 
-))}
+<Link to="/tools/ai-blog-writer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<PenTool className="w-4 h-4"/>
+<span className="text-sm font-medium">Blog Writer</span>
+</Link>
+
+<Link to="/tools/ai-caption-generator" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<FileText className="w-4 h-4"/>
+<span className="text-sm font-medium">Caption Generator</span>
+</Link>
+
+<Link to="/tools/ai-resume-builder" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<User className="w-4 h-4"/>
+<span className="text-sm font-medium">Resume Builder</span>
+</Link>
+
+<Link to="/tools/ai-email-writer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Mail className="w-4 h-4"/>
+<span className="text-sm font-medium">Email Writer</span>
+</Link>
+
+<Link to="/tools/ai-hashtag-generator" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Hash className="w-4 h-4"/>
+<span className="text-sm font-medium">Hashtag Generator</span>
+</Link>
 
 </div>
 
 </div>
 
-<AdPlaceholder slot="sidebar" />
+{/* IMAGE TOOLS */}
+
+<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+
+<h3 className="font-bold text-lg mb-5 text-slate-900">
+Image Tools
+</h3>
+
+<div className="space-y-2">
+
+<Link to="/tools/image-converter-ultra" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Image className="w-4 h-4"/>
+<span className="text-sm font-medium">Image Converter Ultra</span>
+</Link>
+
+<Link to="/tools/svg-to-png" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Image className="w-4 h-4"/>
+<span className="text-sm font-medium">SVG to PNG</span>
+</Link>
+
+<Link to="/tools/png-to-jpg" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Image className="w-4 h-4"/>
+<span className="text-sm font-medium">PNG to JPG</span>
+</Link>
+
+<Link to="/tools/webp-to-png" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Image className="w-4 h-4"/>
+<span className="text-sm font-medium">WEBP to PNG</span>
+</Link>
+
+<Link to="/tools/image-compressor" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<FileImage className="w-4 h-4"/>
+<span className="text-sm font-medium">Image Compressor</span>
+</Link>
+
+</div>
+
+</div>
+
+{/* PDF TOOLS */}
+
+<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+
+<h3 className="font-bold text-lg mb-5 text-slate-900">
+PDF Tools
+</h3>
+
+<div className="space-y-2">
+
+<Link to="/tools/image-to-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<File className="w-4 h-4"/>
+<span className="text-sm font-medium">Image to PDF</span>
+</Link>
+
+<Link to="/tools/jpg-to-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<File className="w-4 h-4"/>
+<span className="text-sm font-medium">JPG to PDF</span>
+</Link>
+
+<Link to="/tools/merge-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<File className="w-4 h-4"/>
+<span className="text-sm font-medium">Merge PDF</span>
+</Link>
+
+<Link to="/tools/split-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<Scissors className="w-4 h-4"/>
+<span className="text-sm font-medium">Split PDF</span>
+</Link>
+
+<Link to="/tools/pdf-to-image" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
+<FileImage className="w-4 h-4"/>
+<span className="text-sm font-medium">PDF to Image</span>
+</Link>
+
+</div>
+
+</div>
+
+<AdPlaceholder slot="sidebar"/>
 
 </aside>
 
@@ -250,72 +288,9 @@ className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50"
 
 <footer className="bg-white border-t border-slate-200 py-12 mt-8">
 
-<div className="container mx-auto px-4">
-
-<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-
-{/* Brand */}
-
-<div className="md:col-span-2">
-
-<h3 className="text-xl font-bold text-indigo-600 mb-3">
-AI Tools Platform
-</h3>
-
-<p className="text-slate-500 text-sm max-w-md">
-Free AI Tools Platform provides powerful artificial intelligence tools
-for creators, students, freelancers, and professionals. Our platform
-helps users generate text, images, and digital content instantly.
-</p>
-
-</div>
-
-{/* Popular Tools */}
-
-<div>
-
-<h4 className="font-bold text-slate-900 mb-4">
-Popular Tools
-</h4>
-
-<ul className="space-y-2 text-sm text-slate-500">
-
-<li><Link to="/tools/ai-chatbot">AI Chatbot</Link></li>
-<li><Link to="/tools/ai-caption-generator">Caption Generator</Link></li>
-<li><Link to="/tools/ai-blog-writer">Blog Writer</Link></li>
-<li><Link to="/tools/ai-hashtag-generator">Hashtag Generator</Link></li>
-
-</ul>
-
-</div>
-
-{/* Legal */}
-
-<div>
-
-<h4 className="font-bold text-slate-900 mb-4">
-Legal
-</h4>
-
-<ul className="space-y-2 text-sm text-slate-500">
-
-<li><Link to="/about">About</Link></li>
-<li><Link to="/privacy-policy">Privacy Policy</Link></li>
-<li><Link to="/terms-and-conditions">Terms & Conditions</Link></li>
-<li><Link to="/disclaimer">Disclaimer</Link></li>
-<li><Link to="/contact">Contact</Link></li>
-
-</ul>
-
-</div>
-
-</div>
-
-<div className="border-t border-slate-100 pt-8 text-center text-slate-400 text-sm">
+<div className="container mx-auto px-4 text-center text-slate-400 text-sm">
 
 © {new Date().getFullYear()} AI Tools Platform
-
-</div>
 
 </div>
 
@@ -324,4 +299,5 @@ Legal
 </div>
 
 );
+
 }
