@@ -1,7 +1,7 @@
 import React,{useState} from "react"
 import imageCompression from "browser-image-compression"
 import FileToolUI from "../FileToolUI"
-import ToolDescription from "../components/ToolDescription"
+import ToolDescription from "../ToolDescription"
 
 export default function ImageCompressor(){
 
