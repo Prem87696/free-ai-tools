@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+ import React, { useState, useEffect, useRef } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { tools } from "../data/tools";
 import { generateContent } from "../services/aiRouter";
@@ -11,354 +11,378 @@ type Msg = { role: "user" | "ai"; text: string };
 
 export function ToolPage() {
 
-  const { toolId } = useParams();
-  const tool = tools.find(t => t.id === toolId);
-  const ToolComponent = toolId ? toolEngine[toolId] : null;
+const { toolId } = useParams();
+const tool = tools.find(t => t.id === toolId);
+const ToolComponent = toolId ? toolEngine[toolId] : null;
 
-  const [formData,setFormData] = useState<Record<string,string>>({});
-  const [messages,setMessages] = useState<Msg[]>([]);
-  const [result,setResult] = useState("");
-  const [loading,setLoading] = useState(false);
-  const [copied,setCopied] = useState<number | null>(null);
+const [formData,setFormData] = useState<Record<string,string>>({});
+const [messages,setMessages] = useState<Msg[]>([]);
+const [result,setResult] = useState("");
+const [loading,setLoading] = useState(false);
+const [copied,setCopied] = useState<number | null>(null);
 
-  const chatRef = useRef<HTMLDivElement>(null);
+const chatRef = useRef<HTMLDivElement>(null);
 
-  useEffect(()=>{
-    setFormData({});
-    setMessages([]);
-    setResult("");
-  },[toolId]);
+/* RESET WHEN TOOL CHANGES */
 
-  useEffect(()=>{
-    chatRef.current?.scrollTo({
-      top:chatRef.current.scrollHeight,
-      behavior:"smooth"
-    });
-  },[messages]);
+useEffect(()=>{
+setFormData({});
+setMessages([]);
+setResult("");
+},[toolId]);
 
-  if(!tool) return <Navigate to="/404"/>;
+/* AUTO SCROLL CHAT */
 
-  /* FILE TOOL */
+useEffect(()=>{
+chatRef.current?.scrollTo({
+top:chatRef.current.scrollHeight,
+behavior:"smooth"
+});
+},[messages]);
 
-  if(ToolComponent){
-    return(
-      <>
-        <SEOHead title={`${tool.name} - Free Tool`} description={tool.description}/>
-        <div className="max-w-4xl mx-auto">
-          <ToolComponent/>
-        </div>
-      </>
-    )
-  }
+if(!tool) return <Navigate to="/404"/>;
 
-  /* INPUT CHANGE */
+/* FILE TOOL COMPONENT */
 
-  const change=(name:string,value:string)=>{
-    setFormData(p=>({...p,[name]:value}));
-  };
+if(ToolComponent){
+return(
+<>
+<SEOHead title={`${tool.name} - Free Tool`} description={tool.description}/>
 
-  /* GENERATOR */
+<div className="max-w-4xl mx-auto">
+<ToolComponent/>
+</div>
+</>
+)
+}
 
-  const submit=async(e:React.FormEvent)=>{
+/* INPUT CHANGE */
 
-    e.preventDefault();
+const change=(name:string,value:string)=>{
+setFormData(prev=>({...prev,[name]:value}));
+};
 
-    setLoading(true);
-    setResult("");
+/* GENERATOR */
 
-    try{
+const submit=async(e:React.FormEvent)=>{
 
-      let prompt = tool.promptTemplate;
+e.preventDefault();
 
-      tool.inputs?.forEach(input=>{
-        prompt = prompt.replace(`{{${input.name}}}`,formData[input.name] || "");
-      });
+setLoading(true);
+setResult("");
 
-      const res = await generateContent(prompt);
+try{
 
-      setResult(res);
+let prompt = tool.promptTemplate;
 
-    }catch{
+tool.inputs?.forEach(input=>{
+prompt = prompt.replace(`{{${input.name}}}`,formData[input.name] || "");
+});
 
-      setResult("Something went wrong");
+const res = await generateContent(prompt);
 
-    }
+setResult(res);
 
-    setLoading(false);
+}catch{
 
-  };
+setResult("Something went wrong");
 
-  /* CHAT WITH MEMORY */
+}
 
-  const chat=async(e:React.FormEvent)=>{
+setLoading(false);
 
-    e.preventDefault();
+};
 
-    const msg=formData["message"] || "";
+/* CHAT */
 
-    if(!msg.trim()) return;
+const chat=async(e:React.FormEvent)=>{
 
-    setMessages(p=>[...p,{role:"user",text:msg}]);
-    setFormData({message:""});
-    setLoading(true);
+e.preventDefault();
 
-    try{
+const msg=formData["message"] || "";
 
-      /* BUILD HISTORY (LAST 10 MESSAGES) */
+if(!msg.trim()) return;
 
-      let history="";
+setMessages(prev=>[...prev,{role:"user",text:msg}]);
+setFormData({message:""});
+setLoading(true);
 
-      messages.slice(-10).forEach(m=>{
-        history += `${m.role==="user" ? "User" : "AI"}: ${m.text}\n`;
-      });
+try{
 
-      history += `User: ${msg}\nAI:`;
+let history="";
 
-      const res = await generateContent(history);
+messages.slice(-10).forEach(m=>{
+history += `${m.role==="user" ? "User" : "AI"}: ${m.text}\n`;
+});
 
-      setMessages(p=>[...p,{role:"ai",text:res}]);
+history += `User: ${msg}\nAI:`;
 
-    }catch{
+const res = await generateContent(history);
 
-      setMessages(p=>[...p,{role:"ai",text:"Error generating response"}]);
+setMessages(prev=>[...prev,{role:"ai",text:res}]);
 
-    }
+}catch{
 
-    setLoading(false);
+setMessages(prev=>[...prev,{role:"ai",text:"Error generating response"}]);
 
-  };
+}
 
-  const copy=(t:string,i:number)=>{
-    navigator.clipboard.writeText(t);
-    setCopied(i);
-    setTimeout(()=>setCopied(null),2000);
-  };
+setLoading(false);
 
-  /* CHATBOT UI */
+};
 
-  if(tool.id==="ai-chatbot"){
+/* COPY RESULT */
 
-    const Icon = tool.icon;
+const copy=(t:string,i:number)=>{
+navigator.clipboard.writeText(t);
+setCopied(i);
+setTimeout(()=>setCopied(null),2000);
+};
 
-    return(
+/* CHATBOT UI */
 
-      <>
-        <SEOHead title={tool.name} description={tool.description}/>
+if(tool.id==="ai-chatbot"){
 
-        <div className="max-w-4xl mx-auto">
+const Icon = tool.icon;
 
-          <div className="text-center mb-8">
+return(
 
-            <div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
-              <Icon className="w-8 h-8"/>
-            </div>
+<> <SEOHead title={tool.name} description={tool.description}/>
 
-            <h1 className="text-3xl font-bold">{tool.name}</h1>
+<div className="max-w-4xl mx-auto">
 
-            <p className="text-slate-600">{tool.description}</p>
+<div className="text-center mb-8">
 
-          </div>
+<div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
+<Icon className="w-8 h-8"/>
+</div>
 
-          <div className="bg-white rounded-2xl shadow-sm flex flex-col h-[520px]">
+<h1 className="text-3xl font-bold">{tool.name}</h1>
+<p className="text-slate-600">{tool.description}</p>
 
-            <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+</div>
 
-              {messages.length===0 &&(
+<div className="bg-white rounded-2xl shadow-sm flex flex-col h-[520px]">
 
-                <div className="flex flex-wrap gap-2">
+<div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
 
-                  <button
-                    onClick={()=>change("message","Write a blog about AI")}
-                    className="px-3 py-2 bg-white border rounded-lg text-sm hover:bg-slate-50"
-                  >
-                    Write blog
-                  </button>
+{messages.map((m,i)=>(
 
-                  <button
-                    onClick={()=>change("message","Explain quantum computing")}
-                    className="px-3 py-2 bg-white border rounded-lg text-sm hover:bg-slate-50"
-                  >
-                    Explain quantum computing
-                  </button>
+<div
+key={i}
+className={`max-w-[75%] px-4 py-3 rounded-xl text-sm ${
+m.role==="user"
+? "ml-auto bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow"
+: "bg-white shadow-sm"
+}`}
+>
 
-                  <button
-                    onClick={()=>change("message","Create marketing caption")}
-                    className="px-3 py-2 bg-white border rounded-lg text-sm hover:bg-slate-50"
-                  >
-                    Marketing caption
-                  </button>
+{m.text}
 
-                </div>
+<button
+onClick={()=>copy(m.text,i)}
+className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
 
-              )}
+>
 
-              {messages.map((m,i)=>(
+{copied===i ? <Check size={14}/> : <Copy size={14}/>} </button>
 
-                <div
-                  key={i}
-                  className={`max-w-[75%] px-4 py-3 rounded-xl text-sm ${
-                    m.role==="user"
-                      ? "ml-auto bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow"
-                      : "bg-white shadow-sm"
-                  }`}
-                >
+</div>
 
-                  {m.text}
+))}
 
-                  <button
-                    onClick={()=>copy(m.text,i)}
-                    className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
-                  >
-                    {copied===i ? <Check size={14}/> : <Copy size={14}/>}
-                  </button>
+{loading &&(
 
-                </div>
+<div className="flex items-center gap-2 text-sm text-slate-500">
 
-              ))}
+<Loader2 className="w-4 h-4 animate-spin"/>
 
-              {loading &&(
+AI is typing...
 
-                <div className="flex gap-2 items-center text-sm text-slate-500">
+</div>
 
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></span>
-                  </div>
+)}
 
-                  AI is typing...
+</div>
 
-                </div>
+<form onSubmit={chat} className="p-4 flex gap-3 bg-white">
 
-              )}
+<textarea
+rows={1}
+value={formData["message"] || ""}
+onChange={(e)=>change("message",e.target.value)}
+placeholder="Ask anything..."
+className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
+/>
 
-            </div>
+<button className="bg-indigo-600 text-white px-6 rounded-xl">
+Send
+</button>
 
-            <form onSubmit={chat} className="p-4 flex gap-3 bg-white">
+</form>
 
-              <textarea
-                rows={1}
-                value={formData["message"] || ""}
-                onChange={(e)=>change("message",e.target.value)}
-                placeholder="Ask anything..."
-                className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
-                onKeyDown={(e)=>{
-                  if(e.key==="Enter" && !e.shiftKey){
-                    e.preventDefault();
-                    chat(e as any);
-                  }
-                }}
-              />
+</div>
 
-              <button className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 rounded-xl shadow">
-                Send
-              </button>
+<AdPlaceholder slot="content" className="mt-8"/>
 
-            </form>
+{descriptionSection(tool.name)}
 
-          </div>
+</div>
 
-        </div>
+</>
 
-      </>
+)
 
-    )
+}
 
-  }
+/* GENERATOR TOOL UI */
 
-  /* GENERATOR TOOL UI */
+const Icon = tool.icon;
 
-  const Icon = tool.icon;
+return(
 
-  return(
+<>
+<SEOHead title={tool.name} description={tool.description}/>
 
-    <>
-      <SEOHead title={tool.name} description={tool.description}/>
+<div className="max-w-4xl mx-auto">
 
-      <div className="max-w-4xl mx-auto">
+<div className="text-center mb-8">
 
-        <div className="text-center mb-8">
+<div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
+<Icon className="w-8 h-8"/>
+</div>
 
-          <div className="inline-flex p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
-            <Icon className="w-8 h-8"/>
-          </div>
+<h1 className="text-3xl font-bold">{tool.name}</h1>
+<p className="text-slate-600">{tool.description}</p>
 
-          <h1 className="text-3xl font-bold">{tool.name}</h1>
+</div>
 
-          <p className="text-slate-600">{tool.description}</p>
+<div className="bg-white border rounded-2xl p-8">
 
-        </div>
+<form onSubmit={submit} className="space-y-6">
 
-        <div className="bg-white border rounded-2xl p-8">
+{tool.inputs?.map(input=>(
 
-          <form onSubmit={submit} className="space-y-6">
+<div key={input.name}>
 
-            {tool.inputs?.map(input=>(
+<label className="block text-sm mb-2">
+{input.label}
+</label>
 
-              <div key={input.name}>
+<textarea
+className="w-full border rounded-lg px-4 py-3"
+value={formData[input.name] || ""}
+onChange={(e)=>change(input.name,e.target.value)}
+/>
 
-                <label className="block text-sm mb-2">
-                  {input.label}
-                </label>
+</div>
 
-                <textarea
-                  className="w-full border rounded-lg px-4 py-3"
-                  value={formData[input.name] || ""}
-                  onChange={(e)=>change(input.name,e.target.value)}
-                />
+))}
 
-              </div>
+<button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center gap-2">
 
-            ))}
+{loading ? (
+<>
+<Loader2 className="w-5 h-5 animate-spin"/>
+Generating...
+</>
+):(
+<>
+<Sparkles className="w-5 h-5"/>
+Generate Content
+</>
+)}
 
-            <button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center gap-2">
+</button>
 
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin"/>
-                  Generating...
-                </>
-              ):(
-                <>
-                  <Sparkles className="w-5 h-5"/>
-                  Generate Content
-                </>
-              )}
+</form>
 
-            </button>
+{result &&(
 
-          </form>
+<div className="mt-6 border bg-slate-50 p-6 rounded-xl">
 
-          {result &&(
+<div className="flex justify-between mb-3">
 
-            <div className="mt-6 border bg-slate-50 p-6 rounded-xl">
+<strong>Generated Result</strong>
 
-              <div className="flex justify-between mb-3">
+<button onClick={()=>copy(result,0)}>
+{copied===0 ? <Check size={16}/> : <Copy size={16}/>}
+</button>
 
-                <strong>Generated Result</strong>
+</div>
 
-                <button onClick={()=>copy(result,0)}>
-                  {copied===0 ? <Check size={16}/> : <Copy size={16}/>}
-                </button>
+<div className="text-sm whitespace-pre-wrap">
+{result}
+</div>
 
-              </div>
+</div>
 
-              <div className="text-sm whitespace-pre-wrap">
-                {result}
-              </div>
+)}
 
-            </div>
+</div>
 
-          )}
+<AdPlaceholder slot="content" className="mt-8"/>
 
-        </div>
+{descriptionSection(tool.name)}
 
-        <AdPlaceholder slot="content" className="mt-8"/>
+</div>
 
-      </div>
+</>
 
-    </>
+)
 
-  )
+}
+
+/* DESCRIPTION + FAQ */
+
+function descriptionSection(name:string){
+
+return(
+
+<section className="mt-12 bg-white border rounded-2xl p-8 space-y-6">
+
+<h2 className="text-2xl font-bold text-slate-900">
+About {name}
+</h2>
+
+<p className="text-slate-600 leading-relaxed">
+{name} is a modern browser based productivity tool designed to simplify
+digital tasks using intelligent automation and fast processing systems.
+Users can complete complex work instantly without installing software
+or technical setup.
+</p>
+
+<p className="text-slate-600 leading-relaxed">
+Our platform helps students, creators, freelancers, developers,
+and professionals improve efficiency using simple online tools.
+</p>
+
+<h3 className="text-xl font-semibold text-slate-900">
+How to Use This Tool
+</h3>
+
+<ul className="list-disc pl-6 text-slate-600 space-y-2">
+<li>Enter your input or upload your file.</li>
+<li>Click the generate or process button.</li>
+<li>The system processes your request instantly.</li>
+<li>Copy or download the generated result.</li>
+</ul>
+
+<h3 className="text-xl font-semibold text-slate-900">
+Frequently Asked Questions
+</h3>
+
+<p><strong>Is this tool free?</strong><br/>
+Yes, this tool is free and accessible directly from your browser.</p>
+
+<p><strong>Do I need to install software?</strong><br/>
+No installation is required.</p>
+
+<p><strong>Is my data stored?</strong><br/>
+User inputs are processed temporarily to generate results.</p>
+
+</section>
+
+)
 
 }
