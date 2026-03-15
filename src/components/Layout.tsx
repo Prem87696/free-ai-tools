@@ -1,4 +1,4 @@
-import React from "react";
+ import React, { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
 Menu,
@@ -20,7 +20,7 @@ import PageTransition from "./PageTransition";
 
 export function Layout() {
 
-const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -57,7 +57,7 @@ return (
 
 <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
 
-{/* Header */}
+{/* HEADER */}
 
 <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
 
@@ -71,7 +71,7 @@ return (
 
 </Link>
 
-{/* Desktop Nav */}
+{/* Desktop Navigation */}
 
 <nav className="hidden md:flex items-center gap-6">
 
@@ -100,11 +100,12 @@ Get Started
 
 </nav>
 
-{/* Mobile Menu */}
+{/* Mobile Menu Button */}
 
 <button
 onClick={toggleMenu}
 className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+
 >
 
 {isMenuOpen ? <X /> : <Menu />}
@@ -113,11 +114,11 @@ className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
 
 </div>
 
-{/* Mobile Nav */}
+{/* Mobile Navigation */}
 
 {isMenuOpen && (
 
-<div className="md:hidden bg-white border-t border-slate-200 p-4 absolute w-full shadow-lg">
+<div className="md:hidden bg-white border-t border-slate-200 p-4">
 
 <nav className="flex flex-col gap-4">
 
@@ -169,19 +170,19 @@ onClick={() => setIsMenuOpen(false)}
 
 </header>
 
-{/* Header Ads */}
+{/* HEADER ADS */}
 
 <div className="container mx-auto px-4">
 <AdPlaceholder slot="header" />
 </div>
 
-{/* Main */}
+{/* MAIN CONTENT */}
 
 <main className="flex-grow container mx-auto px-4 py-8">
 
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-{/* Content */}
+{/* Content Area */}
 
 <div className="lg:col-span-9">
 
@@ -195,7 +196,7 @@ onClick={() => setIsMenuOpen(false)}
 
 <aside className="lg:col-span-3 space-y-8">
 
-<div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-slate-200 shadow-sm">
+<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
 <h3 className="font-bold text-lg mb-5 text-slate-900">
 Popular Tools
@@ -208,16 +209,16 @@ Popular Tools
 <Link
 key={tool.name}
 to={tool.path}
-className="flex items-center gap-3 p-3 rounded-xl transition group hover:bg-indigo-50"
+className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50"
 >
 
-<div className="p-2 rounded-lg bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition">
+<div className="p-2 rounded-lg bg-slate-100">
 
 <tool.icon className="w-4 h-4" />
 
 </div>
 
-<span className="text-sm font-medium text-slate-700 group-hover:text-indigo-600 transition">
+<span className="text-sm font-medium text-slate-700">
 
 {tool.name}
 
@@ -239,13 +240,13 @@ className="flex items-center gap-3 p-3 rounded-xl transition group hover:bg-indi
 
 </main>
 
-{/* Footer Ads */}
+{/* FOOTER ADS */}
 
 <div className="container mx-auto px-4">
 <AdPlaceholder slot="footer" />
 </div>
 
-{/* Footer */}
+{/* FOOTER */}
 
 <footer className="bg-white border-t border-slate-200 py-12 mt-8">
 
@@ -253,7 +254,9 @@ className="flex items-center gap-3 p-3 rounded-xl transition group hover:bg-indi
 
 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 
-<div className="col-span-1 md:col-span-2">
+{/* Brand */}
+
+<div className="md:col-span-2">
 
 <h3 className="text-xl font-bold text-indigo-600 mb-3">
 AI Tools Platform
@@ -261,11 +264,13 @@ AI Tools Platform
 
 <p className="text-slate-500 text-sm max-w-md">
 Free AI Tools Platform provides powerful artificial intelligence tools
-for creators, students, and professionals. Generate text, images and
-content instantly.
+for creators, students, freelancers, and professionals. Our platform
+helps users generate text, images, and digital content instantly.
 </p>
 
 </div>
+
+{/* Popular Tools */}
 
 <div>
 
@@ -275,33 +280,16 @@ Popular Tools
 
 <ul className="space-y-2 text-sm text-slate-500">
 
-<li>
-<a href="/tools/ai-chatbot" className="hover:text-indigo-600">
-AI Chatbot
-</a>
-</li>
-
-<li>
-<a href="/tools/ai-caption-generator" className="hover:text-indigo-600">
-Caption Generator
-</a>
-</li>
-
-<li>
-<a href="/tools/ai-blog-writer" className="hover:text-indigo-600">
-Blog Writer
-</a>
-</li>
-
-<li>
-<a href="/tools/ai-hashtag-generator" className="hover:text-indigo-600">
-Hashtag Generator
-</a>
-</li>
+<li><Link to="/tools/ai-chatbot">AI Chatbot</Link></li>
+<li><Link to="/tools/ai-caption-generator">Caption Generator</Link></li>
+<li><Link to="/tools/ai-blog-writer">Blog Writer</Link></li>
+<li><Link to="/tools/ai-hashtag-generator">Hashtag Generator</Link></li>
 
 </ul>
 
 </div>
+
+{/* Legal */}
 
 <div>
 
@@ -311,29 +299,11 @@ Legal
 
 <ul className="space-y-2 text-sm text-slate-500">
 
-<li>
-<a href="/privacy-policy" className="hover:text-indigo-600">
-Privacy Policy
-</a>
-</li>
-
-<li>
-<a href="/terms-and-conditions" className="hover:text-indigo-600">
-Terms & Conditions
-</a>
-</li>
-
-<li>
-<a href="/disclaimer" className="hover:text-indigo-600">
-Disclaimer
-</a>
-</li>
-
-<li>
-<a href="/contact" className="hover:text-indigo-600">
-Contact
-</a>
-</li>
+<li><Link to="/about">About</Link></li>
+<li><Link to="/privacy-policy">Privacy Policy</Link></li>
+<li><Link to="/terms">Terms & Conditions</Link></li>
+<li><Link to="/disclaimer">Disclaimer</Link></li>
+<li><Link to="/contact">Contact</Link></li>
 
 </ul>
 
@@ -354,5 +324,4 @@ Contact
 </div>
 
 );
-
 }
