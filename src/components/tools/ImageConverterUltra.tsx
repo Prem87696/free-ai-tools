@@ -22,6 +22,8 @@ const [flipV,setFlipV] = useState(false)
 
 const fileInputRef = useRef<HTMLInputElement>(null)
 
+/* open picker */
+
 const openPicker=()=>{
 fileInputRef.current?.click()
 }
@@ -48,7 +50,7 @@ setImages(prev=>[...prev,...list])
 
 }
 
-/* transform */
+/* apply transform instantly */
 
 const applyTransform = async () => {
 
@@ -144,10 +146,12 @@ setImages(updated)
 /* download */
 
 const download=(data:string,name:string)=>{
+
 const a=document.createElement("a")
 a.href=data
 a.download=name
 a.click()
+
 }
 
 /* zip */
@@ -168,7 +172,7 @@ const blob=await zip.generateAsync({type:"blob"})
 
 const a=document.createElement("a")
 a.href=URL.createObjectURL(blob)
-a.download="images.zip"
+a.download="converted-images.zip"
 a.click()
 
 }
@@ -191,7 +195,7 @@ Convert, rotate, flip and optimize images instantly
 
 </div>
 
-{/* UPLOAD CARD */}
+{/* UPLOAD */}
 
 <div
 className="border-2 border-dashed border-indigo-300 rounded-2xl p-12 text-center cursor-pointer bg-indigo-50 hover:bg-indigo-100 transition"
@@ -319,7 +323,7 @@ Flip Vertical </button>
 
 </div>
 
-{/* PREVIEW GRID */}
+{/* PREVIEW */}
 
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
 
@@ -378,6 +382,48 @@ className="mt-10 bg-black text-white px-6 py-3 rounded-lg"
 Download All ZIP </button>
 
 )}
+
+{/* DESCRIPTION */}
+
+<section className="mt-20 border-t pt-10">
+
+<h2 className="text-2xl font-bold mb-4">
+About Ultra Image Converter
+</h2>
+
+<p className="text-slate-600 mb-4">
+Ultra Image Converter is an advanced browser based image processing tool
+that allows users to convert, rotate, flip and optimize images instantly.
+The tool supports multiple popular image formats including PNG, JPG, JPEG,
+WEBP, GIF, BMP and TIFF.
+</p>
+
+<p className="text-slate-600 mb-6">
+It is designed for designers, developers, content creators and everyday
+internet users who need a fast and secure way to convert images without
+installing software. All processing happens directly in your browser.
+</p>
+
+<h3 className="text-xl font-semibold mb-3">
+Frequently Asked Questions
+</h3>
+
+<p className="mb-3">
+<strong>Is this tool free?</strong><br/>
+Yes. The tool is completely free to use without registration.
+</p>
+
+<p className="mb-3">
+<strong>Are images uploaded to a server?</strong><br/>
+No. All image processing happens locally in your browser.
+</p>
+
+<p>
+<strong>Which formats are supported?</strong><br/>
+PNG, JPG, JPEG, WEBP, GIF, BMP and TIFF.
+</p>
+
+</section>
 
 </div>
 
