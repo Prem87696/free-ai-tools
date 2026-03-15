@@ -31,13 +31,19 @@ const navLinks = [
 { name: "Contact", path: "/contact" }
 ];
 
+const toolItem =
+"flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-indigo-200 hover:bg-indigo-50 transition";
+
+const iconBox =
+"p-2 rounded-lg bg-slate-100";
+
 return (
 
 <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
 
 {/* HEADER */}
 
-<header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+<header className="bg-white border-b border-slate-100 sticky top-0 z-50">
 
 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
@@ -76,8 +82,6 @@ Get Started
 </Link>
 
 </nav>
-
-{/* Mobile Button */}
 
 <button
 onClick={toggleMenu}
@@ -134,7 +138,7 @@ onClick={() => setIsMenuOpen(false)}
 
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-{/* PAGE CONTENT */}
+{/* CONTENT */}
 
 <div className="lg:col-span-9">
 
@@ -150,7 +154,7 @@ onClick={() => setIsMenuOpen(false)}
 
 {/* AI TOOLS */}
 
-<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md hover:shadow-lg transition">
 
 <h3 className="font-bold text-lg mb-5 text-slate-900">
 AI Tools
@@ -158,33 +162,33 @@ AI Tools
 
 <div className="space-y-2">
 
-<Link to="/tools/ai-chatbot" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Bot className="w-4 h-4"/>
+<Link to="/tools/ai-chatbot" className={toolItem}>
+<div className={iconBox}><Bot size={16}/></div>
 <span className="text-sm font-medium">AI Chatbot</span>
 </Link>
 
-<Link to="/tools/ai-blog-writer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<PenTool className="w-4 h-4"/>
+<Link to="/tools/ai-blog-writer" className={toolItem}>
+<div className={iconBox}><PenTool size={16}/></div>
 <span className="text-sm font-medium">Blog Writer</span>
 </Link>
 
-<Link to="/tools/ai-caption-generator" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<FileText className="w-4 h-4"/>
+<Link to="/tools/ai-caption-generator" className={toolItem}>
+<div className={iconBox}><FileText size={16}/></div>
 <span className="text-sm font-medium">Caption Generator</span>
 </Link>
 
-<Link to="/tools/ai-resume-builder" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<User className="w-4 h-4"/>
+<Link to="/tools/ai-resume-builder" className={toolItem}>
+<div className={iconBox}><User size={16}/></div>
 <span className="text-sm font-medium">Resume Builder</span>
 </Link>
 
-<Link to="/tools/ai-email-writer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Mail className="w-4 h-4"/>
+<Link to="/tools/ai-email-writer" className={toolItem}>
+<div className={iconBox}><Mail size={16}/></div>
 <span className="text-sm font-medium">Email Writer</span>
 </Link>
 
-<Link to="/tools/ai-hashtag-generator" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Hash className="w-4 h-4"/>
+<Link to="/tools/ai-hashtag-generator" className={toolItem}>
+<div className={iconBox}><Hash size={16}/></div>
 <span className="text-sm font-medium">Hashtag Generator</span>
 </Link>
 
@@ -194,7 +198,7 @@ AI Tools
 
 {/* IMAGE TOOLS */}
 
-<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md hover:shadow-lg transition">
 
 <h3 className="font-bold text-lg mb-5 text-slate-900">
 Image Tools
@@ -202,28 +206,28 @@ Image Tools
 
 <div className="space-y-2">
 
-<Link to="/tools/image-converter-ultra" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Image className="w-4 h-4"/>
+<Link to="/tools/image-converter-ultra" className={toolItem}>
+<div className={iconBox}><Image size={16}/></div>
 <span className="text-sm font-medium">Image Converter Ultra</span>
 </Link>
 
-<Link to="/tools/svg-to-png" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Image className="w-4 h-4"/>
+<Link to="/tools/svg-to-png" className={toolItem}>
+<div className={iconBox}><Image size={16}/></div>
 <span className="text-sm font-medium">SVG to PNG</span>
 </Link>
 
-<Link to="/tools/png-to-jpg" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Image className="w-4 h-4"/>
+<Link to="/tools/png-to-jpg" className={toolItem}>
+<div className={iconBox}><Image size={16}/></div>
 <span className="text-sm font-medium">PNG to JPG</span>
 </Link>
 
-<Link to="/tools/webp-to-png" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Image className="w-4 h-4"/>
+<Link to="/tools/webp-to-png" className={toolItem}>
+<div className={iconBox}><Image size={16}/></div>
 <span className="text-sm font-medium">WEBP to PNG</span>
 </Link>
 
-<Link to="/tools/image-compressor" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<FileImage className="w-4 h-4"/>
+<Link to="/tools/image-compressor" className={toolItem}>
+<div className={iconBox}><FileImage size={16}/></div>
 <span className="text-sm font-medium">Image Compressor</span>
 </Link>
 
@@ -233,7 +237,7 @@ Image Tools
 
 {/* PDF TOOLS */}
 
-<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md hover:shadow-lg transition">
 
 <h3 className="font-bold text-lg mb-5 text-slate-900">
 PDF Tools
@@ -241,28 +245,28 @@ PDF Tools
 
 <div className="space-y-2">
 
-<Link to="/tools/image-to-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<File className="w-4 h-4"/>
+<Link to="/tools/image-to-pdf" className={toolItem}>
+<div className={iconBox}><File size={16}/></div>
 <span className="text-sm font-medium">Image to PDF</span>
 </Link>
 
-<Link to="/tools/jpg-to-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<File className="w-4 h-4"/>
+<Link to="/tools/jpg-to-pdf" className={toolItem}>
+<div className={iconBox}><File size={16}/></div>
 <span className="text-sm font-medium">JPG to PDF</span>
 </Link>
 
-<Link to="/tools/merge-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<File className="w-4 h-4"/>
+<Link to="/tools/merge-pdf" className={toolItem}>
+<div className={iconBox}><File size={16}/></div>
 <span className="text-sm font-medium">Merge PDF</span>
 </Link>
 
-<Link to="/tools/split-pdf" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<Scissors className="w-4 h-4"/>
+<Link to="/tools/split-pdf" className={toolItem}>
+<div className={iconBox}><Scissors size={16}/></div>
 <span className="text-sm font-medium">Split PDF</span>
 </Link>
 
-<Link to="/tools/pdf-to-image" className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-50">
-<FileImage className="w-4 h-4"/>
+<Link to="/tools/pdf-to-image" className={toolItem}>
+<div className={iconBox}><FileImage size={16}/></div>
 <span className="text-sm font-medium">PDF to Image</span>
 </Link>
 
@@ -284,9 +288,7 @@ PDF Tools
 <AdPlaceholder slot="footer" />
 </div>
 
-{/* FOOTER */}
-
-<footer className="bg-white border-t border-slate-200 py-12 mt-8">
+<footer className="bg-white border-t border-slate-100 py-12 mt-8">
 
 <div className="container mx-auto px-4 text-center text-slate-400 text-sm">
 
