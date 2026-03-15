@@ -1,9 +1,10 @@
- import React, { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import JSZip from "jszip"
 
 type Img = {
 file: File
 preview: string
+originalSize: number
 converted?: string
 convertedSize?: number
 }
@@ -14,6 +15,10 @@ const [images,setImages] = useState<Img[]>([])
 const [format,setFormat] = useState("webp")
 const [quality,setQuality] = useState(0.9)
 const [width,setWidth] = useState<number | null>(null)
+
+const [rotate,setRotate] = useState(0)
+const [flipH,setFlipH] = useState(false)
+const [flipV,setFlipV] = useState(false)
 
 const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -35,7 +40,8 @@ if(!file.type.startsWith("image")) return
 
 list.push({
 file,
-preview:URL.createObjectURL(file)
+preview:URL.createObjectURL(file),
+originalSize:file.size
 })
 
 })
@@ -44,7 +50,7 @@ setImages(prev=>[...prev,...list])
 
 }
 
-/* convert */
+/* convert single */
 
 const convertImage = async(img:Img)=>{
 
@@ -68,9 +74,22 @@ canvas.height=h
 
 const ctx=canvas.getContext("2d")
 
-ctx?.drawImage(image,0,0,w,h)
+ctx?.save()
 
-const mime=`image/${format}`
+ctx?.translate(w/2,h/2)
+
+if(flipH) ctx?.scale(-1,1)
+if(flipV) ctx?.scale(1,-1)
+
+ctx?.rotate((rotate*Math.PI)/180)
+
+ctx?.drawImage(image,-w/2,-h/2,w,h)
+
+ctx?.restore()
+
+const mime = format === "jpeg"
+? "image/jpeg"
+: `image/${format}`
 
 const converted=canvas.toDataURL(mime,quality)
 
@@ -131,7 +150,7 @@ const blob=await zip.generateAsync({type:"blob"})
 
 const a=document.createElement("a")
 a.href=URL.createObjectURL(blob)
-a.download="images.zip"
+a.download="converted-images.zip"
 a.click()
 
 }
@@ -150,7 +169,7 @@ return(
 Ultra Image Converter
 </h2>
 
-{/* Upload Area */}
+{/* Upload */}
 
 <div
 className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition"
@@ -173,14 +192,14 @@ Drag & Drop OR Click to Upload
 </p>
 
 <p className="text-xs text-slate-400 mt-2">
-PNG • JPG • WEBP • GIF
+PNG • JPG • JPEG • WEBP • GIF • BMP • TIFF
 </p>
 
 <input
 ref={fileInputRef}
 type="file"
 multiple
-accept=".png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff*"
+accept=".png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff"
 onChange={(e)=>{
 if(e.target.files) handleFiles(e.target.files)
 }}
@@ -191,7 +210,7 @@ className="hidden"
 
 {/* Controls */}
 
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
 
 <div>
 
@@ -205,6 +224,7 @@ onChange={(e)=>setFormat(e.target.value)}
 className="w-full border rounded-lg px-3 py-2 mt-1"
 
 >
+
 <option value="webp">WEBP</option>
 <option value="png">PNG</option>
 <option value="jpeg">JPG</option>
@@ -248,6 +268,50 @@ className="w-full border rounded-lg px-3 py-2 mt-1"
 
 </div>
 
+<div>
+
+<label className="text-sm font-medium">
+Rotate
+</label>
+
+<select
+value={rotate}
+onChange={(e)=>setRotate(Number(e.target.value))}
+className="w-full border rounded-lg px-3 py-2 mt-1"
+
+>
+
+<option value="0">0°</option>
+<option value="90">90°</option>
+<option value="180">180°</option>
+<option value="270">270°</option>
+
+</select>
+
+</div>
+
+</div>
+
+{/* Flip Controls */}
+
+<div className="flex gap-4 mt-4">
+
+<button
+onClick={()=>setFlipH(!flipH)}
+className="border px-4 py-2 rounded-lg"
+
+>
+
+Flip Horizontal </button>
+
+<button
+onClick={()=>setFlipV(!flipV)}
+className="border px-4 py-2 rounded-lg"
+
+>
+
+Flip Vertical </button>
+
 </div>
 
 <button
@@ -258,7 +322,7 @@ className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-l
 
 Convert Images </button>
 
-{/* Preview Grid */}
+{/* Preview */}
 
 <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6">
 
@@ -271,15 +335,28 @@ src={img.preview}
 className="rounded-lg mb-3 w-full object-cover"
 />
 
+<p className="text-xs text-slate-500">
+Original {(img.originalSize/1024).toFixed(1)} KB
+</p>
+
 {img.converted &&(
 
-<p className="text-sm text-green-600 mb-2">
+<>
+
+<img
+src={img.converted}
+className="rounded-lg mt-2 border"
+/>
+
+<p className="text-sm text-green-600">
 Converted {(img.convertedSize!/1024).toFixed(1)} KB
 </p>
 
+</>
+
 )}
 
-<div className="flex gap-2">
+<div className="flex gap-2 mt-3">
 
 {img.converted &&(
 
@@ -322,48 +399,6 @@ className="mt-8 bg-black text-white px-6 py-2 rounded-lg"
 Download All (ZIP) </button>
 
 )}
-
-{/* DESCRIPTION + FAQ */}
-
-<section className="mt-16 border-t pt-10">
-
-<h2 className="text-2xl font-bold mb-4">
-About Ultra Image Converter
-</h2>
-
-<p className="text-slate-600 mb-4">
-Ultra Image Converter is a powerful online tool that allows users to convert
-and optimize images directly in the browser. You can easily change image
-formats such as PNG, JPG, and WebP while adjusting quality and resizing
-dimensions.
-</p>
-
-<p className="text-slate-600 mb-6">
-This tool is designed for photographers, designers, developers,
-content creators, and everyday users who want to optimize images
-quickly without installing software.
-</p>
-
-<h3 className="text-xl font-semibold mb-3">
-Frequently Asked Questions
-</h3>
-
-<p className="mb-3">
-<strong>Is this image converter free?</strong><br/>
-Yes, the tool is completely free and works directly in your browser.
-</p>
-
-<p className="mb-3">
-<strong>Are my images uploaded to a server?</strong><br/>
-No. Images are processed locally in your browser and are not stored.
-</p>
-
-<p>
-<strong>Which formats are supported?</strong><br/>
-PNG, JPG, and WebP formats are supported for conversion.
-</p>
-
-</section>
 
 </div>
 
