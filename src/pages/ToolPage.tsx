@@ -149,10 +149,9 @@ return(
 
 <div className="text-center mb-10">
 
-<div className="inline-flex p-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white mb-4 shadow-lg">
+<div className="inline-flex p-4 rounded-xl bg-slate-100 text-indigo-600 mb-4 border border-slate-200 shadow-sm">
 <Icon className="w-8 h-8"/>
 </div>
-
 <h1 className="text-4xl font-bold text-slate-900">{tool.name}</h1>
 
 <p className="text-slate-500 mt-2 text-lg">
