@@ -43,7 +43,7 @@ fetch(webp)
 .then(blob=>{
 
 resolve({
-name:file.name.replace(/\.[^/.]+$/,"")+".webp",
+name:file.name.replace(/.[^/.]+$/,"")+".webp",
 original:img.src,
 webp:webp,
 originalSize:file.size,
@@ -60,7 +60,7 @@ webpSize:blob.size
 
 const handleFiles = async(files:FileList)=>{
 
-const list:Img[]=[]
+const list:Img=[]
 
 for(const file of Array.from(files)){
 
@@ -165,9 +165,10 @@ Saved {(100-(img.webpSize/img.originalSize)*100).toFixed(0)}%
 href={img.webp}
 download={img.name}
 className="bg-indigo-600 text-white px-4 py-2 rounded-lg"
+
 >
-Download
-</a>
+
+Download </a>
 
 </div>
 
@@ -178,6 +179,7 @@ Download
 <button
 onClick={downloadAll}
 className="mt-4 bg-black text-white px-6 py-2 rounded-lg"
+
 >
 
 Download All (ZIP)
@@ -187,6 +189,88 @@ Download All (ZIP)
 </div>
 
 )}
+
+{/* DESCRIPTION + FAQ */}
+
+<section className="mt-16 border-t pt-10">
+
+<h2 className="text-2xl font-bold mb-4">
+About Image to WebP Converter
+</h2>
+
+<p className="text-slate-600 mb-4">
+Image to WebP Converter is a modern online tool designed to help users
+convert standard image formats such as JPG, PNG, and JPEG into the
+highly efficient WebP format. WebP images provide significantly smaller
+file sizes while maintaining excellent visual quality.
+</p>
+
+<p className="text-slate-600 mb-4">
+This tool processes images directly inside your browser using modern
+web technologies. Because the conversion happens locally on your device,
+your images remain private and are not uploaded to any external servers.
+</p>
+
+<p className="text-slate-600 mb-6">
+WebP format is widely used for websites and web applications because it
+reduces page load time and improves website performance. Converting your
+images to WebP can help optimize websites, improve SEO, and provide
+faster user experiences.
+</p>
+
+<h3 className="text-xl font-semibold mb-3">
+How to Use This Tool
+</h3>
+
+<ul className="list-disc pl-6 text-slate-600 space-y-2 mb-6">
+<li>Select or drag and drop image files from your device.</li>
+<li>Adjust the quality slider if needed.</li>
+<li>The tool automatically converts images to WebP format.</li>
+<li>Download individual WebP files or download all images as a ZIP file.</li>
+</ul>
+
+<h3 className="text-xl font-semibold mb-3">
+Features
+</h3>
+
+<ul className="list-disc pl-6 text-slate-600 space-y-2 mb-6">
+<li>Convert JPG, PNG, and JPEG images to WebP</li>
+<li>Adjustable compression quality</li>
+<li>Batch image conversion</li>
+<li>Download all converted images as ZIP</li>
+<li>No server upload required</li>
+<li>Fast browser-based processing</li>
+</ul>
+
+<h3 className="text-xl font-semibold mb-3">
+Frequently Asked Questions
+</h3>
+
+<p className="mb-3">
+<strong>What is WebP format?</strong><br/>
+WebP is a modern image format developed by Google that provides better
+compression than PNG or JPG while maintaining high image quality.
+</p>
+
+<p className="mb-3">
+<strong>Are my images uploaded to a server?</strong><br/>
+No. All image conversions happen locally in your browser which keeps
+your files private and secure.
+</p>
+
+<p className="mb-3">
+<strong>Can I convert multiple images at once?</strong><br/>
+Yes. The tool supports batch conversion and allows downloading all
+converted images as a ZIP file.
+</p>
+
+<p>
+<strong>Will converting to WebP reduce image quality?</strong><br/>
+The quality slider allows you to balance file size and image quality
+based on your needs.
+</p>
+
+</section>
 
 </div>
 
