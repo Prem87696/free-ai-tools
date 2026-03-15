@@ -1,6 +1,5 @@
  import React from 'react';
-import { SEOHead } from '../components/SEOHead';
-
+ 
 /* ABOUT PAGE */
 
 export function AboutPage() {
