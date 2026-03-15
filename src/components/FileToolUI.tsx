@@ -1,5 +1,5 @@
 import React,{useRef,useState,useEffect} from "react"
-import { Upload, X, Loader2 } from "lucide-react"
+import { Upload, X, Loader2, FileText, ImageIcon } from "lucide-react"
 
 export default function FileToolUI({
 title,
@@ -14,6 +14,7 @@ multiple
 const fileRef=useRef<any>(null)
 
 const [preview,setPreview]=useState<string | null>(null)
+const [fileType,setFileType]=useState<string>("")
 const [fileSize,setFileSize]=useState<number | null>(null)
 const [convertedSize,setConvertedSize]=useState<number | null>(null)
 
@@ -33,18 +34,25 @@ const file=e.target.files[0]
 if(!file)return
 
 setFileSize(file.size)
+setFileType(file.type)
 
 onFileChange(e)
+
+if(file.type.startsWith("image")){
 
 const reader=new FileReader()
 
 reader.onload=()=>{
-
 setPreview(reader.result as string)
-
 }
 
 reader.readAsDataURL(file)
+
+}else{
+
+setPreview("file")
+
+}
 
 }
 
@@ -67,6 +75,7 @@ const removeFile=()=>{
 setPreview(null)
 setFileSize(null)
 setConvertedSize(null)
+setFileType("")
 
 }
 
@@ -109,6 +118,49 @@ if(!fileSize || !convertedSize) return null
 const saved=fileSize-convertedSize
 
 return ((saved/fileSize)*100).toFixed(1)
+
+}
+
+const renderPreview=(src:any,type:any)=>{
+
+if(type.startsWith("image")){
+
+return(
+<img
+src={src}
+className="max-h-72 mx-auto rounded-lg border"
+/>
+)
+
+}
+
+if(type.includes("pdf")){
+
+return(
+
+<div className="flex flex-col items-center justify-center h-40 border rounded-lg bg-slate-50">
+
+<FileText size={40} className="text-red-500"/>
+
+<p className="text-sm mt-2">PDF File</p>
+
+</div>
+
+)
+
+}
+
+return(
+
+<div className="flex flex-col items-center justify-center h-40 border rounded-lg bg-slate-50">
+
+<ImageIcon size={40} className="text-slate-500"/>
+
+<p className="text-sm mt-2">File Preview</p>
+
+</div>
+
+)
 
 }
 
@@ -168,10 +220,7 @@ className="hidden"
 Uploaded File
 </p>
 
-<img
-src={preview}
-className="max-h-72 mx-auto rounded-lg border"
-/>
+{renderPreview(preview,fileType)}
 
 {fileSize && (
 
@@ -204,10 +253,7 @@ className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
 Converted Result
 </p>
 
-<img
-src={downloadUrl}
-className="max-h-72 mx-auto rounded-lg border"
-/>
+{renderPreview(downloadUrl,fileType)}
 
 {convertedSize && (
 
@@ -276,5 +322,4 @@ className="bg-indigo-600 h-2 rounded-full transition-all"
 </div>
 
 )
-
 }
