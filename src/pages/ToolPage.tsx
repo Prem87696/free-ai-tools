@@ -160,7 +160,7 @@ Smart AI assistant to help you generate content instantly
 
 </div>
 
-<div className="bg-white border rounded-2xl shadow-xl flex flex-col h-[540px] overflow-hidden">
+<div className="bg-white border border-slate-200 rounded-2xl shadow-lg flex flex-col h-[540px] overflow-hidden">
 
 <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
 
