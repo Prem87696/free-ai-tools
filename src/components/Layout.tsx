@@ -288,15 +288,130 @@ PDF Tools
 <AdPlaceholder slot="footer" />
 </div>
 
-<footer className="bg-white border-t border-slate-100 py-12 mt-8">
+<footer className="bg-white border-t border-slate-100 mt-16">
 
-<div className="container mx-auto px-4 text-center text-slate-400 text-sm">
+<div className="container mx-auto px-4 py-14">
 
-© {new Date().getFullYear()} AI Tools Platform
+<div className="grid md:grid-cols-4 gap-10">
+
+{/* BRAND */}
+
+<div>
+
+<h3 className="text-xl font-bold text-indigo-600 mb-3">
+AI Tools Platform
+</h3>
+
+<p className="text-sm text-slate-500 leading-relaxed">
+AI Tools Platform is a powerful collection of modern
+online utilities designed to help creators, developers,
+students, freelancers, and businesses complete digital
+tasks faster using artificial intelligence and smart
+automation tools.
+</p>
+
+<p className="text-sm text-slate-500 mt-4 leading-relaxed">
+Our platform provides advanced AI content generators,
+image converters, and document tools that work directly
+inside your browser without requiring software installation.
+</p>
+
+</div>
+
+{/* AI TOOLS */}
+
+<div>
+
+<h4 className="font-semibold text-slate-900 mb-4">
+AI Writing Tools
+</h4>
+
+<ul className="space-y-2 text-sm text-slate-500">
+
+<li><Link to="/tools/ai-chatbot" className="hover:text-indigo-600">AI Chatbot</Link></li>
+
+<li><Link to="/tools/ai-blog-writer" className="hover:text-indigo-600">AI Blog Writer</Link></li>
+
+<li><Link to="/tools/ai-caption-generator" className="hover:text-indigo-600">Caption Generator</Link></li>
+
+<li><Link to="/tools/ai-email-writer" className="hover:text-indigo-600">AI Email Writer</Link></li>
+
+<li><Link to="/tools/ai-resume-builder" className="hover:text-indigo-600">Resume Builder</Link></li>
+
+<li><Link to="/tools/ai-hashtag-generator" className="hover:text-indigo-600">Hashtag Generator</Link></li>
+
+</ul>
+
+</div>
+
+{/* IMAGE TOOLS */}
+
+<div>
+
+<h4 className="font-semibold text-slate-900 mb-4">
+Image Tools
+</h4>
+
+<ul className="space-y-2 text-sm text-slate-500">
+
+<li><Link to="/tools/image-converter-ultra" className="hover:text-indigo-600">Image Converter Ultra</Link></li>
+
+<li><Link to="/tools/svg-to-png" className="hover:text-indigo-600">SVG to PNG</Link></li>
+
+<li><Link to="/tools/png-to-jpg" className="hover:text-indigo-600">PNG to JPG</Link></li>
+
+<li><Link to="/tools/webp-to-png" className="hover:text-indigo-600">WEBP to PNG</Link></li>
+
+<li><Link to="/tools/image-compressor" className="hover:text-indigo-600">Image Compressor</Link></li>
+
+</ul>
+
+</div>
+
+{/* LEGAL */}
+
+<div>
+
+<h4 className="font-semibold text-slate-900 mb-4">
+Company
+</h4>
+
+<ul className="space-y-2 text-sm text-slate-500">
+
+<li><Link to="/about" className="hover:text-indigo-600">About Us</Link></li>
+
+<li><Link to="/contact" className="hover:text-indigo-600">Contact</Link></li>
+
+<li><Link to="/privacy-policy" className="hover:text-indigo-600">Privacy Policy</Link></li>
+
+<li><Link to="/terms-and-conditions" className="hover:text-indigo-600">Terms & Conditions</Link></li>
+
+<li><Link to="/disclaimer" className="hover:text-indigo-600">Disclaimer</Link></li>
+
+</ul>
+
+</div>
+
+</div>
+
+{/* BOTTOM */}
+
+<div className="border-t border-slate-100 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between">
+
+<p className="text-sm text-slate-400">
+© {new Date().getFullYear()} AI Tools Platform. All rights reserved.
+</p>
+
+<p className="text-xs text-slate-400 mt-2 md:mt-0">
+Free AI tools for content generation, image conversion, and productivity.
+</p>
+
+</div>
 
 </div>
 
 </footer>
+
 
 </div>
 
