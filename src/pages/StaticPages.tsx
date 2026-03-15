@@ -10,7 +10,7 @@ return (
      description="Learn about Free AI Tools platform and our mission to provide powerful AI tools for everyone."
    />
 
-```
+ 
   <div className="prose prose-slate max-w-3xl mx-auto">
     <h1>About Free AI Tools</h1>
 
@@ -45,7 +45,7 @@ return (
     </p>
   </div>
 </>
-```
+ 
 
 );
 }
@@ -59,7 +59,7 @@ return (
      description="Contact Free AI Tools for questions, suggestions, or feedback."
    />
 
-```
+ 
   <div className="max-w-2xl mx-auto">
 
     <h1 className="text-3xl font-bold mb-6">Contact Us</h1>
@@ -102,7 +102,7 @@ return (
 
   </div>
 </>
-```
+ 
 
 );
 }
@@ -116,7 +116,7 @@ return (
      description="Privacy Policy explaining how Free AI Tools collects and handles information."
    />
 
-```
+ 
   <div className="prose prose-slate max-w-3xl mx-auto">
 
     <h1>Privacy Policy</h1>
@@ -167,7 +167,7 @@ return (
 
   </div>
 </>
-```
+ 
 
 );
 }
@@ -180,8 +180,7 @@ return (
      title="Terms and Conditions - Free AI Tools"
      description="Terms and conditions for using Free AI Tools platform."
    />
-
-```
+ 
   <div className="prose prose-slate max-w-3xl mx-auto">
 
     <h1>Terms and Conditions</h1>
@@ -223,7 +222,7 @@ return (
 
   </div>
 </>
-```
+ 
 
 );
 }
@@ -237,7 +236,7 @@ return (
      description="General disclaimer for Free AI Tools platform."
    />
 
-```
+ 
   <div className="prose prose-slate max-w-3xl mx-auto">
 
     <h1>Disclaimer</h1>
@@ -267,7 +266,7 @@ return (
 
   </div>
 </>
-```
+ 
 
 );
 }
