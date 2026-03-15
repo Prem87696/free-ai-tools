@@ -1,6 +1,6 @@
 import React,{useState,useRef} from "react"
 import * as bodyPix from "@tensorflow-models/body-pix"
-import "@tensorflow/tfjs"
+import "@tensorflow/tfjs"  
 
 export default function BackgroundRemover(){
 
