@@ -3,7 +3,7 @@ import * as bodyPix from "@tensorflow-models/body-pix"
 import "@tensorflow/tfjs"  
 
 export default function BackgroundRemover(){
-
+ 
 const [image,setImage]=useState<string|null>(null)
 const [result,setResult]=useState<string|null>(null)
 const [loading,setLoading]=useState(false)
