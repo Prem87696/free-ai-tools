@@ -14,7 +14,7 @@ export default function ImageConverterUltra(){
 const [images,setImages] = useState<Img[]>([])
 const [format,setFormat] = useState("webp")
 const [quality,setQuality] = useState(0.9)
-const [width,setWidth] = useState<number | null>(null)
+const [zoom,setZoom] = useState(1)
 
 const [rotate,setRotate] = useState(0)
 const [flipH,setFlipH] = useState(false)
@@ -22,13 +22,11 @@ const [flipV,setFlipV] = useState(false)
 
 const fileInputRef = useRef<HTMLInputElement>(null)
 
-/* open picker */
-
 const openPicker=()=>{
 fileInputRef.current?.click()
 }
 
-/* handle files */
+/* upload */
 
 const handleFiles=(files:FileList)=>{
 
@@ -50,33 +48,34 @@ setImages(prev=>[...prev,...list])
 
 }
 
-/* convert single */
+/* transform */
 
-const convertImage = async(img:Img)=>{
+const applyTransform = async () => {
 
-const image=new Image()
-image.src=img.preview
+const updated: Img[] = []
+
+for(const img of images){
+
+const image = new Image()
+image.src = img.preview
 
 await new Promise(res=>image.onload=res)
 
-const canvas=document.createElement("canvas")
+const canvas = document.createElement("canvas")
 
-let w=image.width
-let h=image.height
+let w = image.width
+let h = image.height
 
-if(width){
-w=width
-h=image.height*(width/image.width)
-}
+canvas.width = w
+canvas.height = h
 
-canvas.width=w
-canvas.height=h
-
-const ctx=canvas.getContext("2d")
+const ctx = canvas.getContext("2d")
 
 ctx?.save()
 
 ctx?.translate(w/2,h/2)
+
+ctx?.scale(zoom,zoom)
 
 if(flipH) ctx?.scale(-1,1)
 if(flipV) ctx?.scale(1,-1)
@@ -87,7 +86,42 @@ ctx?.drawImage(image,-w/2,-h/2,w,h)
 
 ctx?.restore()
 
-const mime = format === "jpeg"
+const preview = canvas.toDataURL()
+
+updated.push({
+...img,
+preview
+})
+
+}
+
+setImages(updated)
+
+}
+
+/* convert */
+
+const convertAll = async()=>{
+
+const updated:Img=[]
+
+for(const img of images){
+
+const image=new Image()
+image.src=img.preview
+
+await new Promise(res=>image.onload=res)
+
+const canvas=document.createElement("canvas")
+
+canvas.width=image.width
+canvas.height=image.height
+
+const ctx=canvas.getContext("2d")
+
+ctx?.drawImage(image,0,0)
+
+const mime = format==="jpeg"
 ? "image/jpeg"
 : `image/${format}`
 
@@ -95,25 +129,11 @@ const converted=canvas.toDataURL(mime,quality)
 
 const blob=await (await fetch(converted)).blob()
 
-return {
+updated.push({
 ...img,
 converted,
 convertedSize:blob.size
-}
-
-}
-
-/* convert all */
-
-const convertAll=async()=>{
-
-const updated:Img=[]
-
-for(const img of images){
-
-const c = await convertImage(img)
-
-updated.push(c)
+})
 
 }
 
@@ -124,15 +144,13 @@ setImages(updated)
 /* download */
 
 const download=(data:string,name:string)=>{
-
 const a=document.createElement("a")
 a.href=data
 a.download=name
 a.click()
-
 }
 
-/* download zip */
+/* zip */
 
 const downloadAll=async()=>{
 
@@ -150,29 +168,33 @@ const blob=await zip.generateAsync({type:"blob"})
 
 const a=document.createElement("a")
 a.href=URL.createObjectURL(blob)
-a.download="converted-images.zip"
+a.download="images.zip"
 a.click()
 
 }
 
-/* remove */
-
-const remove=(i:number)=>{
-setImages(images.filter((_,x)=>x!==i))
-}
-
 return(
 
-<div className="bg-white border border-slate-200 rounded-2xl p-8">
+<div className="max-w-6xl mx-auto px-6 py-10">
 
-<h2 className="text-2xl font-bold mb-6">
+{/* HEADER */}
+
+<div className="text-center mb-10">
+
+<h1 className="text-4xl font-bold text-slate-900">
 Ultra Image Converter
-</h2>
+</h1>
 
-{/* Upload */}
+<p className="text-slate-500 mt-2">
+Convert, rotate, flip and optimize images instantly
+</p>
+
+</div>
+
+{/* UPLOAD CARD */}
 
 <div
-className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition"
+className="border-2 border-dashed border-indigo-300 rounded-2xl p-12 text-center cursor-pointer bg-indigo-50 hover:bg-indigo-100 transition"
 onClick={openPicker}
 onDrop={(e)=>{
 e.preventDefault()
@@ -181,25 +203,21 @@ handleFiles(e.dataTransfer.files)
 onDragOver={(e)=>e.preventDefault()}
 >
 
-<div className="text-5xl mb-4">📁</div>
+<div className="text-5xl mb-3">📤</div>
 
-<h3 className="text-lg font-semibold text-slate-700">
-Upload Images
+<h3 className="text-lg font-semibold">
+Drag & Drop Images
 </h3>
 
-<p className="text-slate-500 mt-1">
-Drag & Drop OR Click to Upload
-</p>
-
-<p className="text-xs text-slate-400 mt-2">
-PNG • JPG • JPEG • WEBP • GIF • BMP • TIFF
+<p className="text-sm text-slate-500 mt-1">
+PNG • JPG • WEBP • GIF • BMP • TIFF
 </p>
 
 <input
 ref={fileInputRef}
 type="file"
 multiple
-accept=".png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff"
+accept="image/*"
 onChange={(e)=>{
 if(e.target.files) handleFiles(e.target.files)
 }}
@@ -208,20 +226,14 @@ className="hidden"
 
 </div>
 
-{/* Controls */}
+{/* TOOLBAR */}
 
-<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-
-<div>
-
-<label className="text-sm font-medium">
-Format
-</label>
+<div className="grid grid-cols-2 md:grid-cols-5 gap-6 mt-10">
 
 <select
 value={format}
 onChange={(e)=>setFormat(e.target.value)}
-className="w-full border rounded-lg px-3 py-2 mt-1"
+className="border rounded-lg px-3 py-2"
 
 >
 
@@ -229,17 +241,7 @@ className="w-full border rounded-lg px-3 py-2 mt-1"
 <option value="png">PNG</option>
 <option value="jpeg">JPG</option>
 <option value="gif">GIF</option>
-<option value="bmp">BMP</option>
-
 </select>
-
-</div>
-
-<div>
-
-<label className="text-sm font-medium">
-Quality {Math.round(quality*100)}%
-</label>
 
 <input
 type="range"
@@ -251,33 +253,25 @@ onChange={(e)=>setQuality(Number(e.target.value))}
 className="w-full"
 />
 
-</div>
-
-<div>
-
-<label className="text-sm font-medium">
-Resize Width
-</label>
-
 <input
-type="number"
-placeholder="optional"
-onChange={(e)=>setWidth(Number(e.target.value))}
-className="w-full border rounded-lg px-3 py-2 mt-1"
+type="range"
+min="1"
+max="3"
+step="0.1"
+value={zoom}
+onChange={(e)=>{
+setZoom(Number(e.target.value))
+setTimeout(applyTransform,50)
+}}
 />
-
-</div>
-
-<div>
-
-<label className="text-sm font-medium">
-Rotate
-</label>
 
 <select
 value={rotate}
-onChange={(e)=>setRotate(Number(e.target.value))}
-className="w-full border rounded-lg px-3 py-2 mt-1"
+onChange={(e)=>{
+setRotate(Number(e.target.value))
+setTimeout(applyTransform,50)
+}}
+className="border rounded-lg px-3 py-2"
 
 >
 
@@ -285,19 +279,27 @@ className="w-full border rounded-lg px-3 py-2 mt-1"
 <option value="90">90°</option>
 <option value="180">180°</option>
 <option value="270">270°</option>
-
 </select>
 
-</div>
+<button
+onClick={convertAll}
+className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-4 py-2"
+
+>
+
+Convert </button>
 
 </div>
 
-{/* Flip Controls */}
+{/* FLIP */}
 
-<div className="flex gap-4 mt-4">
+<div className="flex gap-4 mt-6">
 
 <button
-onClick={()=>setFlipH(!flipH)}
+onClick={()=>{
+setFlipH(!flipH)
+setTimeout(applyTransform,50)
+}}
 className="border px-4 py-2 rounded-lg"
 
 >
@@ -305,7 +307,10 @@ className="border px-4 py-2 rounded-lg"
 Flip Horizontal </button>
 
 <button
-onClick={()=>setFlipV(!flipV)}
+onClick={()=>{
+setFlipV(!flipV)
+setTimeout(applyTransform,50)
+}}
 className="border px-4 py-2 rounded-lg"
 
 >
@@ -314,71 +319,45 @@ Flip Vertical </button>
 
 </div>
 
-<button
-onClick={convertAll}
-className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg"
+{/* PREVIEW GRID */}
 
->
-
-Convert Images </button>
-
-{/* Preview */}
-
-<div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6">
+<div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
 
 {images.map((img,i)=>(
 
-<div key={i} className="border rounded-xl p-4 shadow-sm">
+<div key={i} className="bg-white rounded-xl shadow p-4">
 
 <img
 src={img.preview}
-className="rounded-lg mb-3 w-full object-cover"
+className="rounded-lg mb-3"
 />
 
 <p className="text-xs text-slate-500">
-Original {(img.originalSize/1024).toFixed(1)} KB
+{(img.originalSize/1024).toFixed(1)} KB
 </p>
 
 {img.converted &&(
 
-<>
-
-<img
+<> <img
 src={img.converted}
 className="rounded-lg mt-2 border"
 />
 
-<p className="text-sm text-green-600">
-Converted {(img.convertedSize!/1024).toFixed(1)} KB
+<p className="text-green-600 text-sm">
+{(img.convertedSize!/1024).toFixed(1)} KB
 </p>
-
-</>
-
-)}
-
-<div className="flex gap-2 mt-3">
-
-{img.converted &&(
 
 <button
 onClick={()=>download(img.converted!,`image.${format}`)}
-className="bg-indigo-600 text-white px-3 py-1 rounded"
+className="mt-2 bg-indigo-600 text-white px-3 py-1 rounded"
 
 >
 
 Download </button>
 
+</>
+
 )}
-
-<button
-onClick={()=>remove(i)}
-className="text-red-500 text-sm"
-
->
-
-Remove </button>
-
-</div>
 
 </div>
 
@@ -392,11 +371,11 @@ Remove </button>
 
 <button
 onClick={downloadAll}
-className="mt-8 bg-black text-white px-6 py-2 rounded-lg"
+className="mt-10 bg-black text-white px-6 py-3 rounded-lg"
 
 >
 
-Download All (ZIP) </button>
+Download All ZIP </button>
 
 )}
 
