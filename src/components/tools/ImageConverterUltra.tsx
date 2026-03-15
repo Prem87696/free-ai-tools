@@ -180,7 +180,7 @@ PNG • JPG • WEBP • GIF
 ref={fileInputRef}
 type="file"
 multiple
-accept="image/*"
+accept=".png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff*"
 onChange={(e)=>{
 if(e.target.files) handleFiles(e.target.files)
 }}
@@ -205,10 +205,11 @@ onChange={(e)=>setFormat(e.target.value)}
 className="w-full border rounded-lg px-3 py-2 mt-1"
 
 >
-
-<option value="webp">WebP</option>
+<option value="webp">WEBP</option>
 <option value="png">PNG</option>
 <option value="jpeg">JPG</option>
+<option value="gif">GIF</option>
+<option value="bmp">BMP</option>
 
 </select>
 
