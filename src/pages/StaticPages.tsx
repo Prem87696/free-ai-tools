@@ -31,7 +31,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
     help users complete tasks faster.
   </p>
 
-  <h2>Our Mission</h2>
+  <h2>Our Mission</h2>  
 
   <p>
     Our mission is to make artificial intelligence accessible to
