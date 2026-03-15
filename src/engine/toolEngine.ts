@@ -1,4 +1,4 @@
-import React from "react";
+ import React from "react";
 
 /*
 AUTO LOAD ALL TOOL COMPONENTS
@@ -12,14 +12,17 @@ export const toolEngine: Record<string, React.ComponentType<any>> = {};
 
 for (const path in modules) {
 
-const mod: any = modules[path];
+const mod:any = modules[path];
 
 const file = path.split("/").pop() || "";
 
+/* FIX TOOL ID */
+
 const id = file
-.replace(".tsx", "")
-.replace(/[A-Z]/g, m => "-" + m.toLowerCase())
-.replace(/^-/, "");
+.replace(".tsx","")
+.replace(/([a-z])([A-Z])/g,"$1-$2")
+.replace(/([A-Z])([A-Z][a-z])/g,"$1-$2")
+.toLowerCase();
 
 if(mod.default){
 
