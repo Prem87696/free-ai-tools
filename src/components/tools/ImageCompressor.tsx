@@ -1,7 +1,7 @@
 import React,{useState} from "react"
 import imageCompression from "browser-image-compression"
 import FileToolUI from "../FileToolUI"
-import ToolDescription from "../components/ToolDescription";
+import ToolDescription from "../components/ToolDescription"
 
 export default function ImageCompressor(){
 
@@ -9,9 +9,7 @@ const [file,setFile]=useState<any>(null)
 const [compressed,setCompressed]=useState<string | null>(null)
 
 const handleFile=(e:any)=>{
-
 setFile(e.target.files[0])
-
 }
 
 const convert=async()=>{
@@ -30,14 +28,20 @@ setCompressed(URL.createObjectURL(compressedFile))
 
 return(
 
+<>
+
 <FileToolUI
 title="Image Compressor"
-description="Reduce image size online"
+description="Reduce image size online quickly without losing quality"
 accept="image/*"
 onFileChange={handleFile}
 onConvert={convert}
 downloadUrl={compressed}
 />
+
+<ToolDescription name="Image Compressor"/>
+
+</>
 
 )
 
