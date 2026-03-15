@@ -4,8 +4,7 @@
 
 export function AboutPage() {
 return ( <div className="prose prose-slate max-w-3xl mx-auto">
-
-```
+ 
   <h1>About Free AI Tools</h1>
 
   <p>
@@ -75,7 +74,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
   </p>
 
 </div>
-```
+ 
 
 );
 }
@@ -85,7 +84,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
 export function ContactPage() {
 return ( <div className="max-w-2xl mx-auto">
 
-```
+ 
   <h1 className="text-3xl font-bold mb-6">Contact Us</h1>
 
   <p className="mb-6 text-slate-600">
@@ -157,7 +156,7 @@ return ( <div className="max-w-2xl mx-auto">
   </p>
 
 </div>
-```
+ 
 
 );
 }
@@ -167,7 +166,7 @@ return ( <div className="max-w-2xl mx-auto">
 export function PrivacyPage() {
 return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-```
+ 
   <h1>Privacy Policy</h1>
 
   <p>Last updated: {new Date().toLocaleDateString()}</p>
@@ -237,7 +236,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
   </p>
 
 </div>
-```
+ 
 
 );
 }
@@ -247,7 +246,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
 export function TermsPage() {
 return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-```
+ 
   <h1>Terms and Conditions</h1>
 
   <p>
@@ -304,7 +303,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
   </p>
 
 </div>
-```
+ 
 
 );
 }
@@ -314,7 +313,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
 export function DisclaimerPage() {
 return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-```
+ 
   <h1>Disclaimer</h1>
 
   <p>
@@ -361,7 +360,7 @@ return ( <div className="prose prose-slate max-w-3xl mx-auto">
   </p>
 
 </div>
-```
+ 
 
 );
 }
