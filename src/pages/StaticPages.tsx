@@ -1,12 +1,11 @@
-import React from "react";
+ import React from "react";
 
 /* ABOUT PAGE */
 
 export function AboutPage() {
-return (
+return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-
-
+ 
   <h1>About Free AI Tools</h1>
 
   <p>
@@ -76,6 +75,7 @@ return (
   </p>
 
 </div>
+ 
 
 );
 }
@@ -83,10 +83,9 @@ return (
 /* CONTACT PAGE */
 
 export function ContactPage() {
-return (
+return ( <div className="max-w-2xl mx-auto">
 
-
-
+ 
   <h1 className="text-3xl font-bold mb-6">Contact Us</h1>
 
   <p className="mb-6 text-slate-600">
@@ -158,6 +157,7 @@ return (
   </p>
 
 </div>
+ 
 
 );
 }
@@ -165,10 +165,9 @@ return (
 /* PRIVACY POLICY */
 
 export function PrivacyPage() {
-return (
+return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-
-
+ 
   <h1>Privacy Policy</h1>
 
   <p>Last updated: {new Date().toLocaleDateString()}</p>
@@ -238,6 +237,7 @@ return (
   </p>
 
 </div>
+ 
 
 );
 }
@@ -245,10 +245,9 @@ return (
 /* TERMS */
 
 export function TermsPage() {
-return (
+return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-
-
+ 
   <h1>Terms and Conditions</h1>
 
   <p>
@@ -305,6 +304,7 @@ return (
   </p>
 
 </div>
+ 
 
 );
 }
@@ -312,10 +312,9 @@ return (
 /* DISCLAIMER */
 
 export function DisclaimerPage() {
-return (
+return ( <div className="prose prose-slate max-w-3xl mx-auto">
 
-
-
+ 
   <h1>Disclaimer</h1>
 
   <p>
@@ -362,6 +361,7 @@ return (
   </p>
 
 </div>
+ 
 
 );
 }
