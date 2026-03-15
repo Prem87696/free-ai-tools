@@ -301,7 +301,7 @@ Legal
 
 <li><Link to="/about">About</Link></li>
 <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-<li><Link to="/terms">Terms & Conditions</Link></li>
+<li><Link to="/terms-and-conditions">Terms & Conditions</Link></li>
 <li><Link to="/disclaimer">Disclaimer</Link></li>
 <li><Link to="/contact">Contact</Link></li>
 
