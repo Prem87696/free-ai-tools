@@ -11,17 +11,21 @@ return(
 
 <section className="mt-20">
 
-<div className="flex items-center gap-2 mb-6">
+{/* HEADER */}
 
-<Star className="text-indigo-600"/>
+<div className="flex items-center gap-2 mb-8">
 
-<h2 className="text-2xl font-bold">
+<Star className="text-indigo-600 w-5 h-5"/>
+
+<h2 className="text-2xl font-bold text-slate-900">
 Popular Tools
 </h2>
 
 </div>
 
-<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+{/* GRID */}
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
 {popular.map(tool=>{
 
@@ -32,23 +36,33 @@ return(
 <Link
 key={tool.id}
 to={tool.path}
-className="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-md hover:border-indigo-200 transition"
+className="group bg-white border border-slate-200 p-6 rounded-xl hover:shadow-lg hover:border-indigo-200 transition-all duration-300 flex flex-col"
 >
+
+{/* TOOL HEADER */}
 
 <div className="flex items-center gap-3 mb-3">
 
-<div className="p-2 bg-slate-100 rounded-lg text-indigo-600">
+<div className="p-2 bg-slate-100 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+
 <Icon size={18}/>
+
 </div>
 
-<h3 className="font-semibold">
+<h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+
 {tool.name}
+
 </h3>
 
 </div>
 
-<p className="text-sm text-slate-500">
+{/* DESCRIPTION */}
+
+<p className="text-sm text-slate-500 flex-grow">
+
 {tool.description}
+
 </p>
 
 </Link>
