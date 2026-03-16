@@ -1,10 +1,11 @@
- import React,{useState,useEffect,useRef} from "react"
+import React,{useState,useEffect,useRef} from "react"
 import {useParams,Navigate} from "react-router-dom"
 import {tools} from "../data/tools"
 import {generateContent} from "../services/aiRouter"
 import {toolEngine} from "../engine/toolEngine"
 import {SEOHead} from "../components/SEOHead"
 import {AdPlaceholder} from "../components/AdPlaceholder"
+import {RelatedTools} from "../components/RelatedTools"
 import {Loader2,Copy,Check,Sparkles} from "lucide-react"
 
 type Msg={role:"user"|"ai";text:string}
@@ -145,9 +146,7 @@ setLoading(false)
 
 const copy=(text:string,index:number)=>{
 
-if(navigator.clipboard){
-navigator.clipboard.writeText(text)
-}
+navigator.clipboard?.writeText(text)
 
 setCopied(index)
 
@@ -246,6 +245,12 @@ value={formData["message"]||""}
 onChange={(e)=>change("message",e.target.value)}
 placeholder="Ask anything..."
 className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
+onKeyDown={(e)=>{
+if(e.key==="Enter" && !e.shiftKey){
+e.preventDefault()
+chat(e as any)
+}
+}}
 />
 
 <button className="bg-indigo-600 text-white px-6 rounded-xl">
@@ -259,6 +264,8 @@ Send
 <AdPlaceholder slot="content" className="mt-8"/>
 
 {descriptionSection(tool.name)}
+
+<RelatedTools currentId={tool.id} category={tool.category}/>
 
 </div>
 
@@ -303,11 +310,29 @@ return(
 {input.label}
 </label>
 
+{input.type==="select" ?(
+
+<select
+className="w-full border border-slate-200 rounded-lg px-4 py-3"
+value={formData[input.name]||""}
+onChange={(e)=>change(input.name,e.target.value)}
+>
+
+{input.options?.map((opt:any)=>(
+<option key={opt}>{opt}</option>
+))}
+
+</select>
+
+):(
+
 <textarea
 className="w-full border border-slate-200 rounded-lg px-4 py-3"
-value={formData[input.name] || ""}
+value={formData[input.name]||""}
 onChange={(e)=>change(input.name,e.target.value)}
 />
+
+)}
 
 </div>
 
@@ -359,6 +384,8 @@ Generate Content
 
 {descriptionSection(tool.name)}
 
+<RelatedTools currentId={tool.id} category={tool.category}/>
+
 </div>
 
 </>
@@ -399,4 +426,3 @@ How to Use
 )
 
 }
-
