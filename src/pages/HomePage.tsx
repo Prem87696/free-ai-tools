@@ -2,6 +2,7 @@
 import {Link} from "react-router-dom"
 import {tools} from "../data/tools"
 import {SEOHead} from "../components/SEOHead"
+import {TrendingTools} from "../components/TrendingTools"
 import {ArrowRight,Sparkles,TrendingUp,Zap,Shield} from "lucide-react"
 
 export function HomePage(){
@@ -90,9 +91,13 @@ Try AI Chatbot
 
 </section>
 
+{/* TRENDING TOOLS */}
+
+<TrendingTools/>
+
 {/* CATEGORY FILTER */}
 
-<div className="flex flex-wrap justify-center gap-3 mb-12">
+<div className="flex flex-wrap justify-center gap-3 mb-12 mt-16">
 
 {categories.map(cat=>(
 
@@ -114,6 +119,14 @@ activeCategory===cat
 </div>
 
 {/* TOOLS GRID */}
+
+{filteredTools.length===0 ? (
+
+<div className="text-center py-20 text-slate-500">
+No tools available
+</div>
+
+):(
 
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
@@ -160,6 +173,8 @@ Try Tool <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transitio
 })}
 
 </div>
+
+)}
 
 {/* WHY USE */}
 
