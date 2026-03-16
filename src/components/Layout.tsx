@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import React,{useState} from "react"
+import {Link,Outlet} from "react-router-dom"
 import {
 Menu,
 X,
@@ -12,53 +12,68 @@ User,
 Image,
 FileImage,
 File,
-Scissors
-} from "lucide-react";
+Scissors,
+Search
+} from "lucide-react"
 
-import { AdPlaceholder } from "./AdPlaceholder";
-import PageTransition from "./PageTransition";
+import {AdPlaceholder} from "./AdPlaceholder"
+import PageTransition from "./PageTransition"
 
-export function Layout() {
+export function Layout(){
 
-const [isMenuOpen, setIsMenuOpen] = useState(false);
+const [isMenuOpen,setIsMenuOpen]=useState(false)
 
-const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+const toggleMenu=()=>setIsMenuOpen(!isMenuOpen)
 
-const navLinks = [
-{ name: "Home", path: "/" },
-{ name: "Tools", path: "/tools" },
-{ name: "About", path: "/about" },
-{ name: "Contact", path: "/contact" }
-];
+const navLinks=[
+{name:"Home",path:"/"},
+{name:"Tools",path:"/tools"},
+{name:"About",path:"/about"},
+{name:"Contact",path:"/contact"}
+]
 
-const toolItem =
-"flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-indigo-200 hover:bg-indigo-50 transition";
+const toolItem=
+"flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-indigo-200 hover:bg-indigo-50 transition"
 
-const iconBox =
-"p-2 rounded-lg bg-slate-100";
+const iconBox=
+"p-2 rounded-lg bg-slate-100"
 
-return (
+return(
 
-<div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
+<div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
 
 {/* HEADER */}
 
 <header className="bg-white border-b border-slate-100 sticky top-0 z-50">
 
-<div className="container mx-auto px-4 h-16 flex items-center justify-between">
+<div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
 <Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-600">
 
-<Bot className="w-8 h-8" />
+<Bot className="w-8 h-8"/>
 <span>AI Tools Platform</span>
 
 </Link>
+
+{/* SEARCH */}
+
+<div className="hidden md:flex items-center bg-slate-100 px-3 py-2 rounded-lg w-72">
+
+<Search size={18} className="text-slate-400 mr-2"/>
+
+<input
+type="text"
+placeholder="Search tools..."
+className="bg-transparent outline-none text-sm w-full"
+/>
+
+</div>
 
 {/* Desktop Nav */}
 
 <nav className="hidden md:flex items-center gap-6">
 
-{navLinks.map((link) => (
+{navLinks.map(link=>(
 
 <Link
 key={link.name}
@@ -74,7 +89,7 @@ className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
 
 <Link
 to="/tools"
-className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
 >
 
 Get Started
@@ -89,27 +104,27 @@ className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
 
 >
 
-{isMenuOpen ? <X /> : <Menu />}
+{isMenuOpen?<X/>:<Menu/>}
 
 </button>
 
 </div>
 
-{/* Mobile Menu */}
+{/* MOBILE MENU */}
 
-{isMenuOpen && (
+{isMenuOpen&&(
 
 <div className="md:hidden bg-white border-t border-slate-200 p-4">
 
 <nav className="flex flex-col gap-4">
 
-{navLinks.map((link) => (
+{navLinks.map(link=>(
 
 <Link
 key={link.name}
 to={link.path}
 className="text-slate-600 hover:text-indigo-600 font-medium py-2"
-onClick={() => setIsMenuOpen(false)}
+onClick={()=>setIsMenuOpen(false)}
 >
 
 {link.name}
@@ -128,13 +143,13 @@ onClick={() => setIsMenuOpen(false)}
 
 {/* HEADER ADS */}
 
-<div className="container mx-auto px-4">
-<AdPlaceholder slot="header" />
+<div className="max-w-7xl mx-auto px-4">
+<AdPlaceholder slot="header"/>
 </div>
 
 {/* MAIN */}
 
-<main className="flex-grow container mx-auto px-4 py-8">
+<main className="flex-grow max-w-7xl mx-auto px-4 py-8">
 
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
@@ -143,20 +158,20 @@ onClick={() => setIsMenuOpen(false)}
 <div className="lg:col-span-9">
 
 <PageTransition>
-<Outlet />
+<Outlet/>
 </PageTransition>
 
 </div>
 
 {/* SIDEBAR */}
 
-<aside className="lg:col-span-3 space-y-8">
+<aside className="lg:col-span-3 space-y-8 sticky top-24 h-fit">
 
 {/* AI TOOLS */}
 
-<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md hover:shadow-lg transition">
+<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
 
-<h3 className="font-bold text-lg mb-5 text-slate-900">
+<h3 className="font-bold text-lg mb-5">
 AI Tools
 </h3>
 
@@ -198,9 +213,9 @@ AI Tools
 
 {/* IMAGE TOOLS */}
 
-<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md hover:shadow-lg transition">
+<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
 
-<h3 className="font-bold text-lg mb-5 text-slate-900">
+<h3 className="font-bold text-lg mb-5">
 Image Tools
 </h3>
 
@@ -237,9 +252,9 @@ Image Tools
 
 {/* PDF TOOLS */}
 
-<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md hover:shadow-lg transition">
+<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
 
-<h3 className="font-bold text-lg mb-5 text-slate-900">
+<h3 className="font-bold text-lg mb-5">
 PDF Tools
 </h3>
 
@@ -284,137 +299,22 @@ PDF Tools
 
 {/* FOOTER ADS */}
 
-<div className="container mx-auto px-4">
-<AdPlaceholder slot="footer" />
+<div className="max-w-7xl mx-auto px-4">
+<AdPlaceholder slot="footer"/>
 </div>
 
 <footer className="bg-white border-t border-slate-100 mt-16">
 
-<div className="container mx-auto px-4 py-14">
+<div className="max-w-7xl mx-auto px-4 py-10 text-center text-sm text-slate-400">
 
-<div className="grid md:grid-cols-4 gap-10">
-
-{/* BRAND */}
-
-<div>
-
-<h3 className="text-xl font-bold text-indigo-600 mb-3">
-AI Tools Platform
-</h3>
-
-<p className="text-sm text-slate-500 leading-relaxed">
-AI Tools Platform is a powerful collection of modern
-online utilities designed to help creators, developers,
-students, freelancers, and businesses complete digital
-tasks faster using artificial intelligence and smart
-automation tools.
-</p>
-
-<p className="text-sm text-slate-500 mt-4 leading-relaxed">
-Our platform provides advanced AI content generators,
-image converters, and document tools that work directly
-inside your browser without requiring software installation.
-</p>
-
-</div>
-
-{/* AI TOOLS */}
-
-<div>
-
-<h4 className="font-semibold text-slate-900 mb-4">
-AI Writing Tools
-</h4>
-
-<ul className="space-y-2 text-sm text-slate-500">
-
-<li><Link to="/tools/ai-chatbot" className="hover:text-indigo-600">AI Chatbot</Link></li>
-
-<li><Link to="/tools/ai-blog-writer" className="hover:text-indigo-600">AI Blog Writer</Link></li>
-
-<li><Link to="/tools/ai-caption-generator" className="hover:text-indigo-600">Caption Generator</Link></li>
-
-<li><Link to="/tools/ai-email-writer" className="hover:text-indigo-600">AI Email Writer</Link></li>
-
-<li><Link to="/tools/ai-resume-builder" className="hover:text-indigo-600">Resume Builder</Link></li>
-
-<li><Link to="/tools/ai-hashtag-generator" className="hover:text-indigo-600">Hashtag Generator</Link></li>
-
-</ul>
-
-</div>
-
-{/* IMAGE TOOLS */}
-
-<div>
-
-<h4 className="font-semibold text-slate-900 mb-4">
-Image Tools
-</h4>
-
-<ul className="space-y-2 text-sm text-slate-500">
-
-<li><Link to="/tools/image-converter-ultra" className="hover:text-indigo-600">Image Converter Ultra</Link></li>
-
-<li><Link to="/tools/svg-to-png" className="hover:text-indigo-600">SVG to PNG</Link></li>
-
-<li><Link to="/tools/png-to-jpg" className="hover:text-indigo-600">PNG to JPG</Link></li>
-
-<li><Link to="/tools/webp-to-png" className="hover:text-indigo-600">WEBP to PNG</Link></li>
-
-<li><Link to="/tools/image-compressor" className="hover:text-indigo-600">Image Compressor</Link></li>
-
-</ul>
-
-</div>
-
-{/* LEGAL */}
-
-<div>
-
-<h4 className="font-semibold text-slate-900 mb-4">
-Company
-</h4>
-
-<ul className="space-y-2 text-sm text-slate-500">
-
-<li><Link to="/about" className="hover:text-indigo-600">About Us</Link></li>
-
-<li><Link to="/contact" className="hover:text-indigo-600">Contact</Link></li>
-
-<li><Link to="/privacy-policy" className="hover:text-indigo-600">Privacy Policy</Link></li>
-
-<li><Link to="/terms-and-conditions" className="hover:text-indigo-600">Terms & Conditions</Link></li>
-
-<li><Link to="/disclaimer" className="hover:text-indigo-600">Disclaimer</Link></li>
-
-</ul>
-
-</div>
-
-</div>
-
-{/* BOTTOM */}
-
-<div className="border-t border-slate-100 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between">
-
-<p className="text-sm text-slate-400">
-© {new Date().getFullYear()} AI Tools Platform. All rights reserved.
-</p>
-
-<p className="text-xs text-slate-400 mt-2 md:mt-0">
-Free AI tools for content generation, image conversion, and productivity.
-</p>
-
-</div>
+© {new Date().getFullYear()} AI Tools Platform
 
 </div>
 
 </footer>
 
-
 </div>
 
-);
+)
 
 }
