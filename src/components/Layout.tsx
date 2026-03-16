@@ -1,5 +1,5 @@
- import React,{useState} from "react"
-import {Link,Outlet} from "react-router-dom"
+import React,{useState} from "react"
+import {Link,Outlet,useNavigate} from "react-router-dom"
 import {
 Menu,
 X,
@@ -22,6 +22,9 @@ import PageTransition from "./PageTransition"
 export function Layout(){
 
 const [isMenuOpen,setIsMenuOpen]=useState(false)
+const [search,setSearch]=useState("")
+
+const navigate=useNavigate()
 
 const toggleMenu=()=>setIsMenuOpen(!isMenuOpen)
 
@@ -37,6 +40,14 @@ const toolItem=
 
 const iconBox=
 "p-2 rounded-lg bg-slate-100"
+
+/* SEARCH */
+
+const handleSearch=(e:any)=>{
+if(e.key==="Enter" && search.trim()){
+navigate(`/search?q=${search}`)
+}
+}
 
 return(
 
@@ -63,6 +74,9 @@ return(
 
 <input
 type="text"
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+onKeyDown={handleSearch}
 placeholder="Search tools..."
 className="bg-transparent outline-none text-sm w-full"
 />
@@ -101,7 +115,6 @@ Get Started
 <button
 onClick={toggleMenu}
 className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-
 >
 
 {isMenuOpen?<X/>:<Menu/>}
@@ -114,7 +127,24 @@ className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
 
 {isMenuOpen&&(
 
-<div className="md:hidden bg-white border-t border-slate-200 p-4">
+<div className="md:hidden bg-white border-t border-slate-200 p-4 space-y-4">
+
+{/* MOBILE SEARCH */}
+
+<div className="flex items-center bg-slate-100 px-3 py-2 rounded-lg">
+
+<Search size={18} className="text-slate-400 mr-2"/>
+
+<input
+type="text"
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+onKeyDown={handleSearch}
+placeholder="Search tools..."
+className="bg-transparent outline-none text-sm w-full"
+/>
+
+</div>
 
 <nav className="flex flex-col gap-4">
 
