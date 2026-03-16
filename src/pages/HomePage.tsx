@@ -1,4 +1,4 @@
-import React from "react"
+ import React,{useState} from "react"
 import {Link} from "react-router-dom"
 import {tools} from "../data/tools"
 import {SEOHead} from "../components/SEOHead"
@@ -8,12 +8,14 @@ export function HomePage(){
 
 const categories=["All","Social","Business","Writing","General"]
 
-const [activeCategory,setActiveCategory]=React.useState("All")
+const [activeCategory,setActiveCategory]=useState("All")
 
-const filteredTools=
+const filteredTools =
 activeCategory==="All"
-?tools
-:tools.filter(t=>t.category.toLowerCase()===activeCategory.toLowerCase())
+? tools
+: tools.filter(t =>
+t.category?.toLowerCase()===activeCategory.toLowerCase()
+)
 
 return(
 
@@ -34,16 +36,12 @@ description="Use free AI tools for writing, business, social media and productiv
 </div>
 
 <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
-
-Free AI Tools for <span className="text-indigo-600"> Creators</span>
-
+Free AI Tools for <span className="text-indigo-600">Creators</span>
 </h1>
 
 <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10">
-
 Boost productivity using powerful AI tools for writing,
 business automation, social media, and productivity.
-
 </p>
 
 <div className="flex flex-wrap justify-center gap-4">
@@ -52,18 +50,14 @@ business automation, social media, and productivity.
 to="/tools"
 className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition"
 >
-
 Explore Tools
-
 </Link>
 
 <Link
 to="/tools/ai-chatbot"
 className="bg-white border border-slate-200 px-6 py-3 rounded-xl font-medium hover:bg-slate-50 transition"
 >
-
 Try AI Chatbot
-
 </Link>
 
 </div>
@@ -113,9 +107,7 @@ activeCategory===cat
 
 >
 
-{cat}
-
-</button>
+{cat} </button>
 
 ))}
 
@@ -125,7 +117,11 @@ activeCategory===cat
 
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-{filteredTools.map(tool=>(
+{filteredTools.map(tool=>{
+
+const Icon=tool.icon
+
+return(
 
 <Link
 key={tool.id}
@@ -136,40 +132,32 @@ className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hove
 <div className="flex items-start justify-between mb-4">
 
 <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-
-<tool.icon className="w-6 h-6"/>
-
+<Icon className="w-6 h-6"/>
 </div>
 
 <span className="bg-slate-100 text-slate-500 text-xs font-semibold px-2 py-1 rounded uppercase tracking-wide">
-
 {tool.category}
-
 </span>
 
 </div>
 
 <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
-
 {tool.name}
-
 </h3>
 
 <p className="text-slate-500 text-sm mb-6 flex-grow">
-
 {tool.description}
-
 </p>
 
 <div className="flex items-center text-indigo-600 font-medium text-sm mt-auto">
-
 Try Tool <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"/>
-
 </div>
 
 </Link>
 
-))}
+)
+
+})}
 
 </div>
 
@@ -178,9 +166,7 @@ Try Tool <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transitio
 <section className="mt-20 bg-white p-10 rounded-2xl border border-slate-100">
 
 <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-
 Why Use Our Free AI Tools
-
 </h2>
 
 <div className="grid md:grid-cols-3 gap-10">
@@ -188,12 +174,13 @@ Why Use Our Free AI Tools
 <div className="text-center">
 
 <Zap className="mx-auto mb-3 text-indigo-600"/>
-<h3 className="font-bold text-lg mb-2">Instant Results</h3>
+
+<h3 className="font-bold text-lg mb-2">
+Instant Results
+</h3>
 
 <p className="text-slate-600 text-sm">
-
 Generate content and automate tasks in seconds using AI.
-
 </p>
 
 </div>
@@ -202,12 +189,12 @@ Generate content and automate tasks in seconds using AI.
 
 <TrendingUp className="mx-auto mb-3 text-indigo-600"/>
 
-<h3 className="font-bold text-lg mb-2">Boost Productivity</h3>
+<h3 className="font-bold text-lg mb-2">
+Boost Productivity
+</h3>
 
 <p className="text-slate-600 text-sm">
-
 Improve efficiency for business, marketing and writing tasks.
-
 </p>
 
 </div>
@@ -216,12 +203,12 @@ Improve efficiency for business, marketing and writing tasks.
 
 <Shield className="mx-auto mb-3 text-indigo-600"/>
 
-<h3 className="font-bold text-lg mb-2">Secure & Private</h3>
+<h3 className="font-bold text-lg mb-2">
+Secure & Private
+</h3>
 
 <p className="text-slate-600 text-sm">
-
 Your inputs are processed securely and not stored permanently.
-
 </p>
 
 </div>
