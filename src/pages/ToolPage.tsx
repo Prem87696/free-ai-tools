@@ -31,7 +31,7 @@ setResult("")
 
 useEffect(()=>{
 chatRef.current?.scrollTo({
-top:chatRef.current.scrollHeight,
+top:chatRef.current.scrollHeight+200,
 behavior:"smooth"
 })
 },[messages])
@@ -43,11 +43,15 @@ if(!tool) return <Navigate to="/404"/>
 if(ToolComponent){
 return(
 <>
-<SEOHead title={`${tool.name} - Free Tool`} description={tool.description}/>
+<SEOHead
+title={`${tool.name} - Free Tool`}
+description={`${tool.name} - Free online tool for fast processing. No signup required.`}
+/>
 
-<div className="max-w-5xl mx-auto">
+<div className="max-w-6xl mx-auto">
 <ToolComponent/>
 </div>
+
 </>
 )
 }
@@ -143,26 +147,73 @@ const Icon=tool.icon
 
 return(
 
-<> <SEOHead title={tool.name} description={tool.description}/>
+<>
+<SEOHead title={tool.name} description={tool.description}/>
 
-<div className="max-w-5xl mx-auto">
+<div className="max-w-6xl mx-auto">
+
+{/* HERO */}
 
 <div className="text-center mb-10">
 
 <div className="inline-flex p-4 rounded-xl bg-slate-100 text-indigo-600 mb-4 border border-slate-200 shadow-sm">
 <Icon className="w-8 h-8"/>
 </div>
+
 <h1 className="text-4xl font-bold text-slate-900">{tool.name}</h1>
 
 <p className="text-slate-500 mt-2 text-lg">
 Smart AI assistant to help you generate content instantly
 </p>
 
+{/* TRUST SIGNALS */}
+
+<div className="flex flex-wrap justify-center gap-3 mt-4 text-sm">
+
+<span className="bg-slate-100 px-3 py-1 rounded-full">⚡ Fast AI responses</span>
+<span className="bg-slate-100 px-3 py-1 rounded-full">🔒 Secure processing</span>
+<span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free tool</span>
+
 </div>
+
+</div>
+
+{/* CHAT UI */}
 
 <div className="bg-white border border-slate-200 rounded-2xl shadow-lg flex flex-col h-[540px] overflow-hidden">
 
 <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+
+{/* EXAMPLE PROMPTS */}
+
+{messages.length===0 &&(
+
+<div className="flex flex-wrap gap-2 mb-4">
+
+<button
+onClick={()=>change("message","Write a blog about AI")}
+className="text-xs bg-slate-200 px-3 py-1 rounded-lg hover:bg-slate-300"
+>
+Write blog
+</button>
+
+<button
+onClick={()=>change("message","Generate Instagram caption")}
+className="text-xs bg-slate-200 px-3 py-1 rounded-lg hover:bg-slate-300"
+>
+Instagram caption
+</button>
+
+<button
+onClick={()=>change("message","Explain quantum computing")}
+className="text-xs bg-slate-200 px-3 py-1 rounded-lg hover:bg-slate-300"
+>
+Explain quantum computing
+</button>
+
+</div>
+
+)}
 
 {messages.map((m,i)=>(
 
@@ -171,7 +222,7 @@ key={i}
 className={`max-w-[75%] px-4 py-3 rounded-xl text-sm shadow ${
 m.role==="user"
 ?"ml-auto bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
-:"bg-white border"
+:"bg-white border border-slate-200"
 }`}
 >
 
@@ -180,11 +231,8 @@ m.role==="user"
 <button
 onClick={()=>copy(m.text,i)}
 className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
-
 >
-
 {copied===i?<Check size={14}/>:<Copy size={14}/>}
-
 </button>
 
 </div>
@@ -213,6 +261,12 @@ value={formData["message"]||""}
 onChange={(e)=>change("message",e.target.value)}
 placeholder="Ask anything..."
 className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
+onKeyDown={(e)=>{
+if(e.key==="Enter" && !e.shiftKey){
+e.preventDefault()
+chat(e as any)
+}
+}}
 />
 
 <button className="bg-indigo-600 text-white px-6 rounded-xl">
@@ -244,7 +298,7 @@ return(
 <>
 <SEOHead title={tool.name} description={tool.description}/>
 
-<div className="max-w-5xl mx-auto">
+<div className="max-w-6xl mx-auto">
 
 <div className="text-center mb-10">
 
@@ -258,7 +312,7 @@ return(
 
 </div>
 
-<div className="bg-white border rounded-2xl p-8">
+<div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
 
 <form onSubmit={submit} className="space-y-6">
 
@@ -271,7 +325,7 @@ return(
 </label>
 
 <textarea
-className="w-full border rounded-lg px-4 py-3"
+className="w-full border border-slate-200 rounded-lg px-4 py-3"
 value={formData[input.name]||""}
 onChange={(e)=>change(input.name,e.target.value)}
 />
@@ -340,7 +394,7 @@ function descriptionSection(name:string){
 
 return(
 
-<section className="mt-12 bg-white border rounded-2xl p-8 space-y-6">
+<section className="mt-12 bg-white border border-slate-200 rounded-2xl p-8 space-y-6">
 
 <h2 className="text-2xl font-bold text-slate-900">
 About {name}
