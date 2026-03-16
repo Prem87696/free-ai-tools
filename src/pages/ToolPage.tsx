@@ -199,6 +199,12 @@ Smart AI assistant to help you generate content instantly
 <span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free</span>
 
 </div>
+{/* TOOL STATS */}
+
+<div className="mt-6">
+<ToolStats/>
+</div>
+
 
 </div>
 
