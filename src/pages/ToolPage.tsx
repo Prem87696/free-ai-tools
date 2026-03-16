@@ -1,4 +1,4 @@
-import React,{useState,useEffect,useRef} from "react"
+ import React,{useState,useEffect,useRef} from "react"
 import {useParams,Navigate} from "react-router-dom"
 import {tools} from "../data/tools"
 import {generateContent} from "../services/aiRouter"
@@ -12,7 +12,9 @@ type Msg={role:"user"|"ai";text:string}
 export function ToolPage(){
 
 const {toolId}=useParams()
+
 const tool=tools.find(t=>t.id===toolId)
+
 const ToolComponent=toolId?toolEngine[toolId]:null
 
 const [formData,setFormData]=useState<Record<string,string>>({})
@@ -23,19 +25,20 @@ const [copied,setCopied]=useState<number|null>(null)
 
 const chatRef=useRef<HTMLDivElement>(null)
 
+/* RESET WHEN TOOL CHANGES */
+
 useEffect(()=>{
 setFormData({})
 setMessages([])
 setResult("")
 },[toolId])
 
-/* SCROLL CHAT */
+/* AUTO SCROLL CHAT */
 
 useEffect(()=>{
-chatRef.current?.scrollTo({
-top:chatRef.current.scrollHeight,
-behavior:"smooth"
-})
+if(chatRef.current){
+chatRef.current.scrollTop=chatRef.current.scrollHeight
+}
 },[messages])
 
 if(!tool) return <Navigate to="/404"/>
@@ -82,7 +85,8 @@ try{
 let prompt=tool.promptTemplate || ""
 
 tool.inputs?.forEach(input=>{
-prompt=prompt.replaceAll(`{{${input.name}}}`,formData[input.name] || "")
+const value=formData[input.name] || ""
+prompt=prompt.split(`{{${input.name}}}`).join(value)
 })
 
 const res=await generateContent(prompt)
@@ -105,7 +109,7 @@ const chat=async(e:React.FormEvent)=>{
 
 e.preventDefault()
 
-const msg=formData["message"]||""
+const msg=formData["message"] || ""
 
 if(!msg.trim()) return
 
@@ -139,11 +143,13 @@ setLoading(false)
 
 /* COPY */
 
-const copy=(t:string,i:number)=>{
+const copy=(text:string,index:number)=>{
 
-navigator.clipboard?.writeText(t)
+if(navigator.clipboard){
+navigator.clipboard.writeText(text)
+}
 
-setCopied(i)
+setCopied(index)
 
 setTimeout(()=>setCopied(null),2000)
 
@@ -169,7 +175,9 @@ return(
 <Icon className="w-8 h-8"/>
 </div>
 
-<h1 className="text-4xl font-bold text-slate-900">{tool.name}</h1>
+<h1 className="text-4xl font-bold text-slate-900">
+{tool.name}
+</h1>
 
 <p className="text-slate-500 mt-2 text-lg">
 Smart AI assistant to help you generate content instantly
@@ -216,7 +224,7 @@ className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
 
 ))}
 
-{loading&&(
+{loading &&(
 
 <div className="flex items-center gap-2 text-sm text-slate-500">
 
@@ -260,7 +268,7 @@ Send
 
 }
 
-/* GENERATOR UI */
+/* GENERATOR TOOL */
 
 const Icon=tool.icon
 
@@ -297,7 +305,7 @@ return(
 
 <textarea
 className="w-full border border-slate-200 rounded-lg px-4 py-3"
-value={formData[input.name]||""}
+value={formData[input.name] || ""}
 onChange={(e)=>change(input.name,e.target.value)}
 />
 
@@ -307,7 +315,7 @@ onChange={(e)=>change(input.name,e.target.value)}
 
 <button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center gap-2">
 
-{loading?(
+{loading ?(
 <>
 <Loader2 className="w-5 h-5 animate-spin"/>
 Generating...
@@ -323,7 +331,7 @@ Generate Content
 
 </form>
 
-{result&&(
+{result &&(
 
 <div className="mt-6 border bg-slate-50 p-6 rounded-xl">
 
