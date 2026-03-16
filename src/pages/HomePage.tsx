@@ -1,8 +1,9 @@
- import React,{useState} from "react"
+import React,{useState} from "react"
 import {Link} from "react-router-dom"
 import {tools} from "../data/tools"
 import {SEOHead} from "../components/SEOHead"
 import {TrendingTools} from "../components/TrendingTools"
+import {PopularTools} from "../components/PopularTools"
 import {ArrowRight,Sparkles,TrendingUp,Zap,Shield} from "lucide-react"
 
 export function HomePage(){
@@ -94,6 +95,10 @@ Try AI Chatbot
 {/* TRENDING TOOLS */}
 
 <TrendingTools/>
+
+{/* POPULAR TOOLS */}
+
+<PopularTools/>
 
 {/* CATEGORY FILTER */}
 
