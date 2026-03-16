@@ -29,9 +29,11 @@ setMessages([])
 setResult("")
 },[toolId])
 
+/* SCROLL CHAT */
+
 useEffect(()=>{
 chatRef.current?.scrollTo({
-top:chatRef.current.scrollHeight+200,
+top:chatRef.current.scrollHeight,
 behavior:"smooth"
 })
 },[messages])
@@ -41,11 +43,13 @@ if(!tool) return <Navigate to="/404"/>
 /* FILE TOOL */
 
 if(ToolComponent){
+
 return(
+
 <>
 <SEOHead
 title={`${tool.name} - Free Tool`}
-description={`${tool.name} - Free online tool for fast processing. No signup required.`}
+description={`${tool.name} free online tool. Fast, secure and no signup required.`}
 />
 
 <div className="max-w-6xl mx-auto">
@@ -53,7 +57,9 @@ description={`${tool.name} - Free online tool for fast processing. No signup req
 </div>
 
 </>
+
 )
+
 }
 
 /* INPUT CHANGE */
@@ -73,10 +79,10 @@ setResult("")
 
 try{
 
-let prompt=tool.promptTemplate
+let prompt=tool.promptTemplate || ""
 
 tool.inputs?.forEach(input=>{
-prompt=prompt.replace(`{{${input.name}}}`,formData[input.name]||"")
+prompt=prompt.replaceAll(`{{${input.name}}}`,formData[input.name] || "")
 })
 
 const res=await generateContent(prompt)
@@ -134,9 +140,13 @@ setLoading(false)
 /* COPY */
 
 const copy=(t:string,i:number)=>{
-navigator.clipboard.writeText(t)
+
+navigator.clipboard?.writeText(t)
+
 setCopied(i)
+
 setTimeout(()=>setCopied(null),2000)
+
 }
 
 /* CHATBOT */
@@ -147,8 +157,7 @@ const Icon=tool.icon
 
 return(
 
-<>
-<SEOHead title={tool.name} description={tool.description}/>
+<> <SEOHead title={tool.name} description={tool.description}/>
 
 <div className="max-w-6xl mx-auto">
 
@@ -156,7 +165,7 @@ return(
 
 <div className="text-center mb-10">
 
-<div className="inline-flex p-4 rounded-xl bg-slate-100 text-indigo-600 mb-4 border border-slate-200 shadow-sm">
+<div className="inline-flex p-4 rounded-xl bg-slate-100 text-indigo-600 mb-4 border border-slate-200">
 <Icon className="w-8 h-8"/>
 </div>
 
@@ -166,60 +175,25 @@ return(
 Smart AI assistant to help you generate content instantly
 </p>
 
-{/* TRUST SIGNALS */}
-
 <div className="flex flex-wrap justify-center gap-3 mt-4 text-sm">
 
-<span className="bg-slate-100 px-3 py-1 rounded-full">⚡ Fast AI responses</span>
-<span className="bg-slate-100 px-3 py-1 rounded-full">🔒 Secure processing</span>
-<span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free tool</span>
+<span className="bg-slate-100 px-3 py-1 rounded-full">⚡ Fast AI</span> <span className="bg-slate-100 px-3 py-1 rounded-full">🔒 Secure</span> <span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free</span>
 
 </div>
 
 </div>
 
-{/* CHAT UI */}
+{/* CHAT */}
 
 <div className="bg-white border border-slate-200 rounded-2xl shadow-lg flex flex-col h-[540px] overflow-hidden">
 
 <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
 
-{/* EXAMPLE PROMPTS */}
-
-{messages.length===0 &&(
-
-<div className="flex flex-wrap gap-2 mb-4">
-
-<button
-onClick={()=>change("message","Write a blog about AI")}
-className="text-xs bg-slate-200 px-3 py-1 rounded-lg hover:bg-slate-300"
->
-Write blog
-</button>
-
-<button
-onClick={()=>change("message","Generate Instagram caption")}
-className="text-xs bg-slate-200 px-3 py-1 rounded-lg hover:bg-slate-300"
->
-Instagram caption
-</button>
-
-<button
-onClick={()=>change("message","Explain quantum computing")}
-className="text-xs bg-slate-200 px-3 py-1 rounded-lg hover:bg-slate-300"
->
-Explain quantum computing
-</button>
-
-</div>
-
-)}
-
 {messages.map((m,i)=>(
 
 <div
 key={i}
-className={`max-w-[75%] px-4 py-3 rounded-xl text-sm shadow ${
+className={`max-w-[75%] px-4 py-3 rounded-xl text-sm ${
 m.role==="user"
 ?"ml-auto bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
 :"bg-white border border-slate-200"
@@ -231,8 +205,11 @@ m.role==="user"
 <button
 onClick={()=>copy(m.text,i)}
 className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
+
 >
+
 {copied===i?<Check size={14}/>:<Copy size={14}/>}
+
 </button>
 
 </div>
@@ -261,12 +238,6 @@ value={formData["message"]||""}
 onChange={(e)=>change("message",e.target.value)}
 placeholder="Ask anything..."
 className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
-onKeyDown={(e)=>{
-if(e.key==="Enter" && !e.shiftKey){
-e.preventDefault()
-chat(e as any)
-}
-}}
 />
 
 <button className="bg-indigo-600 text-white px-6 rounded-xl">
@@ -388,7 +359,7 @@ Generate Content
 
 }
 
-/* DESCRIPTION + FAQ */
+/* DESCRIPTION */
 
 function descriptionSection(name:string){
 
@@ -396,46 +367,28 @@ return(
 
 <section className="mt-12 bg-white border border-slate-200 rounded-2xl p-8 space-y-6">
 
-<h2 className="text-2xl font-bold text-slate-900">
+<h2 className="text-2xl font-bold">
 About {name}
 </h2>
 
 <p className="text-slate-600">
-{name} is a powerful online tool designed to help users complete
-tasks quickly using modern web technology.
-The system processes requests instantly without requiring software installation.
+{name} helps users complete tasks faster using modern web technology.
+No installation required and works instantly inside the browser.
 </p>
 
-<p className="text-slate-600">
-This tool is ideal for students, developers, marketers,
-freelancers, and professionals who want to improve productivity.
-</p>
-
-<h3 className="text-xl font-semibold text-slate-900">
+<h3 className="text-xl font-semibold">
 How to Use
 </h3>
 
 <ul className="list-disc pl-6 text-slate-600 space-y-2">
-<li>Enter your input or upload a file</li>
-<li>Click generate or process</li>
-<li>Copy or download the result</li>
+<li>Enter your input</li>
+<li>Click generate</li>
+<li>Copy the result</li>
 </ul>
-
-<h3 className="text-xl font-semibold text-slate-900">
-FAQ
-</h3>
-
-<p><strong>Is this tool free?</strong><br/>
-Yes, the tool is free and works directly in your browser.</p>
-
-<p><strong>Do I need to install anything?</strong><br/>
-No installation is required.</p>
-
-<p><strong>Is my data stored?</strong><br/>
-No. Data is processed temporarily for generating results.</p>
 
 </section>
 
 )
 
 }
+
