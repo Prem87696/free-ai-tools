@@ -6,6 +6,7 @@ import {toolEngine} from "../engine/toolEngine"
 import {SEOHead} from "../components/SEOHead"
 import {AdPlaceholder} from "../components/AdPlaceholder"
 import {RelatedTools} from "../components/RelatedTools"
+import { ToolStats } from "../components/ToolStats"
 import {Loader2,Copy,Check,Sparkles} from "lucide-react"
 
 type Msg={role:"user"|"ai";text:string}
