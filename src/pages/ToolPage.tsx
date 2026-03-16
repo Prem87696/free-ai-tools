@@ -12,11 +12,11 @@ type Msg={role:"user"|"ai";text:string}
 
 export function ToolPage(){
 
-const {toolId}=useParams()
+const {toolId}=useParams<{toolId:string}>()
 
 const tool=tools.find(t=>t.id===toolId)
 
-const ToolComponent=toolId?toolEngine[toolId]:null
+const ToolComponent=toolId ? toolEngine[toolId] : null
 
 const [formData,setFormData]=useState<Record<string,string>>({})
 const [messages,setMessages]=useState<Msg[]>([])
@@ -52,8 +52,10 @@ return(
 
 <>
 <SEOHead
-title={`${tool.name} - Free Tool`}
-description={`${tool.name} free online tool. Fast, secure and no signup required.`}
+title={`${tool.name} – Free AI Tool`}
+description={`Use ${tool.name} online for free. Fast AI powered tool for generating results instantly. No signup required.`}
+canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
+keywords={`${tool.name}, free ai tool, ai tools online, ${tool.category} ai tool`}
 />
 
 <div className="max-w-6xl mx-auto">
@@ -87,7 +89,7 @@ let prompt=tool.promptTemplate || ""
 
 tool.inputs?.forEach(input=>{
 const value=formData[input.name] || ""
-prompt=prompt.split(`{{${input.name}}}`).join(value)
+prompt=prompt.replaceAll(`{{${input.name}}}`,value)
 })
 
 const res=await generateContent(prompt)
@@ -115,7 +117,9 @@ const msg=formData["message"] || ""
 if(!msg.trim()) return
 
 setMessages(prev=>[...prev,{role:"user",text:msg}])
+
 setFormData({message:""})
+
 setLoading(true)
 
 try{
@@ -162,7 +166,12 @@ const Icon=tool.icon
 
 return(
 
-<> <SEOHead title={tool.name} description={tool.description}/>
+<>
+<SEOHead
+title={`${tool.name} – Free AI Tool`}
+description={tool.description}
+canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
+/>
 
 <div className="max-w-6xl mx-auto">
 
@@ -184,7 +193,9 @@ Smart AI assistant to help you generate content instantly
 
 <div className="flex flex-wrap justify-center gap-3 mt-4 text-sm">
 
-<span className="bg-slate-100 px-3 py-1 rounded-full">⚡ Fast AI</span> <span className="bg-slate-100 px-3 py-1 rounded-full">🔒 Secure</span> <span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free</span>
+<span className="bg-slate-100 px-3 py-1 rounded-full">⚡ Fast AI</span>
+<span className="bg-slate-100 px-3 py-1 rounded-full">🔒 Secure</span>
+<span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free</span>
 
 </div>
 
@@ -212,7 +223,6 @@ m.role==="user"
 <button
 onClick={()=>copy(m.text,i)}
 className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100"
-
 >
 
 {copied===i?<Check size={14}/>:<Copy size={14}/>}
@@ -245,12 +255,6 @@ value={formData["message"]||""}
 onChange={(e)=>change("message",e.target.value)}
 placeholder="Ask anything..."
 className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
-onKeyDown={(e)=>{
-if(e.key==="Enter" && !e.shiftKey){
-e.preventDefault()
-chat(e as any)
-}
-}}
 />
 
 <button className="bg-indigo-600 text-white px-6 rounded-xl">
@@ -282,7 +286,11 @@ const Icon=tool.icon
 return(
 
 <>
-<SEOHead title={tool.name} description={tool.description}/>
+<SEOHead
+title={`${tool.name} – Free AI Tool`}
+description={tool.description}
+canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
+/>
 
 <div className="max-w-6xl mx-auto">
 
@@ -310,29 +318,11 @@ return(
 {input.label}
 </label>
 
-{input.type==="select" ?(
-
-<select
-className="w-full border border-slate-200 rounded-lg px-4 py-3"
-value={formData[input.name]||""}
-onChange={(e)=>change(input.name,e.target.value)}
->
-
-{input.options?.map((opt:any)=>(
-<option key={opt}>{opt}</option>
-))}
-
-</select>
-
-):(
-
 <textarea
 className="w-full border border-slate-200 rounded-lg px-4 py-3"
 value={formData[input.name]||""}
 onChange={(e)=>change(input.name,e.target.value)}
 />
-
-)}
 
 </div>
 
