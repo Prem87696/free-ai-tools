@@ -11,11 +11,21 @@ const {slug}=useParams<{slug:string}>()
 const [content,setContent]=useState("")
 const [loading,setLoading]=useState(false)
 
-/* SAFE TITLE */
+/* TITLE */
 const title = slug ? slug.replaceAll("-"," ") : "AI Guide"
 
-/* GENERATE BLOG */
+/* GENERATE WITH CACHE */
 const generateBlog=async(currentTitle:string)=>{
+
+const key = "blog-" + currentTitle
+
+/* ✅ CACHE CHECK */
+const cached = localStorage.getItem(key)
+
+if(cached){
+setContent(cached)
+return
+}
 
 setLoading(true)
 
@@ -35,6 +45,9 @@ Include:
 
 const res = await generateContent(prompt)
 
+/* ✅ SAVE CACHE */
+localStorage.setItem(key,res)
+
 setContent(res)
 
 }catch{
@@ -45,7 +58,7 @@ setLoading(false)
 
 }
 
-/* AUTO GENERATE */
+/* AUTO LOAD */
 useEffect(()=>{
 if(title){
 generateBlog(title)
@@ -66,7 +79,6 @@ canonicalUrl={`https://free-ai-tools-lac.vercel.app/blog/${slug}`}
 {title}
 </h1>
 
-{/* BUTTON */}
 <button
 onClick={()=>generateBlog(title)}
 className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
@@ -74,7 +86,6 @@ className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
 {loading ? <Loader2 className="animate-spin"/> : "Regenerate Article"}
 </button>
 
-{/* CONTENT */}
 <div className="prose max-w-none whitespace-pre-wrap">
 
 {loading ? (
@@ -86,7 +97,7 @@ Generating content...
 
 </div>
 
-{/* 🔥 RELATED BLOGS */}
+{/* RELATED BLOGS */}
 <div className="mt-10">
 <h2 className="text-xl font-bold mb-4">
 Related Guides
@@ -114,7 +125,7 @@ className="border p-4 rounded-xl hover:shadow"
 </div>
 </div>
 
-{/* 🔗 TOOL CTA */}
+{/* TOOL CTA */}
 <div className="mt-10 text-center">
 
 <h2 className="text-xl font-bold mb-4">
