@@ -8,217 +8,218 @@ import {ArrowRight,Sparkles,TrendingUp,Zap,Shield} from "lucide-react"
 
 export function HomePage(){
 
-  const allTools:ToolConfig[] = getAllTools()
+/* ✅ MEMO FIX */
+const allTools:ToolConfig[] = useMemo(()=>getAllTools(),[])
 
-  const categories = ["All","Social","Business","Writing","General"]
+const categories = ["All","Social","Business","Writing","General"]
 
-  const [activeCategory,setActiveCategory]=useState<string>("All")
+const [activeCategory,setActiveCategory]=useState<string>("All")
 
-  /* ✅ FILTER (optimized) */
-  const filteredTools = useMemo(()=>{
+/* FILTER */
+const filteredTools = useMemo(()=>{
 
-    if(activeCategory === "All") return allTools
+if(activeCategory==="All") return allTools
 
-    return allTools.filter(t =>
-      t.category?.toLowerCase() === activeCategory.toLowerCase()
-    )
+return allTools.filter(t =>
+t.category?.toLowerCase()===activeCategory.toLowerCase()
+)
 
-  },[activeCategory,allTools])
+},[activeCategory,allTools])
 
-  return(
+return(
 
-    <>
+<>
 
-      <SEOHead
-        title="Free AI Tools Platform - Generate Content Instantly"
-        description="Use free AI tools for writing, business, social media and productivity. No signup required."
-      />
+<SEOHead
+title="Free AI Tools Platform - Generate Content Instantly"
+description="Use free AI tools for writing, business, social media and productivity. No signup required."
+/>
 
-      {/* HERO */}
-      <section className="text-center py-16 md:py-24">
+{/* HERO */}
+<section className="text-center py-16 md:py-24">
 
-        <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-          <Sparkles className="w-4 h-4"/>
-          <span>AI Powered Productivity Tools</span>
-        </div>
+<div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-sm mb-6">
+<Sparkles className="w-4 h-4"/>
+<span>AI Powered Productivity Tools</span>
+</div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
-          Free AI Tools for <span className="text-indigo-600">Creators</span>
-        </h1>
+<h1 className="text-4xl md:text-6xl font-extrabold mb-6">
+Free AI Tools for <span className="text-indigo-600">Creators</span>
+</h1>
 
-        <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10">
-          Boost productivity using powerful AI tools for writing,
-          business automation, social media, and productivity.
-        </p>
+<p className="text-lg text-slate-600 max-w-2xl mx-auto mb-10">
+Boost productivity using powerful AI tools for writing,
+business automation, social media, and productivity.
+</p>
 
-        <div className="flex flex-wrap justify-center gap-4">
+<div className="flex flex-wrap justify-center gap-4">
 
-          <Link
-            to="/tools"
-            className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition"
-          >
-            Explore Tools
-          </Link>
+<Link
+to="/tools"
+className="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition"
+>
+Explore Tools
+</Link>
 
-          <Link
-            to="/tools/ai-chatbot"
-            className="bg-white border border-slate-200 px-6 py-3 rounded-xl font-medium hover:bg-slate-50 transition"
-          >
-            Try AI Chatbot
-          </Link>
+<Link
+to="/tools/ai-chatbot"
+className="bg-white border px-6 py-3 rounded-xl hover:bg-slate-50 transition"
+>
+Try AI Chatbot
+</Link>
 
-        </div>
+</div>
 
-        {/* STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-14">
+{/* STATS */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-14">
 
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-2xl font-bold text-indigo-600">{allTools.length}+</p>
-            <p className="text-sm text-slate-500">AI Tools</p>
-          </div>
+<div className="bg-white border p-4 rounded-xl">
+<p className="text-2xl font-bold text-indigo-600">{allTools.length}+</p>
+<p className="text-sm text-slate-500">AI Tools</p>
+</div>
 
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-2xl font-bold text-indigo-600">100%</p>
-            <p className="text-sm text-slate-500">Free</p>
-          </div>
+<div className="bg-white border p-4 rounded-xl">
+<p className="text-2xl font-bold text-indigo-600">100%</p>
+<p className="text-sm text-slate-500">Free</p>
+</div>
 
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-2xl font-bold text-indigo-600">Fast</p>
-            <p className="text-sm text-slate-500">Processing</p>
-          </div>
+<div className="bg-white border p-4 rounded-xl">
+<p className="text-2xl font-bold text-indigo-600">Fast</p>
+<p className="text-sm text-slate-500">Processing</p>
+</div>
 
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-2xl font-bold text-indigo-600">Secure</p>
-            <p className="text-sm text-slate-500">Private</p>
-          </div>
+<div className="bg-white border p-4 rounded-xl">
+<p className="text-2xl font-bold text-indigo-600">Secure</p>
+<p className="text-sm text-slate-500">Private</p>
+</div>
 
-        </div>
+</div>
 
-      </section>
+</section>
 
-      {/* TRENDING */}
-      <TrendingTools/>
+{/* 🔥 TRENDING */}
+<TrendingTools/>
 
-      {/* POPULAR */}
-      <PopularTools/>
+{/* ⭐ POPULAR */}
+<PopularTools/>
 
-      {/* FILTER */}
-      <div className="flex flex-wrap justify-center gap-3 mb-12 mt-16">
+{/* CATEGORY FILTER */}
+<div className="flex flex-wrap justify-center gap-3 mt-16 mb-10">
 
-        {categories.map(cat=>(
+{categories.map(cat=>(
 
-          <button
-            key={cat}
-            onClick={()=>setActiveCategory(cat)}
-            className={`px-6 py-2 rounded-full text-sm transition ${
-              activeCategory===cat
-                ?"bg-indigo-600 text-white shadow"
-                :"bg-white border text-slate-600 hover:bg-slate-50"
-            }`}
-          >
-            {cat}
-          </button>
+<button
+key={cat}
+onClick={()=>setActiveCategory(cat)}
+className={`px-6 py-2 rounded-full text-sm transition ${
+activeCategory===cat
+?"bg-indigo-600 text-white"
+:"bg-white border text-slate-600 hover:bg-slate-50"
+}`}
+>
+{cat}
+</button>
 
-        ))}
+))}
 
-      </div>
+</div>
 
-      {/* GRID */}
-      {filteredTools.length===0 ? (
+{/* GRID */}
+{filteredTools.length===0 ? (
 
-        <div className="text-center py-20 text-slate-500">
-          No tools available
-        </div>
+<div className="text-center py-20 text-slate-500">
+No tools available
+</div>
 
-      ):(
+):( 
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          {filteredTools.map(tool=>{
+{filteredTools.map(tool=>{
 
-            const Icon=tool.icon
+const Icon = tool.icon
 
-            return(
+return(
 
-              <Link
-                key={tool.id}
-                to={tool.path}
-                className="group bg-white p-6 rounded-2xl border border-slate-200 hover:shadow-lg hover:border-indigo-200 transition"
-              >
+<Link
+key={tool.id}
+to={tool.path}
+className="group bg-white p-6 rounded-2xl border hover:shadow-lg hover:border-indigo-200 transition"
+>
 
-                <div className="flex justify-between mb-4">
+<div className="flex justify-between mb-4">
 
-                  <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition">
-                    <Icon className="w-6 h-6"/>
-                  </div>
+<div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition">
+<Icon className="w-6 h-6"/>
+</div>
 
-                  <span className="text-xs bg-slate-100 px-2 py-1 rounded uppercase">
-                    {tool.category}
-                  </span>
+<span className="text-xs bg-slate-100 px-2 py-1 rounded uppercase">
+{tool.category}
+</span>
 
-                </div>
+</div>
 
-                <h3 className="text-xl font-bold mb-2 group-hover:text-indigo-600 transition">
-                  {tool.name}
-                </h3>
+<h3 className="text-lg font-bold mb-2 group-hover:text-indigo-600">
+{tool.name}
+</h3>
 
-                <p className="text-sm text-slate-500 mb-4 line-clamp-2">
-                  {tool.description}
-                </p>
+<p className="text-sm text-slate-500 mb-4 line-clamp-2">
+{tool.description}
+</p>
 
-                <div className="text-indigo-600 text-sm flex items-center">
-                  Try Tool <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition"/>
-                </div>
+<div className="text-indigo-600 text-sm flex items-center">
+Try Tool <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition"/>
+</div>
 
-              </Link>
+</Link>
 
-            )
+)
 
-          })}
+})}
 
-        </div>
+</div>
 
-      )}
+)}
 
-      {/* WHY */}
-      <section className="mt-20 bg-white p-10 rounded-2xl border border-slate-100">
+{/* WHY */}
+<section className="mt-20 bg-white p-10 rounded-2xl border">
 
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Why Use Our Free AI Tools
-        </h2>
+<h2 className="text-3xl font-bold text-center mb-8">
+Why Use Our Free AI Tools
+</h2>
 
-        <div className="grid md:grid-cols-3 gap-10">
+<div className="grid md:grid-cols-3 gap-10">
 
-          <div className="text-center">
-            <Zap className="mx-auto mb-3 text-indigo-600"/>
-            <h3 className="font-bold">Instant Results</h3>
-            <p className="text-sm text-slate-600">
-              Generate content instantly
-            </p>
-          </div>
+<div className="text-center">
+<Zap className="mx-auto mb-3 text-indigo-600"/>
+<h3 className="font-bold">Instant Results</h3>
+<p className="text-sm text-slate-600">
+Generate content instantly
+</p>
+</div>
 
-          <div className="text-center">
-            <TrendingUp className="mx-auto mb-3 text-indigo-600"/>
-            <h3 className="font-bold">Boost Productivity</h3>
-            <p className="text-sm text-slate-600">
-              Improve efficiency using AI
-            </p>
-          </div>
+<div className="text-center">
+<TrendingUp className="mx-auto mb-3 text-indigo-600"/>
+<h3 className="font-bold">Boost Productivity</h3>
+<p className="text-sm text-slate-600">
+Improve efficiency using AI
+</p>
+</div>
 
-          <div className="text-center">
-            <Shield className="mx-auto mb-3 text-indigo-600"/>
-            <h3 className="font-bold">Secure</h3>
-            <p className="text-sm text-slate-600">
-              Your data stays private
-            </p>
-          </div>
+<div className="text-center">
+<Shield className="mx-auto mb-3 text-indigo-600"/>
+<h3 className="font-bold">Secure</h3>
+<p className="text-sm text-slate-600">
+Your data stays private
+</p>
+</div>
 
-        </div>
+</div>
 
-      </section>
+</section>
 
-    </>
+</>
 
-  )
+)
 
 }
