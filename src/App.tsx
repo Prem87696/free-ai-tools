@@ -1,4 +1,4 @@
- import React from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
@@ -6,7 +6,9 @@ import { Layout } from "./components/Layout";
 import { HomePage } from "./pages/HomePage";
 import { ToolPage } from "./pages/ToolPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
-import { BlogPage } from "./pages/BlogPage"; // ✅ NEW
+import { BlogPage } from "./pages/BlogPage";
+import { BlogListPage } from "./pages/BlogListPage"; // ✅ NEW
+import { AdminPage } from "./pages/AdminPage"; // ✅ NEW
 
 import {
   AboutPage,
@@ -37,7 +39,7 @@ export default function App() {
             {/* HOME */}
             <Route index element={<HomePage />} />
 
-            {/* TOOL PAGE (OLD + NEW SEO SAFE) */}
+            {/* TOOL PAGE */}
             <Route path="tools/:toolId" element={<ToolPage />} />
             <Route path="tool/:toolId" element={<ToolPage />} />
 
@@ -48,8 +50,12 @@ export default function App() {
             <Route path="categories" element={<ToolCategoriesPage />} />
             <Route path="category/:category" element={<CategoryPage />} />
 
-            {/* BLOG SYSTEM ✅ */}
-            <Route path="blog/:slug" element={<BlogPage />} />
+            {/* BLOG */}
+            <Route path="blog" element={<BlogListPage />} /> {/* list */}
+            <Route path="blog/:slug" element={<BlogPage />} /> {/* detail */}
+
+            {/* ADMIN */}
+            <Route path="admin" element={<AdminPage />} />
 
             {/* STATIC */}
             <Route path="about" element={<AboutPage />} />
