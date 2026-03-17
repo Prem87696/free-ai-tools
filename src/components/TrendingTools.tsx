@@ -1,83 +1,96 @@
 import React,{useEffect,useState} from "react"
 import { Link } from "react-router-dom"
-import { getAllTools } from "../data/tools"
+import { getAllTools, ToolConfig } from "../data/tools"
 import { TrendingUp } from "lucide-react"
 
 export function TrendingTools(){
 
-const [trending,setTrending]=useState<any[]>([])
+  const [trending,setTrending]=useState<ToolConfig[]>([])
 
-useEffect(()=>{
+  useEffect(()=>{
 
-const allTools = getAllTools()
+    try{
 
-const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
+      const allTools = getAllTools()
 
-/* SORT BY USAGE */
-const sorted = [...allTools].sort((a,b)=>{
-return (stats[b.name] || 0) - (stats[a.name] || 0)
-})
+      /* ✅ SAFE STORAGE READ */
+      const stats = typeof window !== "undefined"
+        ? JSON.parse(localStorage.getItem("analytics") || "{}")
+        : {}
 
-setTrending(sorted.slice(0,6))
+      /* ✅ SORT BY USAGE */
+      const sorted = [...allTools].sort((a,b)=>{
+        return (stats[b.name] || 0) - (stats[a.name] || 0)
+      })
 
-},[])
+      /* ✅ FALLBACK (if no analytics yet) */
+      const fallback = allTools.filter(t=>t.trending)
 
-if(trending.length === 0) return null
+      setTrending(sorted.length ? sorted.slice(0,6) : fallback.slice(0,6))
 
-return(
+    }catch{
+      setTrending([])
+    }
 
-<section className="mt-20">
+  },[])
 
-<div className="flex items-center gap-2 mb-6">
+  /* ❌ NO DATA */
+  if(!trending || trending.length === 0) return null
 
-<TrendingUp className="text-indigo-600"/>
+  return(
 
-<h2 className="text-2xl font-bold">
-🔥 Trending Tools
-</h2>
+    <section className="mt-20">
 
-</div>
+      <div className="flex items-center gap-2 mb-6">
 
-<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <TrendingUp className="text-indigo-600"/>
 
-{trending.map(tool=>{
+        <h2 className="text-2xl font-bold">
+          🔥 Trending Tools
+        </h2>
 
-const Icon = tool.icon
+      </div>
 
-return(
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-<Link
-key={tool.id}
-to={tool.path}
-className="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-md hover:border-indigo-200 transition"
->
+        {trending.map(tool=>{
 
-<div className="flex items-center gap-3 mb-3">
+          const Icon = tool.icon
 
-<div className="p-2 bg-slate-100 rounded-lg text-indigo-600">
-<Icon size={18}/>
-</div>
+          return(
 
-<h3 className="font-semibold">
-{tool.name}
-</h3>
+            <Link
+              key={tool.id}
+              to={tool.path}
+              className="group bg-white border border-slate-200 p-6 rounded-xl hover:shadow-md hover:border-indigo-200 transition"
+            >
 
-</div>
+              <div className="flex items-center gap-3 mb-3">
 
-<p className="text-sm text-slate-500">
-{tool.description}
-</p>
+                <div className="p-2 bg-slate-100 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
+                  <Icon size={18}/>
+                </div>
 
-</Link>
+                <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 transition">
+                  {tool.name}
+                </h3>
 
-)
+              </div>
 
-})}
+              <p className="text-sm text-slate-500 line-clamp-2">
+                {tool.description}
+              </p>
 
-</div>
+            </Link>
 
-</section>
+          )
 
-)
+        })}
+
+      </div>
+
+    </section>
+
+  )
 
 }
