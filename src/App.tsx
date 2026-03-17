@@ -5,11 +5,12 @@ import { HelmetProvider } from "react-helmet-async";
 import { Layout } from "./components/Layout";
 import { HomePage } from "./pages/HomePage";
 import { ToolPage } from "./pages/ToolPage";
+import { ToolsPage } from "./pages/ToolsPage"; // ✅ NEW
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
 import { BlogPage } from "./pages/BlogPage";
 import { BlogListPage } from "./pages/BlogListPage";
 import { AdminPage } from "./pages/AdminPage";
-import { AnalyticsPage } from "./pages/AnalyticsPage"; // ✅ NEW
+import { AnalyticsPage } from "./pages/AnalyticsPage";
 
 import {
   AboutPage,
@@ -40,8 +41,13 @@ export default function App() {
             {/* HOME */}
             <Route index element={<HomePage />} />
 
-            {/* TOOL PAGE (SEO SAFE) */}
+            {/* ✅ ALL TOOLS PAGE (FIXED) */}
+            <Route path="tools" element={<ToolsPage />} />
+
+            {/* TOOL PAGE */}
             <Route path="tools/:toolId" element={<ToolPage />} />
+
+            {/* OLD URL REDIRECT */}
             <Route path="tool/:toolId" element={<Navigate to="/tools/:toolId" replace />} />
 
             {/* SEARCH */}
@@ -58,7 +64,7 @@ export default function App() {
             {/* ADMIN */}
             <Route path="admin" element={<AdminPage />} />
 
-            {/* ANALYTICS ✅ */}
+            {/* ANALYTICS */}
             <Route path="analytics" element={<AnalyticsPage />} />
 
             {/* STATIC */}
