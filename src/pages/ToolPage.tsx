@@ -2,7 +2,6 @@ import React,{useState,useEffect} from "react"
 import {useParams,Navigate} from "react-router-dom"
 import { getAllTools, ToolConfig } from "../data/tools"
 import {generateContent} from "../services/aiRouter"
-import {toolEngine} from "../engine/toolEngine"
 import {SEOHead} from "../components/SEOHead"
 import {AdPlaceholder} from "../components/AdPlaceholder"
 import {RelatedTools} from "../components/RelatedTools"
@@ -12,9 +11,8 @@ export function ToolPage(){
 
 const {toolId}=useParams<{toolId:string}>()
 
-const tool:ToolConfig | undefined = getAllTools().find(t=>t.id===toolId)
-
-const ToolComponent=toolId ? toolEngine[toolId] : null
+const allTools = getAllTools()
+const tool:ToolConfig | undefined = allTools.find(t=>t.id===toolId)
 
 const [formData,setFormData]=useState<Record<string,string>>({})
 const [result,setResult]=useState("")
@@ -40,7 +38,7 @@ localStorage.setItem("analytics", JSON.stringify(stats))
 if(!tool) return <Navigate to="/404"/>
 
 /* CLICK TRACK */
-const trackClick = ()=>{
+const trackClick=()=>{
 try{
 const clicks = JSON.parse(localStorage.getItem("clicks") || "{}")
 clicks[tool.name] = (clicks[tool.name] || 0) + 1
@@ -50,7 +48,9 @@ localStorage.setItem("clicks", JSON.stringify(clicks))
 
 /* CTA */
 const CTA=()=>(
+
 tool.link ? (
+
 <div className="mt-6 p-5 bg-indigo-50 border rounded-xl text-center">
 
 <p className="text-sm text-slate-600 mb-2">
@@ -72,11 +72,12 @@ Recommended for best results
 </p>
 
 </div>
+
 ):null
 )
 
 /* VALIDATION */
-const isValid = tool.inputs?.every(i=>formData[i.name]?.trim()) ?? true
+const isValid = tool.inputs?.every(i => formData[i.name]?.trim()) ?? true
 
 /* GENERATE */
 const submit=async(e:React.FormEvent)=>{
@@ -89,13 +90,14 @@ setResult("")
 
 try{
 
-let prompt=tool.promptTemplate || ""
+let prompt = tool.promptTemplate || ""
 
 tool.inputs?.forEach(input=>{
-prompt=prompt.replaceAll(`{{${input.name}}}`,formData[input.name]||"")
+prompt = prompt.replaceAll(`{{${input.name}}}`, formData[input.name] || "")
 })
 
-const res=await generateContent(prompt)
+const res = await generateContent(prompt)
+
 setResult(res)
 
 }catch{
@@ -114,11 +116,12 @@ setTimeout(()=>setCopied(null),2000)
 }catch{}
 }
 
-const Icon=tool.icon
+const Icon = tool.icon
 
 return(
 
 <>
+
 <SEOHead
 title={`${tool.name} - Free AI Tool | Generate Instantly`}
 description={`${tool.description} Use ${tool.name} online free. No signup required.`}
@@ -131,11 +134,19 @@ canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
 
 {/* HEADER */}
 <div className="text-center mb-10">
+
 <Icon className="w-8 h-8 mx-auto mb-4"/>
-<h1 className="text-3xl font-bold">{tool.name}</h1>
-<p className="text-slate-600">{tool.description}</p>
+
+<h1 className="text-3xl font-bold">
+{tool.name}
+</h1>
+
+<p className="text-slate-600">
+{tool.description}
+</p>
 
 <CTA/>
+
 </div>
 
 {/* TOOL */}
@@ -145,13 +156,13 @@ canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
 
 {tool.inputs?.map(input=>(
 
-input.type === "select" ? (
+input.type==="select" ? (
 
 <select
 key={input.name}
 className="w-full border rounded-lg px-4 py-3"
-value={formData[input.name]||""}
-onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
+value={formData[input.name] || ""}
+onChange={(e)=>setFormData(prev=>({...prev,[input.name]:e.target.value}))}
 >
 <option value="">Select {input.label}</option>
 {input.options?.map(opt=>(
@@ -159,15 +170,15 @@ onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
 ))}
 </select>
 
-) : input.type === "text" ? (
+) : input.type==="text" ? (
 
 <input
 key={input.name}
 type="text"
 placeholder={input.label}
 className="w-full border rounded-lg px-4 py-3"
-value={formData[input.name]||""}
-onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
+value={formData[input.name] || ""}
+onChange={(e)=>setFormData(prev=>({...prev,[input.name]:e.target.value}))}
 />
 
 ) : (
@@ -176,8 +187,8 @@ onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
 key={input.name}
 placeholder={input.label}
 className="w-full border rounded-lg px-4 py-3"
-value={formData[input.name]||""}
-onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
+value={formData[input.name] || ""}
+onChange={(e)=>setFormData(prev=>({...prev,[input.name]:e.target.value}))}
 />
 
 )
@@ -206,18 +217,19 @@ Generating...
 <div className="mt-6 border p-6 rounded-xl">
 
 <div className="flex justify-between mb-2">
+
 <strong>Result</strong>
 
 <button onClick={()=>copy(result,0)}>
-{copied===0?<Check size={16}/>:<Copy size={16}/>}
+{copied===0 ? <Check size={16}/> : <Copy size={16}/>}
 </button>
+
 </div>
 
 <div className="text-sm whitespace-pre-wrap">
 {result}
 </div>
 
-{/* BEST CTA POSITION */}
 <CTA/>
 
 </div>
@@ -233,6 +245,9 @@ Generating...
 <AdPlaceholder slot="bottom"/>
 
 </div>
+
 </>
+
 )
+
 }
