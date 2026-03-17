@@ -15,9 +15,7 @@ type Msg={role:"user"|"ai";text:string}
 export function ToolPage(){
 
 const {toolId}=useParams<{toolId:string}>()
-
 const tool=tools.find(t=>t.id===toolId)
-
 const ToolComponent=toolId ? toolEngine[toolId] : null
 
 const [formData,setFormData]=useState<Record<string,string>>({})
@@ -35,7 +33,7 @@ setMessages([])
 setResult("")
 },[toolId])
 
-/* AUTO SCROLL */
+/* SCROLL */
 useEffect(()=>{
 if(chatRef.current){
 chatRef.current.scrollTop=chatRef.current.scrollHeight
@@ -44,8 +42,8 @@ chatRef.current.scrollTop=chatRef.current.scrollHeight
 
 if(!tool) return <Navigate to="/404"/>
 
-/* ✅ Structured Data Component */
-const StructuredData = () => (
+/* STRUCTURED DATA */
+const StructuredData=()=>(
 <Helmet>
 <script type="application/ld+json">
 {JSON.stringify({
@@ -71,15 +69,20 @@ return(
 <>
 <SEOHead
 title={`${tool.name} – Free AI Tool`}
-description={`Use ${tool.name} online for free. Fast AI powered tool.`}
+description={`Use ${tool.name} online for free.`}
 canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
 />
 
 <StructuredData/>
 
+<AdPlaceholder slot="top" className="mb-6"/>
+
 <div className="max-w-6xl mx-auto">
 <ToolComponent/>
 </div>
+
+<AdPlaceholder slot="bottom" className="mt-10"/>
+
 </>
 )
 }
@@ -89,7 +92,7 @@ const change=(name:string,value:string)=>{
 setFormData(prev=>({...prev,[name]:value}))
 }
 
-/* GENERATOR */
+/* GENERATE */
 const submit=async(e:React.FormEvent)=>{
 e.preventDefault()
 setLoading(true)
@@ -98,28 +101,23 @@ setResult("")
 try{
 let prompt=tool.promptTemplate || ""
 tool.inputs?.forEach(input=>{
-const value=formData[input.name] || ""
-prompt=prompt.replaceAll(`{{${input.name}}}`,value)
+prompt=prompt.replaceAll(`{{${input.name}}}`,formData[input.name]||"")
 })
-
 const res=await generateContent(prompt)
 setResult(res)
-
 }catch{
 setResult("Something went wrong")
 }
-
 setLoading(false)
 }
 
 /* CHAT */
 const chat=async(e:React.FormEvent)=>{
 e.preventDefault()
-
-const msg=formData["message"] || ""
+const msg=formData["message"]||""
 if(!msg.trim()) return
 
-setMessages(prev=>[...prev,{role:"user",text:msg}])
+setMessages(p=>[...p,{role:"user",text:msg}])
 setFormData({message:""})
 setLoading(true)
 
@@ -128,15 +126,12 @@ let history=""
 messages.slice(-10).forEach(m=>{
 history+=`${m.role==="user"?"User":"AI"}: ${m.text}\n`
 })
-
 history+=`User: ${msg}\nAI:`
 
 const res=await generateContent(history)
-
-setMessages(prev=>[...prev,{role:"ai",text:res}])
-
+setMessages(p=>[...p,{role:"ai",text:res}])
 }catch{
-setMessages(prev=>[...prev,{role:"ai",text:"Error generating response"}])
+setMessages(p=>[...p,{role:"ai",text:"Error"}])
 }
 
 setLoading(false)
@@ -149,6 +144,22 @@ setCopied(index)
 setTimeout(()=>setCopied(null),2000)
 }
 
+/* CTA BUTTON */
+const CTA=()=>(
+tool.link ? (
+<div className="mt-4 text-center">
+<a
+href={tool.link}
+target="_blank"
+rel="nofollow sponsored"
+className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700"
+>
+🚀 Try {tool.name}
+</a>
+</div>
+):null
+)
+
 /* CHATBOT */
 if(tool.id==="ai-chatbot"){
 
@@ -156,84 +167,48 @@ const Icon=tool.icon
 
 return(
 <>
-<SEOHead
-title={`${tool.name} – Free AI Tool`}
-description={tool.description}
-canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
-/>
-
+<SEOHead title={tool.name} description={tool.description} canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}/>
 <StructuredData/>
+<AdPlaceholder slot="top"/>
 
 <div className="max-w-6xl mx-auto">
 
 <div className="text-center mb-10">
-
-<div className="inline-flex p-4 rounded-xl bg-slate-100 text-indigo-600 mb-4 border border-slate-200">
-<Icon className="w-8 h-8"/>
-</div>
-
-<h1 className="text-4xl font-bold text-slate-900">
-{tool.name}
-</h1>
-
-<p className="text-slate-500 mt-2 text-lg">
-Smart AI assistant to help you generate content instantly
-</p>
-
-<div className="flex flex-wrap justify-center gap-3 mt-4 text-sm">
-<span className="bg-slate-100 px-3 py-1 rounded-full">⚡ Fast AI</span>
-<span className="bg-slate-100 px-3 py-1 rounded-full">🔒 Secure</span>
-<span className="bg-slate-100 px-3 py-1 rounded-full">💰 Free</span>
-</div>
-
-<div className="mt-6">
+<Icon className="w-8 h-8 mx-auto mb-4"/>
+<h1 className="text-4xl font-bold">{tool.name}</h1>
+<p className="text-slate-500 mt-2">{tool.description}</p>
 <ToolStats/>
+<CTA/>
 </div>
 
-</div>
-
-<div className="bg-white border border-slate-200 rounded-2xl shadow-lg flex flex-col h-[540px] overflow-hidden">
+<div className="bg-white border rounded-2xl flex flex-col h-[540px] overflow-hidden">
 
 <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
 
 {messages.map((m,i)=>(
-<div key={i} className={`max-w-[75%] px-4 py-3 rounded-xl text-sm ${
-m.role==="user"
-?"ml-auto bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
-:"bg-white border border-slate-200"
+<div key={i} className={`max-w-[75%] px-4 py-3 rounded-xl ${
+m.role==="user"?"ml-auto bg-indigo-600 text-white":"bg-white border"
 }`}>
 {m.text}
-
-<button onClick={()=>copy(m.text,i)} className="text-xs mt-2 flex gap-1 opacity-70 hover:opacity-100">
+<button onClick={()=>copy(m.text,i)} className="text-xs mt-2">
 {copied===i?<Check size={14}/>:<Copy size={14}/>}
 </button>
-
 </div>
 ))}
 
-{loading &&(
-<div className="flex items-center gap-2 text-sm text-slate-500">
-<Loader2 className="w-4 h-4 animate-spin"/>
-AI is typing...
-</div>
-)}
+{loading && <Loader2 className="animate-spin"/>}
 
 </div>
 
-<form onSubmit={chat} className="p-4 border-t flex gap-3 bg-white">
-
+<form onSubmit={chat} className="p-4 flex gap-3">
 <textarea
-rows={1}
 value={formData["message"]||""}
 onChange={(e)=>change("message",e.target.value)}
-placeholder="Ask anything..."
-className="flex-1 bg-slate-100 rounded-xl px-4 py-3 outline-none resize-none"
+className="flex-1 bg-slate-100 rounded-xl px-4 py-2"
 />
-
 <button className="bg-indigo-600 text-white px-6 rounded-xl">
 Send
 </button>
-
 </form>
 
 </div>
@@ -241,87 +216,66 @@ Send
 <AdPlaceholder slot="content" className="mt-8"/>
 
 {descriptionSection(tool.name)}
-
 <RelatedTools currentId={tool.id} category={tool.category}/>
+
+<AdPlaceholder slot="bottom" className="mt-10"/>
 
 </div>
 </>
 )
 }
 
-/* GENERATOR TOOL */
+/* GENERATOR */
 
 const Icon=tool.icon
 
 return(
 <>
-<SEOHead
-title={`${tool.name} – Free AI Tool`}
-description={tool.description}
-canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
-/>
-
+<SEOHead title={tool.name} description={tool.description} canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}/>
 <StructuredData/>
+
+<AdPlaceholder slot="top" className="mb-6"/>
 
 <div className="max-w-6xl mx-auto">
 
 <div className="text-center mb-10">
-
-<div className="inline-flex p-4 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
-<Icon className="w-8 h-8"/>
-</div>
-
+<Icon className="w-8 h-8 mx-auto mb-4"/>
 <h1 className="text-3xl font-bold">{tool.name}</h1>
-<p className="text-slate-600">{tool.description}</p>
-
+<p>{tool.description}</p>
+<CTA/>
 </div>
 
-<div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+<div className="bg-white border rounded-2xl p-8">
 
 <form onSubmit={submit} className="space-y-6">
 
 {tool.inputs?.map(input=>(
-<div key={input.name}>
-<label className="block text-sm mb-2">{input.label}</label>
-
 <textarea
-className="w-full border border-slate-200 rounded-lg px-4 py-3"
+key={input.name}
+className="w-full border rounded-lg px-4 py-3"
 value={formData[input.name]||""}
 onChange={(e)=>change(input.name,e.target.value)}
 />
-</div>
 ))}
 
-<button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center gap-2">
-{loading ?(
-<>
-<Loader2 className="w-5 h-5 animate-spin"/>
-Generating...
-</>
-):(
-<>
-<Sparkles className="w-5 h-5"/>
-Generate Content
-</>
-)}
+<button className="w-full bg-indigo-600 text-white py-3 rounded-lg">
+{loading?"Generating...":"Generate"}
 </button>
 
 </form>
 
 {result &&(
-<div className="mt-6 border bg-slate-50 p-6 rounded-xl">
-
-<div className="flex justify-between mb-3">
-<strong>Generated Result</strong>
-
+<div className="mt-6 border p-6 rounded-xl">
+<div className="flex justify-between">
+<strong>Result</strong>
 <button onClick={()=>copy(result,0)}>
 {copied===0?<Check size={16}/>:<Copy size={16}/>}
 </button>
 </div>
+<div className="text-sm mt-2 whitespace-pre-wrap">{result}</div>
 
-<div className="text-sm whitespace-pre-wrap">
-{result}
-</div>
+{/* 💰 CTA BELOW RESULT */}
+<CTA/>
 
 </div>
 )}
@@ -331,8 +285,9 @@ Generate Content
 <AdPlaceholder slot="content" className="mt-8"/>
 
 {descriptionSection(tool.name)}
-
 <RelatedTools currentId={tool.id} category={tool.category}/>
+
+<AdPlaceholder slot="bottom" className="mt-10"/>
 
 </div>
 </>
@@ -343,27 +298,14 @@ Generate Content
 /* DESCRIPTION */
 function descriptionSection(name:string){
 return(
-<section className="mt-12 bg-white border border-slate-200 rounded-2xl p-8 space-y-6">
-
-<h2 className="text-2xl font-bold">
-About {name}
-</h2>
-
-<p className="text-slate-600">
-{name} helps users complete tasks faster using modern web technology.
-No installation required and works instantly inside the browser.
-</p>
-
-<h3 className="text-xl font-semibold">
-How to Use
-</h3>
-
-<ul className="list-disc pl-6 text-slate-600 space-y-2">
-<li>Enter your input</li>
-<li>Click generate</li>
-<li>Copy the result</li>
+<section className="mt-12 bg-white border rounded-2xl p-8 space-y-6">
+<h2 className="text-2xl font-bold">About {name}</h2>
+<p>{name} helps users complete tasks faster using modern AI tools.</p>
+<ul className="list-disc pl-6">
+<li>Enter input</li>
+<li>Generate</li>
+<li>Copy result</li>
 </ul>
-
 </section>
 )
 }
