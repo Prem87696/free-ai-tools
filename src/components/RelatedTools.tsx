@@ -1,65 +1,72 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { getAllTools } from "../data/tools"
+import { getAllTools, ToolConfig } from "../data/tools"
 
-export function RelatedTools({ currentId, category }: any){
+interface RelatedToolsProps{
+  currentId:string
+  category:string
+}
 
-const allTools = getAllTools()
+export function RelatedTools({ currentId, category }: RelatedToolsProps){
 
-const related = allTools
-.filter(t => t.category === category && t.id !== currentId)
-.slice(0,4)
+  const allTools:ToolConfig[] = getAllTools()
 
-if(related.length === 0) return null
+  /* ✅ FILTER + SAFE FALLBACK */
+  const related = allTools
+    .filter(t => t.category === category && t.id !== currentId)
+    .slice(0,4)
 
-return(
+  /* ❌ NO RELATED */
+  if(!related || related.length === 0) return null
 
-<div className="mt-16">
+  return(
 
-<h2 className="text-2xl font-bold mb-6">
-Related Tools
-</h2>
+    <div className="mt-16">
 
-<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <h2 className="text-2xl font-bold mb-6">
+        Related Tools
+      </h2>
 
-{related.map(tool=>{
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-const Icon = tool.icon
+        {related.map(tool=>{
 
-return(
+          const Icon = tool.icon
 
-<Link
-key={tool.id}
-to={tool.path}
-className="bg-white border border-slate-200 p-5 rounded-xl hover:shadow-md hover:border-indigo-200 transition"
->
+          return(
 
-<div className="flex items-center gap-3 mb-3">
+            <Link
+              key={tool.id}
+              to={tool.path}
+              className="group bg-white border border-slate-200 p-5 rounded-xl hover:shadow-md hover:border-indigo-200 transition"
+            >
 
-<div className="p-2 bg-slate-100 rounded-lg text-indigo-600">
-<Icon size={18}/>
-</div>
+              <div className="flex items-center gap-3 mb-3">
 
-<h3 className="font-semibold text-sm">
-{tool.name}
-</h3>
+                <div className="p-2 bg-slate-100 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
+                  <Icon size={18}/>
+                </div>
 
-</div>
+                <h3 className="font-semibold text-sm text-slate-900 group-hover:text-indigo-600 transition">
+                  {tool.name}
+                </h3>
 
-<p className="text-xs text-slate-500">
-{tool.description}
-</p>
+              </div>
 
-</Link>
+              <p className="text-xs text-slate-500 line-clamp-2">
+                {tool.description}
+              </p>
 
-)
+            </Link>
 
-})}
+          )
 
-</div>
+        })}
 
-</div>
+      </div>
 
-)
+    </div>
+
+  )
 
 }
