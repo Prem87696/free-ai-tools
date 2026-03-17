@@ -114,13 +114,26 @@ const stored = localStorage.getItem("customTools")
 
 if(!stored) return tools
 
-const parsed = JSON.parse(stored)
+const parsed:Partial<ToolConfig>[] = JSON.parse(stored)
 
-/* FIX: icon fallback */
-const fixed = parsed.map((t:any)=>({
-...t,
-icon:Sparkles,
-tags: t.tags || ["custom ai tool"]
+/* ✅ SAFE MAP */
+const fixed:ToolConfig[] = parsed.map((t,index)=>({
+
+id: t.id || `custom-${index}`,
+slug: t.slug || `custom-${index}`,
+name: t.name || "Custom Tool",
+description: t.description || "User added tool",
+icon: Sparkles,
+path: t.path || `/tools/custom-${index}`,
+promptTemplate: t.promptTemplate || "",
+inputs: t.inputs || [],
+category: (t.category as ToolConfig["category"]) || "general",
+tags: t.tags || ["custom ai tool"],
+image: t.image,
+link: t.link,
+featured: t.featured || false,
+trending: t.trending || false
+
 }))
 
 return [...tools, ...fixed]
@@ -133,7 +146,7 @@ return tools
 
 /* ---------- SEO MODIFIERS ---------- */
 
-export const seoModifiers={
+export const seoModifiers = {
 
 "caption-generator":[
 {slug:"instagram",name:"Instagram"}
