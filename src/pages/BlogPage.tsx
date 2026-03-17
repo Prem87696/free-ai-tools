@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react"
-import {useParams} from "react-router-dom"
+import {useParams,Link} from "react-router-dom"
 import {SEOHead} from "../components/SEOHead"
 import {generateContent} from "../services/aiRouter"
 import {Loader2} from "lucide-react"
@@ -19,7 +19,6 @@ const generateBlog=async(currentTitle:string)=>{
 
 const key = "blog-" + currentTitle
 
-/* ✅ CACHE CHECK */
 const cached = localStorage.getItem(key)
 
 if(cached){
@@ -45,7 +44,6 @@ Include:
 
 const res = await generateContent(prompt)
 
-/* ✅ SAVE CACHE */
 localStorage.setItem(key,res)
 
 setContent(res)
@@ -86,6 +84,7 @@ className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
 {loading ? <Loader2 className="animate-spin"/> : "Regenerate Article"}
 </button>
 
+{/* CONTENT */}
 <div className="prose max-w-none whitespace-pre-wrap">
 
 {loading ? (
@@ -97,8 +96,31 @@ Generating content...
 
 </div>
 
-{/* RELATED BLOGS */}
-<div className="mt-10">
+{/* 💰 AFFILIATE CTA (HIGH CONVERSION) */}
+<div className="mt-12 p-6 bg-indigo-50 border rounded-xl text-center">
+
+<h2 className="text-xl font-bold mb-2">
+Best AI Tool for this task
+</h2>
+
+<p className="text-sm text-slate-600 mb-4">
+Get faster and more accurate results using premium AI tools
+</p>
+
+<a
+href="https://your-affiliate-link.com"
+target="_blank"
+rel="nofollow sponsored"
+className="bg-indigo-600 text-white px-6 py-3 rounded-xl inline-block hover:bg-indigo-700"
+>
+🚀 Try Premium AI Tool
+</a>
+
+</div>
+
+{/* 🔗 RELATED BLOGS */}
+<div className="mt-12">
+
 <h2 className="text-xl font-bold mb-4">
 Related Guides
 </h2>
@@ -112,32 +134,33 @@ Related Guides
 "ai-content-generator-free"
 ].map((item,i)=>(
 
-<a
+<Link
 key={i}
-href={`/blog/${item}`}
+to={`/blog/${item}`}
 className="border p-4 rounded-xl hover:shadow"
 >
 {item.replaceAll("-"," ")}
-</a>
+</Link>
 
 ))}
 
 </div>
+
 </div>
 
-{/* TOOL CTA */}
-<div className="mt-10 text-center">
+{/* 🔗 TOOL CTA */}
+<div className="mt-12 text-center">
 
 <h2 className="text-xl font-bold mb-4">
 Try AI Tools
 </h2>
 
-<a
-href="/tools/ai-chatbot"
+<Link
+to="/tools/ai-chatbot"
 className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl"
 >
 Open AI Chatbot →
-</a>
+</Link>
 
 </div>
 
