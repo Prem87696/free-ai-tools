@@ -1,16 +1,16 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
+import React from "react"
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom"
+import { HelmetProvider } from "react-helmet-async"
 
-import { Layout } from "./components/Layout";
-import { HomePage } from "./pages/HomePage";
-import { ToolPage } from "./pages/ToolPage";
-import { ToolsPage } from "./pages/ToolsPage"; // ✅ NEW
-import { DynamicSEOPage } from "./pages/DynamicSEOPage";
-import { BlogPage } from "./pages/BlogPage";
-import { BlogListPage } from "./pages/BlogListPage";
-import { AdminPage } from "./pages/AdminPage";
-import { AnalyticsPage } from "./pages/AnalyticsPage";
+import { Layout } from "./components/Layout"
+import { HomePage } from "./pages/HomePage"
+import { ToolPage } from "./pages/ToolPage"
+import { ToolsPage } from "./pages/ToolsPage"
+import { DynamicSEOPage } from "./pages/DynamicSEOPage"
+import { BlogPage } from "./pages/BlogPage"
+import { BlogListPage } from "./pages/BlogListPage"
+import { AdminPage } from "./pages/AdminPage"
+import { AnalyticsPage } from "./pages/AnalyticsPage"
 
 import {
   AboutPage,
@@ -18,16 +18,35 @@ import {
   PrivacyPage,
   TermsPage,
   DisclaimerPage
-} from "./pages/StaticPages";
+} from "./pages/StaticPages"
 
-import { SitemapPage } from "./pages/SitemapPage";
-import { ToolCategoriesPage } from "./pages/ToolCategoriesPage";
-import { ToolSearchPage } from "./pages/ToolSearchPage";
-import { CategoryPage } from "./pages/CategoryPage";
+import { SitemapPage } from "./pages/SitemapPage"
+import { ToolCategoriesPage } from "./pages/ToolCategoriesPage"
+import { ToolSearchPage } from "./pages/ToolSearchPage"
+import { CategoryPage } from "./pages/CategoryPage"
 
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop"
 
 export default function App() {
+
+  /* ✅ FIX: dynamic redirect */
+  function ToolRedirect(){
+    const { toolId } = useParams()
+    return <Navigate to={`/tools/${toolId}`} replace />
+  }
+
+  /* ✅ 404 PAGE */
+  function NotFound(){
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <h1 className="text-4xl font-bold mb-4">404</h1>
+        <p className="text-slate-500 mb-6">Page Not Found</p>
+        <a href="/" className="text-indigo-600 font-medium">
+          Go Home →
+        </a>
+      </div>
+    )
+  }
 
   return (
     <HelmetProvider>
@@ -41,14 +60,12 @@ export default function App() {
             {/* HOME */}
             <Route index element={<HomePage />} />
 
-            {/* ✅ ALL TOOLS PAGE (FIXED) */}
+            {/* TOOLS */}
             <Route path="tools" element={<ToolsPage />} />
-
-            {/* TOOL PAGE */}
             <Route path="tools/:toolId" element={<ToolPage />} />
 
-            {/* OLD URL REDIRECT */}
-            <Route path="tool/:toolId" element={<Navigate to="/tools/:toolId" replace />} />
+            {/* OLD URL REDIRECT (FIXED) */}
+            <Route path="tool/:toolId" element={<ToolRedirect />} />
 
             {/* SEARCH */}
             <Route path="search" element={<ToolSearchPage />} />
@@ -79,12 +96,7 @@ export default function App() {
             <Route path="ai-:slug" element={<DynamicSEOPage />} />
 
             {/* 404 */}
-            <Route path="404" element={
-              <div style={{ padding: 40 }}>
-                <h1>404 Page Not Found</h1>
-              </div>
-            } />
-
+            <Route path="404" element={<NotFound />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
 
           </Route>
@@ -93,5 +105,5 @@ export default function App() {
 
       </BrowserRouter>
     </HelmetProvider>
-  );
+  )
 }
