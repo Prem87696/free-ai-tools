@@ -1,26 +1,56 @@
-const cache = new Map<string, { result: string; time: number }>();
+export function getCache(key: string){
 
-const CACHE_TIME = 24 * 60 * 60 * 1000;
+if(typeof window === "undefined") return null
 
-export function getCache(prompt: string) {
+try{
 
-  const data = cache.get(prompt);
+const cache = localStorage.getItem("ai-cache")
+if(!cache) return null
 
-  if (!data) return null;
+const parsed = JSON.parse(cache)
 
-  if (Date.now() - data.time > CACHE_TIME) {
-    cache.delete(prompt);
-    return null;
-  }
+/* normalize */
+const normalizedKey = key.trim().toLowerCase()
 
-  return data.result;
+const data = parsed[normalizedKey]
+
+if(!data) return null
+
+/* expire check */
+const CACHE_TIME = 24 * 60 * 60 * 1000
+
+if(Date.now() - data.time > CACHE_TIME){
+delete parsed[normalizedKey]
+localStorage.setItem("ai-cache", JSON.stringify(parsed))
+return null
 }
 
-export function setCache(prompt: string, result: string) {
+return data.result
 
-  cache.set(prompt, {
-    result,
-    time: Date.now()
-  });
+}catch{
+return null
+}
+
+}
+
+export function setCache(key: string, value: string){
+
+if(typeof window === "undefined") return
+
+try{
+
+const cache = localStorage.getItem("ai-cache")
+const parsed = cache ? JSON.parse(cache) : {}
+
+const normalizedKey = key.trim().toLowerCase()
+
+parsed[normalizedKey] = {
+result: value,
+time: Date.now()
+}
+
+localStorage.setItem("ai-cache", JSON.stringify(parsed))
+
+}catch{}
 
 }
