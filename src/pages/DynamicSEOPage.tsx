@@ -1,242 +1,261 @@
-import React from 'react';
-import { useParams, Navigate, Link } from 'react-router-dom';
-import { tools, seoModifiers } from '../data/tools';
-import { generateContent } from '../services/aiRouter';  // ✅ FIXED
-import { SEOHead } from '../components/SEOHead';
-import { AdPlaceholder } from '../components/AdPlaceholder';
-import { Loader2, Copy, Check, AlertCircle, Sparkles } from 'lucide-react';
-export function DynamicSEOPage() {
-  const { slug } = useParams();
-  
-  // Parse the slug to find matching tool and modifier
-  // Expected format: ai-[tool]-for-[modifier]
-  // e.g. ai-caption-generator-for-instagram
-  
-  let matchedTool = null;
-  let matchedModifier = null;
+import React,{useState} from "react"
+import { useParams, Navigate, Link } from "react-router-dom"
+import { getAllTools, seoModifiers } from "../data/tools"
+import { generateContent } from "../services/aiRouter"
+import { SEOHead } from "../components/SEOHead"
+import { AdPlaceholder } from "../components/AdPlaceholder"
+import { Loader2, Copy, Check, AlertCircle, Sparkles } from "lucide-react"
 
-  // This is a simple parser. In a real app, you might want a more robust routing map.
-  if (slug && slug.startsWith('ai-')) {
-    const parts = slug.replace('ai-', '').split('-for-');
-    if (parts.length === 2) {
-      const toolSlug = parts[0]; // e.g. caption-generator
-      const modifierSlug = parts[1]; // e.g. instagram
+export function DynamicSEOPage(){
 
-      matchedTool = tools.find(t => t.id === `ai-${toolSlug}`);
-      
-      if (matchedTool && seoModifiers[toolSlug as keyof typeof seoModifiers]) {
-        const modifiers = seoModifiers[toolSlug as keyof typeof seoModifiers];
-        matchedModifier = modifiers.find(m => m.slug === modifierSlug);
-      }
-    }
-  }
+const { slug } = useParams<{slug:string}>()
 
-  if (!matchedTool || !matchedModifier) {
-    // If not a valid SEO page, maybe it's a static page or 404
-    // For now, redirect to 404
-    return <Navigate to="/404" />;
-  }
+const tools = getAllTools()
 
-  const [formData, setFormData] = React.useState<Record<string, string>>({});
-  const [result, setResult] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const [copied, setCopied] = React.useState(false);
+let matchedTool:any = null
+let matchedModifier:any = null
 
-  const pageTitle = `${matchedTool.name} for ${matchedModifier.name}`;
-  const pageDescription = `Free AI ${matchedTool.name} specifically designed for ${matchedModifier.name}. Generate optimized content for ${matchedModifier.name} instantly.`;
+/* ✅ SAFE PARSER */
+if (slug?.startsWith("ai-")){
 
-  const handleInputChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+const parts = slug.replace("ai-","").split("-for-")
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    setResult('');
+if(parts.length===2){
 
-    try {
-      // Construct prompt with modifier context
-      let prompt = matchedTool!.promptTemplate;
-      
-      // Append context to prompt
-      prompt += ` \n\nIMPORTANT: Optimize this content specifically ${matchedModifier!.context}.`;
+const toolSlug = parts[0]
+const modifierSlug = parts[1]
 
-      let missingFields = [];
+matchedTool = tools.find(t=>t.id === `ai-${toolSlug}`)
 
-      matchedTool!.inputs.forEach(input => {
-        const value = formData[input.name];
-        if (!value) {
-          missingFields.push(input.label);
-        }
-        prompt = prompt.replace(`{{${input.name}}}`, value || '');
-      });
+if(matchedTool && seoModifiers[toolSlug as keyof typeof seoModifiers]){
 
-      if (missingFields.length > 0) {
-        throw new Error(`Please fill in all fields: ${missingFields.join(', ')}`);
-      }
+const modifiers = seoModifiers[toolSlug as keyof typeof seoModifiers]
 
-      const generatedText = await generateContent(prompt);
-      setResult(generatedText);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+matchedModifier = modifiers.find(m=>m.slug === modifierSlug)
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(result);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+}
 
-  return (
-    <>
-      <SEOHead 
-        title={`${pageTitle} - Free AI Tool`}
-        description={pageDescription}
-        keywords={`ai ${matchedTool.name.toLowerCase()}, ${matchedModifier.name.toLowerCase()}, free ai generator`}
-        canonicalUrl={`/${slug}`}
-      />
+}
 
-      <div className="max-w-4xl mx-auto">
-        {/* Breadcrumbs */}
-        <nav className="text-sm text-slate-500 mb-6">
-          <Link to="/" className="hover:text-indigo-600">Home</Link>
-          <span className="mx-2">/</span>
-          <Link to="/tools" className="hover:text-indigo-600">Tools</Link>
-          <span className="mx-2">/</span>
-          <span className="text-slate-900 font-medium">{pageTitle}</span>
-        </nav>
+}
 
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
-            <matchedTool.icon className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">{pageTitle}</h1>
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            Generate professional, optimized content for {matchedModifier.name} using our specialized AI tool.
-          </p>
-        </div>
+if(!matchedTool || !matchedModifier){
+return <Navigate to="/404"/>
+}
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="p-6 md:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 gap-6">
-                {matchedTool.inputs.map((input) => (
-                  <div key={input.name}>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      {input.label}
-                    </label>
-                    {input.type === 'textarea' ? (
-                      <textarea
-                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors min-h-[120px]"
-                        placeholder={input.placeholder}
-                        value={formData[input.name] || ''}
-                        onChange={(e) => handleInputChange(input.name, e.target.value)}
-                      />
-                    ) : input.type === 'select' ? (
-                      <select
-                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white"
-                        value={formData[input.name] || ''}
-                        onChange={(e) => handleInputChange(input.name, e.target.value)}
-                      >
-                        <option value="">Select an option</option>
-                        {input.options?.map(opt => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                        placeholder={input.placeholder}
-                        value={formData[input.name] || ''}
-                        onChange={(e) => handleInputChange(input.name, e.target.value)}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
+/* STATE */
+const [formData,setFormData]=useState<Record<string,string>>({})
+const [result,setResult]=useState("")
+const [loading,setLoading]=useState(false)
+const [error,setError]=useState("")
+const [copied,setCopied]=useState(false)
 
-              {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-2 text-sm">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  {error}
-                </div>
-              )}
+const pageTitle = `${matchedTool.name} for ${matchedModifier.name}`
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Generating for {matchedModifier.name}...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Generate Optimized Content
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
-          
-          {/* Result Section */}
-          {result && (
-            <div className="border-t border-slate-100 bg-slate-50 p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  Generated Result
-                </h3>
-                <button
-                  onClick={copyToClipboard}
-                  className="text-slate-500 hover:text-indigo-600 flex items-center gap-1 text-sm font-medium transition-colors"
-                >
-                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  {copied ? 'Copied!' : 'Copy Text'}
-                </button>
-              </div>
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm whitespace-pre-wrap font-mono text-sm text-slate-700 leading-relaxed">
-                {result}
-              </div>
-            </div>
-          )}
-        </div>
+/* INPUT */
+const change=(name:string,value:string)=>{
+setFormData(prev=>({...prev,[name]:value}))
+}
 
-        <AdPlaceholder slot="content" className="mt-8" />
+/* SUBMIT */
+const submit=async(e:React.FormEvent)=>{
 
-        {/* SEO Content Section - Programmatic */}
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>Best {matchedTool.name} for {matchedModifier.name}</h2>
-          <p>
-            Are you looking for the best way to create content for <strong>{matchedModifier.name}</strong>? 
-            Our {pageTitle} is designed to help you succeed. Whether you are a professional or just starting out, 
-            using AI tools can significantly improve your workflow.
-          </p>
-          
-          <h3>How to create content for {matchedModifier.name} with AI</h3>
-          <ol>
-            <li>Enter your specific topic or requirements in the form above.</li>
-            <li>Our AI analyzes your request and applies optimization rules for {matchedModifier.name}.</li>
-            <li>Copy the generated result and use it directly on your platform.</li>
-          </ol>
+e.preventDefault()
+setLoading(true)
+setError("")
+setResult("")
 
-          <h3>Benefits of using AI for {matchedModifier.name}</h3>
-          <p>
-            Creating high-quality content for {matchedModifier.name} requires consistency and creativity. 
-            This tool helps you maintain both by providing endless ideas and polished drafts in seconds.
-            It is specifically tuned to understand the nuances of {matchedModifier.name}, ensuring your content performs well.
-          </p>
-        </div>
-      </div>
-    </>
-  );
+try{
+
+let prompt = matchedTool.promptTemplate || ""
+
+/* ADD CONTEXT */
+prompt += `\n\nIMPORTANT: Optimize content specifically ${matchedModifier.context || matchedModifier.name}.`
+
+/* VALIDATION */
+let missing:string[] = []
+
+matchedTool.inputs?.forEach((input:any)=>{
+const value = formData[input.name]
+
+if(!value) missing.push(input.label)
+
+prompt = prompt.replaceAll(`{{${input.name}}}`,value || "")
+})
+
+if(missing.length>0){
+throw new Error(`Fill all fields: ${missing.join(", ")}`)
+}
+
+const res = await generateContent(prompt)
+
+setResult(res)
+
+}catch(err:any){
+setError(err.message || "Something went wrong")
+}
+
+setLoading(false)
+}
+
+/* COPY */
+const copy=()=>{
+navigator.clipboard?.writeText(result)
+setCopied(true)
+setTimeout(()=>setCopied(false),2000)
+}
+
+const Icon = matchedTool.icon
+
+return(
+
+<>
+
+<SEOHead
+title={`${pageTitle} - Free AI Tool`}
+description={`Generate ${matchedTool.name} optimized for ${matchedModifier.name}. Fast & free AI generator.`}
+canonicalUrl={`https://free-ai-tools-lac.vercel.app/ai-${slug}`}
+/>
+
+<div className="max-w-4xl mx-auto">
+
+{/* HEADER */}
+<div className="text-center mb-8">
+
+<div className="inline-flex p-3 bg-indigo-100 rounded-xl mb-4 text-indigo-600">
+<Icon className="w-8 h-8"/>
+</div>
+
+<h1 className="text-3xl font-bold mb-2">
+{pageTitle}
+</h1>
+
+<p className="text-slate-600">
+Generate optimized content for {matchedModifier.name} instantly
+</p>
+
+</div>
+
+{/* FORM */}
+<div className="bg-white border rounded-2xl p-6">
+
+<form onSubmit={submit} className="space-y-6">
+
+{matchedTool.inputs?.map((input:any)=>(
+
+input.type==="select" ? (
+
+<select
+key={input.name}
+className="w-full border px-4 py-3 rounded-lg"
+value={formData[input.name]||""}
+onChange={(e)=>change(input.name,e.target.value)}
+>
+<option value="">Select {input.label}</option>
+{input.options?.map((opt:string)=>(
+<option key={opt}>{opt}</option>
+))}
+</select>
+
+): input.type==="text" ? (
+
+<input
+key={input.name}
+type="text"
+placeholder={input.label}
+className="w-full border px-4 py-3 rounded-lg"
+value={formData[input.name]||""}
+onChange={(e)=>change(input.name,e.target.value)}
+/>
+
+):(
+
+<textarea
+key={input.name}
+placeholder={input.label}
+className="w-full border px-4 py-3 rounded-lg"
+value={formData[input.name]||""}
+onChange={(e)=>change(input.name,e.target.value)}
+/>
+
+)
+
+))}
+
+{/* ERROR */}
+{error && (
+<div className="text-red-500 flex items-center gap-2">
+<AlertCircle size={16}/> {error}
+</div>
+)}
+
+<button
+disabled={loading}
+className="w-full bg-indigo-600 text-white py-3 rounded-xl flex justify-center items-center gap-2"
+>
+{loading ? (
+<>
+<Loader2 className="animate-spin"/> Generating...
+</>
+):(
+<>
+<Sparkles/> Generate Content
+</>
+)}
+</button>
+
+</form>
+
+{/* RESULT */}
+{result &&(
+
+<div className="mt-6 border p-6 rounded-xl">
+
+<div className="flex justify-between mb-2">
+<strong>Result</strong>
+
+<button onClick={copy}>
+{copied?<Check size={16}/>:<Copy size={16}/>}
+</button>
+
+</div>
+
+<div className="text-sm whitespace-pre-wrap">
+{result}
+</div>
+
+</div>
+
+)}
+
+</div>
+
+<AdPlaceholder slot="content" className="mt-8"/>
+
+{/* SEO CONTENT */}
+<div className="mt-12 prose max-w-none">
+
+<h2>Best {matchedTool.name} for {matchedModifier.name}</h2>
+
+<p>
+Use this AI tool to generate optimized content specifically for {matchedModifier.name}.
+Improve performance and save time using automation.
+</p>
+
+<h3>How it works</h3>
+
+<ul>
+<li>Enter your input</li>
+<li>Generate content</li>
+<li>Copy & use</li>
+</ul>
+
+</div>
+
+</div>
+
+</>
+
+)
+
 }
