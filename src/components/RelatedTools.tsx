@@ -1,10 +1,12 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { tools } from "../data/tools"
+import { getAllTools } from "../data/tools"
 
 export function RelatedTools({ currentId, category }: any){
 
-const related = tools
+const allTools = getAllTools()
+
+const related = allTools
 .filter(t => t.category === category && t.id !== currentId)
 .slice(0,4)
 
