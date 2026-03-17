@@ -1,13 +1,11 @@
 import React,{useState,useEffect,useRef} from "react"
 import {useParams,Navigate} from "react-router-dom"
-import { Helmet } from "react-helmet-async"
-import { getAllTools } from "../data/tools" // ✅ FIX
+import { getAllTools } from "../data/tools"
 import {generateContent} from "../services/aiRouter"
 import {toolEngine} from "../engine/toolEngine"
 import {SEOHead} from "../components/SEOHead"
 import {AdPlaceholder} from "../components/AdPlaceholder"
 import {RelatedTools} from "../components/RelatedTools"
-import { ToolStats } from "../components/ToolStats"
 import {Loader2,Copy,Check} from "lucide-react"
 
 type Msg={role:"user"|"ai";text:string}
@@ -16,7 +14,7 @@ export function ToolPage(){
 
 const {toolId}=useParams<{toolId:string}>()
 
-const tool = getAllTools().find(t=>t.id===toolId) // ✅ FIX
+const tool = getAllTools().find(t=>t.id===toolId)
 
 const ToolComponent=toolId ? toolEngine[toolId] : null
 
@@ -41,6 +39,19 @@ if(chatRef.current){
 chatRef.current.scrollTop=chatRef.current.scrollHeight
 }
 },[messages])
+
+/* ✅ ANALYTICS TRACKING */
+useEffect(()=>{
+
+if(!tool) return
+
+try{
+const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
+stats[tool.name] = (stats[tool.name] || 0) + 1
+localStorage.setItem("analytics", JSON.stringify(stats))
+}catch{}
+
+},[tool])
 
 if(!tool) return <Navigate to="/404"/>
 
@@ -84,8 +95,6 @@ navigator.clipboard?.writeText(text)
 setCopied(index)
 setTimeout(()=>setCopied(null),2000)
 }
-
-/* UI */
 
 const Icon=tool.icon
 
