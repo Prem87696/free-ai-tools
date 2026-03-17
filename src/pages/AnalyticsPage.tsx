@@ -1,107 +1,162 @@
 import React,{useEffect,useState} from "react"
 import { SEOHead } from "../components/SEOHead"
 
+type StatsRecord = Record<string, number>
+
 export function AnalyticsPage(){
 
-const [data,setData]=useState<any>({})
-const [total,setTotal]=useState(0)
+  const [views,setViews]=useState<StatsRecord>({})
+  const [clicks,setClicks]=useState<StatsRecord>({})
+  const [totalViews,setTotalViews]=useState(0)
+  const [totalClicks,setTotalClicks]=useState(0)
 
-useEffect(()=>{
+  useEffect(()=>{
 
-try{
+    try{
 
-const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
+      if(typeof window === "undefined") return
 
-setData(stats)
+      const viewStats:StatsRecord = JSON.parse(localStorage.getItem("analytics") || "{}")
+      const clickStats:StatsRecord = JSON.parse(localStorage.getItem("clicks") || "{}")
 
-/* TOTAL COUNT */
-const sum = Object.values(stats).reduce((a:any,b:any)=>a+b,0)
-setTotal(sum)
+      setViews(viewStats)
+      setClicks(clickStats)
 
-}catch{
-setData({})
-}
+      /* TOTAL VIEWS */
+      const viewSum = Object.values(viewStats).reduce((a,b)=>a+b,0)
+      setTotalViews(viewSum)
 
-},[])
+      /* TOTAL CLICKS */
+      const clickSum = Object.values(clickStats).reduce((a,b)=>a+b,0)
+      setTotalClicks(clickSum)
 
-/* SORT */
-const sorted = Object.entries(data).sort((a:any,b:any)=>b[1]-a[1])
+    }catch{
+      setViews({})
+      setClicks({})
+    }
 
-return(
+  },[])
 
-<div className="max-w-5xl mx-auto p-6">
+  /* SORT */
+  const sortedViews = Object.entries(views).sort((a,b)=>b[1]-a[1])
+  const sortedClicks = Object.entries(clicks).sort((a,b)=>b[1]-a[1])
 
-<SEOHead
-title="Analytics Dashboard"
-description="Track tool usage and performance"
-/>
+  return(
 
-<h1 className="text-3xl font-bold mb-6">
-📊 Analytics Dashboard
-</h1>
+    <div className="max-w-5xl mx-auto p-6">
 
-{/* TOTAL */}
-<div className="mb-6 p-4 bg-indigo-50 rounded-xl">
-<h2 className="font-bold text-lg">
-Total Tool Usage: {total}
-</h2>
-</div>
+      <SEOHead
+        title="Analytics Dashboard"
+        description="Track tool usage, clicks and performance"
+      />
 
-{/* EMPTY */}
-{sorted.length === 0 ? (
+      <h1 className="text-3xl font-bold mb-6">
+        📊 Analytics Dashboard
+      </h1>
 
-<p className="text-slate-500">
-No data yet. Use tools to generate stats.
-</p>
+      {/* SUMMARY */}
+      <div className="grid md:grid-cols-2 gap-4 mb-8">
 
-):( 
+        <div className="p-4 bg-indigo-50 rounded-xl">
+          <h2 className="font-bold text-lg">
+            Total Views: {totalViews}
+          </h2>
+        </div>
 
-<>
+        <div className="p-4 bg-green-50 rounded-xl">
+          <h2 className="font-bold text-lg">
+            💰 Total Clicks: {totalClicks}
+          </h2>
+        </div>
 
-{/* TOP TOOLS */}
-<div className="mb-8">
+      </div>
 
-<h2 className="text-xl font-bold mb-4">
-🔥 Top Tools
-</h2>
+      {/* EMPTY */}
+      {sortedViews.length === 0 ? (
 
-{sorted.slice(0,5).map(([name,count]:any,i)=>(
-<div
-key={i}
-className="flex justify-between border p-3 rounded-lg mb-2"
->
-<span>{name}</span>
-<strong>{count}</strong>
-</div>
-))}
+        <p className="text-slate-500">
+          No data yet. Use tools to generate stats.
+        </p>
 
-</div>
+      ) : (
 
-{/* ALL DATA */}
-<div>
+        <>
 
-<h2 className="text-xl font-bold mb-4">
-All Tools Data
-</h2>
+          {/* TOP VIEWED */}
+          <div className="mb-10">
 
-{sorted.map(([name,count]:any,i)=>(
-<div
-key={i}
-className="flex justify-between border p-3 rounded-lg mb-2"
->
-<span>{name}</span>
-<span>{count}</span>
-</div>
-))}
+            <h2 className="text-xl font-bold mb-4">
+              🔥 Top Viewed Tools
+            </h2>
 
-</div>
+            {sortedViews.slice(0,5).map(([name,count],i)=>(
 
-</>
+              <div
+                key={i}
+                className="flex justify-between border p-3 rounded-lg mb-2"
+              >
+                <span>{name}</span>
+                <strong>{count}</strong>
+              </div>
 
-)}
+            ))}
 
-</div>
+          </div>
 
-)
+          {/* TOP CLICKS */}
+          <div className="mb-10">
+
+            <h2 className="text-xl font-bold mb-4">
+              💰 Top Clicked Tools
+            </h2>
+
+            {sortedClicks.length === 0 ? (
+
+              <p className="text-slate-500">
+                No clicks tracked yet
+              </p>
+
+            ) : sortedClicks.slice(0,5).map(([name,count],i)=>(
+
+              <div
+                key={i}
+                className="flex justify-between border p-3 rounded-lg mb-2"
+              >
+                <span>{name}</span>
+                <strong>{count}</strong>
+              </div>
+
+            ))}
+
+          </div>
+
+          {/* ALL DATA */}
+          <div>
+
+            <h2 className="text-xl font-bold mb-4">
+              📋 All Tools Data
+            </h2>
+
+            {sortedViews.map(([name,count],i)=>(
+
+              <div
+                key={i}
+                className="flex justify-between border p-3 rounded-lg mb-2"
+              >
+                <span>{name}</span>
+                <span>{count} views</span>
+              </div>
+
+            ))}
+
+          </div>
+
+        </>
+
+      )}
+
+    </div>
+
+  )
 
 }
