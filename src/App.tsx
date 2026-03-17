@@ -8,73 +8,70 @@ import { ToolPage } from "./pages/ToolPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
 
 import {
-AboutPage,
-ContactPage,
-PrivacyPage,
-TermsPage,
-DisclaimerPage
+  AboutPage,
+  ContactPage,
+  PrivacyPage,
+  TermsPage,
+  DisclaimerPage
 } from "./pages/StaticPages";
 
 import { SitemapPage } from "./pages/SitemapPage";
 import { ToolCategoriesPage } from "./pages/ToolCategoriesPage";
 import { ToolSearchPage } from "./pages/ToolSearchPage";
-import { CategoryPage } from "./pages/CategoryPage";   // ⭐ added
+import { CategoryPage } from "./pages/CategoryPage";
 
 import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
 
-return (
+  return (
+    <HelmetProvider>
+      <BrowserRouter>
+        <ScrollToTop />
 
-<HelmetProvider>
+        <Routes>
 
-<BrowserRouter>
+          <Route path="/" element={<Layout />}>
 
-<ScrollToTop />
+            {/* HOME */}
+            <Route index element={<HomePage />} />
 
-<Routes>
+            {/* ✅ TOOL PAGE (OLD + NEW SEO SAFE) */}
+            <Route path="tools/:toolId" element={<ToolPage />} />
+            <Route path="tool/:toolId" element={<ToolPage />} />
 
-<Route path="/" element={<Layout />}>
+            {/* SEARCH */}
+            <Route path="search" element={<ToolSearchPage />} />
 
-{/* HOME */}
-<Route index element={<HomePage />} />
+            {/* CATEGORIES */}
+            <Route path="categories" element={<ToolCategoriesPage />} />
+            <Route path="category/:category" element={<CategoryPage />} />
 
-{/* TOOL PAGE */}
-<Route path="tools/:toolId" element={<ToolPage />} />
+            {/* STATIC */}
+            <Route path="about" element={<AboutPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="privacy-policy" element={<PrivacyPage />} />
+            <Route path="terms-and-conditions" element={<TermsPage />} />
+            <Route path="disclaimer" element={<DisclaimerPage />} />
+            <Route path="sitemap" element={<SitemapPage />} />
 
-{/* TOOL SEARCH */}
-<Route path="search" element={<ToolSearchPage />} />
+            {/* ✅ PROGRAMMATIC SEO */}
+            <Route path="ai-:slug" element={<DynamicSEOPage />} />
 
-{/* TOOL CATEGORIES */}
-<Route path="categories" element={<ToolCategoriesPage />} />
+            {/* 404 */}
+            <Route path="404" element={
+              <div style={{ padding: 40 }}>
+                <h1>404 Page Not Found</h1>
+              </div>
+            } />
 
-{/* CATEGORY PAGE ⭐ */}
-<Route path="category/:category" element={<CategoryPage />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
 
-{/* STATIC PAGES */}
-<Route path="about" element={<AboutPage />} />
-<Route path="contact" element={<ContactPage />} />
-<Route path="privacy-policy" element={<PrivacyPage />} />
-<Route path="terms-and-conditions" element={<TermsPage />} />
-<Route path="disclaimer" element={<DisclaimerPage />} />
-<Route path="sitemap" element={<SitemapPage />} />
+          </Route>
 
-{/* PROGRAMMATIC SEO PAGES */}
-<Route path="ai-:slug" element={<DynamicSEOPage />} />
+        </Routes>
 
-{/* 404 */}
-<Route path="404" element={<h1 style={{ padding: 40 }}>404 Page Not Found</h1>} />
-
-<Route path="*" element={<Navigate to="/404" replace />} />
-
-</Route>
-
-</Routes>
-
-</BrowserRouter>
-
-</HelmetProvider>
-
-);
-
+      </BrowserRouter>
+    </HelmetProvider>
+  );
 }
