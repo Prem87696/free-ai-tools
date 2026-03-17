@@ -1,5 +1,5 @@
 import {
-Bot,Mail,PenTool,Hash,ShoppingBag,User,Image,Sparkles,FileImage,FilePlus
+Bot,Mail,Image,Sparkles,FileImage
 } from "lucide-react"
 import { LucideIcon } from "lucide-react"
 
@@ -24,7 +24,6 @@ promptTemplate:string
 inputs:ToolInput[]
 category:"social"|"business"|"writing"|"general"
 tags?:string[]
-
 image?:string
 link?:string
 featured?:boolean
@@ -45,7 +44,7 @@ path:"/tools/ai-chatbot",
 promptTemplate:"You are a helpful AI assistant. Answer: {{query}}",
 inputs:[{name:"query",label:"Your Question",type:"textarea"}],
 category:"general",
-tags:["ai chatbot","chatgpt alternative","ai assistant"],
+tags:["ai chatbot","chatgpt alternative"],
 featured:true,
 trending:true,
 link:"https://chat.openai.com"
@@ -65,7 +64,7 @@ inputs:[
 {name:"tone",label:"Tone",type:"select",options:["Funny","Professional"]}
 ],
 category:"social",
-tags:["instagram caption","social media ai","caption generator"],
+tags:["instagram caption","social media ai"],
 link:"https://www.copy.ai"
 },
 
@@ -82,7 +81,7 @@ inputs:[
 {name:"subject",label:"Subject",type:"text"}
 ],
 category:"business",
-tags:["email generator","business email ai","email writer"],
+tags:["email generator","email writer"],
 link:"https://writesonic.com"
 },
 
@@ -96,7 +95,7 @@ path:"/tools/image-compressor",
 promptTemplate:"",
 inputs:[],
 category:"general",
-tags:["image compress","optimize image","reduce size"],
+tags:["image compress","reduce size"],
 link:"https://tinypng.com"
 }
 
@@ -116,15 +115,25 @@ if(!stored) return tools
 
 const parsed:Partial<ToolConfig>[] = JSON.parse(stored)
 
-/* ✅ SAFE MAP */
-const fixed:ToolConfig[] = parsed.map((t,index)=>({
+/* ✅ CLEAN + UNIQUE */
+const map = new Map<string,ToolConfig>()
 
-id: t.id || `custom-${index}`,
-slug: t.slug || `custom-${index}`,
+tools.forEach(t=>map.set(t.id,t))
+
+parsed.forEach((t,index)=>{
+
+const id = t.id || `custom-${index}`
+
+if(map.has(id)) return // prevent duplicate
+
+map.set(id,{
+
+id,
+slug: t.slug || id,
 name: t.name || "Custom Tool",
 description: t.description || "User added tool",
 icon: Sparkles,
-path: t.path || `/tools/custom-${index}`,
+path: t.path || `/tools/${id}`,
 promptTemplate: t.promptTemplate || "",
 inputs: t.inputs || [],
 category: (t.category as ToolConfig["category"]) || "general",
@@ -134,9 +143,11 @@ link: t.link,
 featured: t.featured || false,
 trending: t.trending || false
 
-}))
+})
 
-return [...tools, ...fixed]
+})
+
+return Array.from(map.values())
 
 }catch{
 return tools
