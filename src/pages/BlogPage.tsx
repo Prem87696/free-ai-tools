@@ -45,7 +45,7 @@ setLoading(false)
 
 }
 
-/* AUTO GENERATE ON LOAD */
+/* AUTO GENERATE */
 useEffect(()=>{
 if(title){
 generateBlog(title)
@@ -66,7 +66,7 @@ canonicalUrl={`https://free-ai-tools-lac.vercel.app/blog/${slug}`}
 {title}
 </h1>
 
-{/* MANUAL BUTTON (OPTIONAL) */}
+{/* BUTTON */}
 <button
 onClick={()=>generateBlog(title)}
 className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
@@ -76,12 +76,58 @@ className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
 
 {/* CONTENT */}
 <div className="prose max-w-none whitespace-pre-wrap">
+
 {loading ? (
 <div className="flex items-center gap-2 text-slate-500">
 <Loader2 className="animate-spin"/>
 Generating content...
 </div>
 ) : content}
+
+</div>
+
+{/* 🔥 RELATED BLOGS */}
+<div className="mt-10">
+<h2 className="text-xl font-bold mb-4">
+Related Guides
+</h2>
+
+<div className="grid md:grid-cols-2 gap-4">
+
+{[
+"ai-tools-for-students",
+"best-free-ai-tools",
+"ai-tools-for-business",
+"ai-content-generator-free"
+].map((item,i)=>(
+
+<a
+key={i}
+href={`/blog/${item}`}
+className="border p-4 rounded-xl hover:shadow"
+>
+{item.replaceAll("-"," ")}
+</a>
+
+))}
+
+</div>
+</div>
+
+{/* 🔗 TOOL CTA */}
+<div className="mt-10 text-center">
+
+<h2 className="text-xl font-bold mb-4">
+Try AI Tools
+</h2>
+
+<a
+href="/tools/ai-chatbot"
+className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl"
+>
+Open AI Chatbot →
+</a>
+
 </div>
 
 </div>
