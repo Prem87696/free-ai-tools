@@ -1,11 +1,28 @@
-import React from "react"
+import React,{useEffect,useState} from "react"
 import { Link } from "react-router-dom"
-import { tools } from "../data/tools"
+import { getAllTools } from "../data/tools"
 import { TrendingUp } from "lucide-react"
 
 export function TrendingTools(){
 
-const trending = tools.slice(0,6)
+const [trending,setTrending]=useState<any[]>([])
+
+useEffect(()=>{
+
+const allTools = getAllTools()
+
+const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
+
+/* SORT BY USAGE */
+const sorted = [...allTools].sort((a,b)=>{
+return (stats[b.name] || 0) - (stats[a.name] || 0)
+})
+
+setTrending(sorted.slice(0,6))
+
+},[])
+
+if(trending.length === 0) return null
 
 return(
 
@@ -16,7 +33,7 @@ return(
 <TrendingUp className="text-indigo-600"/>
 
 <h2 className="text-2xl font-bold">
-Trending Tools
+🔥 Trending Tools
 </h2>
 
 </div>
@@ -62,4 +79,5 @@ className="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-md hover
 </section>
 
 )
+
 }
