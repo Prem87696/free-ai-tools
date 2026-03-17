@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from "react"
+ import React,{useEffect,useState} from "react"
 import { SEOHead } from "../components/SEOHead"
 
 export function AnalyticsPage(){
