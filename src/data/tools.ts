@@ -1,5 +1,5 @@
 import {
-Bot,Mail,Image,Sparkles,FileImage
+Bot, Mail, Image, Sparkles, FileImage
 } from "lucide-react"
 import { LucideIcon } from "lucide-react"
 
@@ -34,6 +34,7 @@ trending?:boolean
 
 export const tools:ToolConfig[]=[
 
+/* 1 */
 {
 id:"ai-chatbot",
 slug:"ai-chatbot",
@@ -44,12 +45,11 @@ path:"/tools/ai-chatbot",
 promptTemplate:"You are a helpful AI assistant. Answer: {{query}}",
 inputs:[{name:"query",label:"Your Question",type:"textarea"}],
 category:"general",
-tags:["ai chatbot","chatgpt alternative"],
 featured:true,
-trending:true,
-link:"https://chat.openai.com"
+trending:true
 },
 
+/* 2 */
 {
 id:"ai-caption-generator",
 slug:"ai-caption-generator",
@@ -64,10 +64,10 @@ inputs:[
 {name:"tone",label:"Tone",type:"select",options:["Funny","Professional"]}
 ],
 category:"social",
-tags:["instagram caption","social media ai"],
-link:"https://www.copy.ai"
+trending:true
 },
 
+/* 3 */
 {
 id:"ai-email-writer",
 slug:"ai-email-writer",
@@ -81,10 +81,10 @@ inputs:[
 {name:"subject",label:"Subject",type:"text"}
 ],
 category:"business",
-tags:["email generator","email writer"],
-link:"https://writesonic.com"
+featured:true
 },
 
+/* 4 */
 {
 id:"image-compressor",
 slug:"image-compressor",
@@ -94,9 +94,128 @@ icon:FileImage,
 path:"/tools/image-compressor",
 promptTemplate:"",
 inputs:[],
-category:"general",
-tags:["image compress","reduce size"],
-link:"https://tinypng.com"
+category:"general"
+},
+
+/* 5 */
+{
+id:"ai-blog-writer",
+slug:"ai-blog-writer",
+name:"AI Blog Writer",
+description:"Generate SEO optimized blog posts.",
+icon:Sparkles,
+path:"/tools/ai-blog-writer",
+promptTemplate:"Write a blog about {{topic}}",
+inputs:[
+{name:"topic",label:"Blog Topic",type:"textarea"}
+],
+category:"writing",
+trending:true
+},
+
+/* 6 */
+{
+id:"ai-hashtag-generator",
+slug:"ai-hashtag-generator",
+name:"Hashtag Generator",
+description:"Generate trending hashtags.",
+icon:Sparkles,
+path:"/tools/ai-hashtag-generator",
+promptTemplate:"Generate hashtags for {{topic}}",
+inputs:[
+{name:"topic",label:"Topic",type:"text"}
+],
+category:"social"
+},
+
+/* 7 */
+{
+id:"ai-product-description",
+slug:"ai-product-description",
+name:"Product Description Generator",
+description:"Create product descriptions.",
+icon:Sparkles,
+path:"/tools/ai-product-description",
+promptTemplate:"Write product description for {{product}}",
+inputs:[
+{name:"product",label:"Product Name",type:"text"}
+],
+category:"business"
+},
+
+/* 8 */
+{
+id:"ai-youtube-title",
+slug:"ai-youtube-title",
+name:"YouTube Title Generator",
+description:"Generate viral titles.",
+icon:Sparkles,
+path:"/tools/ai-youtube-title",
+promptTemplate:"Generate youtube title for {{topic}}",
+inputs:[
+{name:"topic",label:"Video Topic",type:"text"}
+],
+category:"social"
+},
+
+/* 9 */
+{
+id:"ai-instagram-bio",
+slug:"ai-instagram-bio",
+name:"Instagram Bio Generator",
+description:"Create attractive bio.",
+icon:Sparkles,
+path:"/tools/ai-instagram-bio",
+promptTemplate:"Write instagram bio for {{niche}}",
+inputs:[
+{name:"niche",label:"Niche",type:"text"}
+],
+category:"social"
+},
+
+/* 10 */
+{
+id:"ai-story-generator",
+slug:"ai-story-generator",
+name:"Story Generator",
+description:"Generate creative stories.",
+icon:Sparkles,
+path:"/tools/ai-story-generator",
+promptTemplate:"Write a story about {{topic}}",
+inputs:[
+{name:"topic",label:"Story Topic",type:"text"}
+],
+category:"writing"
+},
+
+/* 11 */
+{
+id:"ai-summary-tool",
+slug:"ai-summary-tool",
+name:"Text Summarizer",
+description:"Summarize long text instantly.",
+icon:Sparkles,
+path:"/tools/ai-summary-tool",
+promptTemplate:"Summarize this text: {{text}}",
+inputs:[
+{name:"text",label:"Enter Text",type:"textarea"}
+],
+category:"general"
+},
+
+/* 12 */
+{
+id:"ai-rewrite-tool",
+slug:"ai-rewrite-tool",
+name:"Text Rewriter",
+description:"Rewrite content in better way.",
+icon:Sparkles,
+path:"/tools/ai-rewrite-tool",
+promptTemplate:"Rewrite this text: {{text}}",
+inputs:[
+{name:"text",label:"Enter Text",type:"textarea"}
+],
+category:"writing"
 }
 
 ]
@@ -115,7 +234,6 @@ if(!stored) return tools
 
 const parsed:Partial<ToolConfig>[] = JSON.parse(stored)
 
-/* ✅ CLEAN + UNIQUE */
 const map = new Map<string,ToolConfig>()
 
 tools.forEach(t=>map.set(t.id,t))
@@ -124,25 +242,18 @@ parsed.forEach((t,index)=>{
 
 const id = t.id || `custom-${index}`
 
-if(map.has(id)) return // prevent duplicate
+if(map.has(id)) return
 
 map.set(id,{
-
 id,
 slug: t.slug || id,
 name: t.name || "Custom Tool",
-description: t.description || "User added tool",
+description: t.description || "User tool",
 icon: Sparkles,
 path: t.path || `/tools/${id}`,
 promptTemplate: t.promptTemplate || "",
 inputs: t.inputs || [],
-category: (t.category as ToolConfig["category"]) || "general",
-tags: t.tags || ["custom ai tool"],
-image: t.image,
-link: t.link,
-featured: t.featured || false,
-trending: t.trending || false
-
+category: (t.category as ToolConfig["category"]) || "general"
 })
 
 })
@@ -158,13 +269,6 @@ return tools
 /* ---------- SEO MODIFIERS ---------- */
 
 export const seoModifiers = {
-
-"caption-generator":[
-{slug:"instagram",name:"Instagram"}
-],
-
-"email-writer":[
-{slug:"business",name:"Business"}
-]
-
+"caption-generator":[{slug:"instagram",name:"Instagram"}],
+"email-writer":[{slug:"business",name:"Business"}]
 }
