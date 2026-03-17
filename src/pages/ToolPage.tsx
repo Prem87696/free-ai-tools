@@ -1,6 +1,6 @@
 import React,{useState,useEffect,useRef} from "react"
 import {useParams,Navigate} from "react-router-dom"
-import { getAllTools } from "../data/tools"
+import { getAllTools, ToolConfig } from "../data/tools"
 import {generateContent} from "../services/aiRouter"
 import {toolEngine} from "../engine/toolEngine"
 import {SEOHead} from "../components/SEOHead"
@@ -12,174 +12,227 @@ type Msg={role:"user"|"ai";text:string}
 
 export function ToolPage(){
 
-const {toolId}=useParams<{toolId:string}>()
+  const {toolId}=useParams<{toolId:string}>()
 
-const tool = getAllTools().find(t=>t.id===toolId)
+  const tool:ToolConfig | undefined = getAllTools().find(t=>t.id===toolId)
 
-const ToolComponent=toolId ? toolEngine[toolId] : null
+  const ToolComponent=toolId ? toolEngine[toolId] : null
 
-const [formData,setFormData]=useState<Record<string,string>>({})
-const [result,setResult]=useState("")
-const [loading,setLoading]=useState(false)
-const [copied,setCopied]=useState<number|null>(null)
+  const [formData,setFormData]=useState<Record<string,string>>({})
+  const [result,setResult]=useState("")
+  const [loading,setLoading]=useState(false)
+  const [copied,setCopied]=useState<number|null>(null)
 
-const chatRef=useRef<HTMLDivElement>(null)
+  const chatRef=useRef<HTMLDivElement>(null)
 
-/* RESET */
-useEffect(()=>{
-setFormData({})
-setResult("")
-},[toolId])
+  /* RESET */
+  useEffect(()=>{
+    setFormData({})
+    setResult("")
+  },[toolId])
 
-/* ANALYTICS */
-useEffect(()=>{
-if(!tool) return
-try{
-const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
-stats[tool.name] = (stats[tool.name] || 0) + 1
-localStorage.setItem("analytics", JSON.stringify(stats))
-}catch{}
-},[tool])
+  /* ✅ ANALYTICS (VIEW TRACK) */
+  useEffect(()=>{
+    if(!tool || typeof window === "undefined") return
+    try{
+      const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
+      stats[tool.name] = (stats[tool.name] || 0) + 1
+      localStorage.setItem("analytics", JSON.stringify(stats))
+    }catch{}
+  },[tool])
 
-if(!tool) return <Navigate to="/404"/>
+  if(!tool) return <Navigate to="/404"/>
 
-/* 💰 HIGH-CONVERSION CTA */
-const CTA=()=>(
-tool.link ? (
-<div className="mt-6 p-5 bg-indigo-50 border rounded-xl text-center">
+  /* 💰 CLICK TRACK */
+  const trackClick = ()=>{
+    try{
+      const clicks = JSON.parse(localStorage.getItem("clicks") || "{}")
+      clicks[tool.name] = (clicks[tool.name] || 0) + 1
+      localStorage.setItem("clicks", JSON.stringify(clicks))
+    }catch{}
+  }
 
-<p className="text-sm text-slate-600 mb-2">
-⚡ Want better & faster results?
-</p>
+  /* 💰 CTA */
+  const CTA=()=>(
 
-<a
-href={tool.link}
-target="_blank"
-rel="nofollow sponsored"
-className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition"
->
-🚀 Try Premium AI Tool
-</a>
+    tool.link ? (
 
-<p className="text-xs text-slate-400 mt-2">
-Recommended for best results
-</p>
+      <div className="mt-6 p-5 bg-indigo-50 border rounded-xl text-center">
 
-</div>
-):null
-)
+        <p className="text-sm text-slate-600 mb-2">
+          ⚡ Want better & faster results?
+        </p>
 
-/* GENERATE */
-const submit=async(e:React.FormEvent)=>{
-e.preventDefault()
-setLoading(true)
-setResult("")
+        <a
+          href={tool.link}
+          target="_blank"
+          rel="nofollow sponsored"
+          onClick={trackClick}
+          className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition"
+        >
+          🚀 Try Premium AI Tool
+        </a>
 
-try{
-let prompt=tool.promptTemplate || ""
-tool.inputs?.forEach(input=>{
-prompt=prompt.replaceAll(`{{${input.name}}}`,formData[input.name]||"")
-})
+        <p className="text-xs text-slate-400 mt-2">
+          Recommended for best results
+        </p>
 
-const res=await generateContent(prompt)
-setResult(res)
+      </div>
 
-}catch{
-setResult("Error generating result")
-}
+    ):null
+  )
 
-setLoading(false)
-}
+  /* GENERATE */
+  const submit=async(e:React.FormEvent)=>{
+    e.preventDefault()
+    setLoading(true)
+    setResult("")
 
-/* COPY */
-const copy=(text:string,index:number)=>{
-navigator.clipboard?.writeText(text)
-setCopied(index)
-setTimeout(()=>setCopied(null),2000)
-}
+    try{
 
-const Icon=tool.icon
+      let prompt=tool.promptTemplate || ""
 
-return(
-<>
-<SEOHead title={tool.name} description={tool.description}/>
+      tool.inputs?.forEach(input=>{
+        prompt=prompt.replaceAll(`{{${input.name}}}`,formData[input.name]||"")
+      })
 
-<AdPlaceholder slot="top"/>
+      const res=await generateContent(prompt)
 
-<div className="max-w-6xl mx-auto">
+      setResult(res)
 
-{/* HEADER */}
-<div className="text-center mb-10">
-<Icon className="w-8 h-8 mx-auto mb-4"/>
-<h1 className="text-3xl font-bold">{tool.name}</h1>
-<p className="text-slate-600">{tool.description}</p>
+    }catch{
+      setResult("Error generating result")
+    }
 
-{/* CTA TOP */}
-<CTA/>
+    setLoading(false)
+  }
 
-</div>
+  /* COPY */
+  const copy=(text:string,index:number)=>{
+    try{
+      navigator.clipboard.writeText(text)
+      setCopied(index)
+      setTimeout(()=>setCopied(null),2000)
+    }catch{}
+  }
 
-{/* TOOL */}
-<div className="bg-white border rounded-2xl p-8">
+  const Icon=tool.icon
 
-<form onSubmit={submit} className="space-y-6">
+  return(
 
-{tool.inputs?.map(input=>(
-<textarea
-key={input.name}
-placeholder={input.label}
-className="w-full border rounded-lg px-4 py-3"
-value={formData[input.name]||""}
-onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
-/>
-))}
+    <>
+      <SEOHead
+        title={`${tool.name} - Free AI Tool`}
+        description={`${tool.description} Use ${tool.name} online for free.`}
+        canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
+      />
 
-<button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center items-center gap-2">
+      <AdPlaceholder slot="top"/>
 
-{loading ? (
-<>
-<Loader2 className="animate-spin w-5 h-5"/>
-Generating...
-</>
-) : "Generate"}
+      <div className="max-w-6xl mx-auto">
 
-</button>
+        {/* HEADER */}
+        <div className="text-center mb-10">
+          <Icon className="w-8 h-8 mx-auto mb-4"/>
+          <h1 className="text-3xl font-bold">{tool.name}</h1>
+          <p className="text-slate-600">{tool.description}</p>
 
-</form>
+          <CTA/>
+        </div>
 
-{/* RESULT */}
-{result &&(
-<div className="mt-6 border p-6 rounded-xl">
+        {/* TOOL */}
+        <div className="bg-white border rounded-2xl p-8">
 
-<div className="flex justify-between mb-2">
-<strong>Result</strong>
+          <form onSubmit={submit} className="space-y-6">
 
-<button onClick={()=>copy(result,0)}>
-{copied===0?<Check size={16}/>:<Copy size={16}/>}
-</button>
+            {tool.inputs?.map(input=>(
 
-</div>
+              input.type === "select" ? (
 
-<div className="text-sm whitespace-pre-wrap">
-{result}
-</div>
+                <select
+                  key={input.name}
+                  className="w-full border rounded-lg px-4 py-3"
+                  value={formData[input.name]||""}
+                  onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
+                >
+                  <option value="">Select {input.label}</option>
+                  {input.options?.map(opt=>(
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
 
-{/* 💰 CTA AFTER RESULT (BEST POSITION) */}
-<CTA/>
+              ) : input.type === "text" ? (
 
-</div>
-)}
+                <input
+                  key={input.name}
+                  type="text"
+                  placeholder={input.label}
+                  className="w-full border rounded-lg px-4 py-3"
+                  value={formData[input.name]||""}
+                  onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
+                />
 
-</div>
+              ) : (
 
-<AdPlaceholder slot="content"/>
+                <textarea
+                  key={input.name}
+                  placeholder={input.label}
+                  className="w-full border rounded-lg px-4 py-3"
+                  value={formData[input.name]||""}
+                  onChange={(e)=>setFormData({...formData,[input.name]:e.target.value})}
+                />
 
-<RelatedTools currentId={tool.id} category={tool.category}/>
+              )
 
-<AdPlaceholder slot="bottom"/>
+            ))}
 
-</div>
-</>
-)
+            <button className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center items-center gap-2">
+
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin w-5 h-5"/>
+                  Generating...
+                </>
+              ) : "Generate"}
+
+            </button>
+
+          </form>
+
+          {/* RESULT */}
+          {result &&(
+
+            <div className="mt-6 border p-6 rounded-xl">
+
+              <div className="flex justify-between mb-2">
+                <strong>Result</strong>
+
+                <button onClick={()=>copy(result,0)}>
+                  {copied===0?<Check size={16}/>:<Copy size={16}/>}
+                </button>
+              </div>
+
+              <div className="text-sm whitespace-pre-wrap">
+                {result}
+              </div>
+
+              <CTA/>
+
+            </div>
+
+          )}
+
+        </div>
+
+        <AdPlaceholder slot="content"/>
+
+        <RelatedTools currentId={tool.id} category={tool.category}/>
+
+        <AdPlaceholder slot="bottom"/>
+
+      </div>
+    </>
+
+  )
 
 }
