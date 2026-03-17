@@ -1,56 +1,74 @@
-export function getCache(key: string){
+/* 🔥 SERVER CACHE */
+const serverCache = new Map<string, { result: string; time: number }>()
 
-if(typeof window === "undefined") return null
-
-try{
-
-const cache = localStorage.getItem("ai-cache")
-if(!cache) return null
-
-const parsed = JSON.parse(cache)
-
-/* normalize */
-const normalizedKey = key.trim().toLowerCase()
-
-const data = parsed[normalizedKey]
-
-if(!data) return null
-
-/* expire check */
 const CACHE_TIME = 24 * 60 * 60 * 1000
 
-if(Date.now() - data.time > CACHE_TIME){
-delete parsed[normalizedKey]
-localStorage.setItem("ai-cache", JSON.stringify(parsed))
-return null
+/* 🔍 GET CACHE */
+export function getCache(key: string){
+
+const normalizedKey = btoa(key.trim().toLowerCase())
+
+/* 1️⃣ SERVER CACHE */
+const serverData = serverCache.get(normalizedKey)
+
+if(serverData){
+if(Date.now() - serverData.time < CACHE_TIME){
+console.log("SERVER CACHE HIT")
+return serverData.result
+}else{
+serverCache.delete(normalizedKey)
+}
 }
 
+/* 2️⃣ BROWSER CACHE */
+if(typeof window !== "undefined"){
+
+try{
+const cache = localStorage.getItem("ai-cache")
+if(cache){
+
+const parsed = JSON.parse(cache)
+const data = parsed[normalizedKey]
+
+if(data && Date.now() - data.time < CACHE_TIME){
+console.log("BROWSER CACHE HIT")
 return data.result
+}
 
-}catch{
+}
+}catch{}
+}
+
 return null
 }
 
-}
-
+/* 💾 SET CACHE */
 export function setCache(key: string, value: string){
 
-if(typeof window === "undefined") return
+const normalizedKey = btoa(key.trim().toLowerCase())
+
+/* SERVER */
+serverCache.set(normalizedKey,{
+result:value,
+time:Date.now()
+})
+
+/* BROWSER */
+if(typeof window !== "undefined"){
 
 try{
 
 const cache = localStorage.getItem("ai-cache")
 const parsed = cache ? JSON.parse(cache) : {}
 
-const normalizedKey = key.trim().toLowerCase()
-
 parsed[normalizedKey] = {
-result: value,
-time: Date.now()
+result:value,
+time:Date.now()
 }
 
 localStorage.setItem("ai-cache", JSON.stringify(parsed))
 
 }catch{}
+}
 
 }
