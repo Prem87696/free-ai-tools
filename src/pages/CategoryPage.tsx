@@ -1,16 +1,18 @@
- import React from "react"
+import React from "react"
 import { useParams, Link, Navigate } from "react-router-dom"
-import { tools } from "../data/tools"
+import { getAllTools } from "../data/tools"
 import { SEOHead } from "../components/SEOHead"
 import { Sparkles } from "lucide-react"
 
 export function CategoryPage(){
 
-const { category } = useParams()
+const { category } = useParams<{category:string}>()
 
 if(!category) return <Navigate to="/tools" />
 
-const categoryTools = tools.filter(
+const allTools = getAllTools()
+
+const categoryTools = allTools.filter(
 t => t.category?.toLowerCase() === category.toLowerCase()
 )
 
@@ -19,15 +21,16 @@ const title = `${category.charAt(0).toUpperCase()+category.slice(1)} Tools`
 return(
 
 <>
+
 <SEOHead
 title={`${title} - Free AI Tools`}
 description={`Browse free ${category} tools. Fast, secure and easy to use.`}
+canonicalUrl={`https://free-ai-tools-lac.vercel.app/category/${category}`}
 />
 
 <div className="max-w-6xl mx-auto px-6 py-10">
 
 {/* HEADER */}
-
 <div className="text-center mb-12">
 
 <div className="inline-flex p-4 bg-indigo-100 rounded-xl text-indigo-600 mb-4">
@@ -44,8 +47,7 @@ description={`Browse free ${category} tools. Fast, secure and easy to use.`}
 
 </div>
 
-{/* EMPTY STATE */}
-
+{/* EMPTY */}
 {categoryTools.length===0 &&(
 
 <div className="text-center py-16">
@@ -65,8 +67,7 @@ Browse All Tools
 
 )}
 
-{/* TOOL GRID */}
-
+{/* GRID */}
 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
 {categoryTools.map(tool=>{
@@ -78,16 +79,16 @@ return(
 <Link
 key={tool.id}
 to={tool.path}
-className="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-md transition"
+className="group bg-white p-6 rounded-2xl border hover:border-indigo-200 hover:shadow-md transition"
 >
 
 <div className="flex items-center gap-3 mb-3">
 
-<div className="p-2 rounded-lg bg-slate-100 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
+<div className="p-2 rounded-lg bg-slate-100 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white">
 <Icon size={20}/>
 </div>
 
-<h3 className="font-semibold text-slate-900 group-hover:text-indigo-600">
+<h3 className="font-semibold group-hover:text-indigo-600">
 {tool.name}
 </h3>
 
