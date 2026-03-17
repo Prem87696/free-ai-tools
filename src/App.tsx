@@ -7,8 +7,9 @@ import { HomePage } from "./pages/HomePage";
 import { ToolPage } from "./pages/ToolPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
 import { BlogPage } from "./pages/BlogPage";
-import { BlogListPage } from "./pages/BlogListPage"; // ✅ NEW
-import { AdminPage } from "./pages/AdminPage"; // ✅ NEW
+import { BlogListPage } from "./pages/BlogListPage";
+import { AdminPage } from "./pages/AdminPage";
+import { AnalyticsPage } from "./pages/AnalyticsPage"; // ✅ NEW
 
 import {
   AboutPage,
@@ -39,9 +40,9 @@ export default function App() {
             {/* HOME */}
             <Route index element={<HomePage />} />
 
-            {/* TOOL PAGE */}
+            {/* TOOL PAGE (SEO SAFE) */}
             <Route path="tools/:toolId" element={<ToolPage />} />
-            <Route path="tool/:toolId" element={<ToolPage />} />
+            <Route path="tool/:toolId" element={<Navigate to="/tools/:toolId" replace />} />
 
             {/* SEARCH */}
             <Route path="search" element={<ToolSearchPage />} />
@@ -51,11 +52,14 @@ export default function App() {
             <Route path="category/:category" element={<CategoryPage />} />
 
             {/* BLOG */}
-            <Route path="blog" element={<BlogListPage />} /> {/* list */}
-            <Route path="blog/:slug" element={<BlogPage />} /> {/* detail */}
+            <Route path="blog" element={<BlogListPage />} />
+            <Route path="blog/:slug" element={<BlogPage />} />
 
             {/* ADMIN */}
             <Route path="admin" element={<AdminPage />} />
+
+            {/* ANALYTICS ✅ */}
+            <Route path="analytics" element={<AnalyticsPage />} />
 
             {/* STATIC */}
             <Route path="about" element={<AboutPage />} />
