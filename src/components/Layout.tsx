@@ -335,14 +335,83 @@ PDF Tools
 
 <footer className="bg-white border-t border-slate-100 mt-16">
 
-<div className="max-w-7xl mx-auto px-4 py-10 text-center text-sm text-slate-400">
+<div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
 
-© {new Date().getFullYear()} AI Tools Platform
+{/* BRAND */}
+
+<div>
+<h3 className="font-bold text-lg text-indigo-600 mb-3">
+AI Tools Platform
+</h3>
+
+<p className="text-slate-500">
+Free AI tools for content creation, business, and productivity.
+No signup required.
+</p>
+</div>
+
+{/* QUICK LINKS */}
+
+<div>
+<h4 className="font-semibold mb-3 text-slate-800">
+Quick Links
+</h4>
+
+<ul className="space-y-2 text-slate-500">
+
+<li><Link to="/">Home</Link></li>
+<li><Link to="/tools">All Tools</Link></li>
+<li><Link to="/blog">Blog</Link></li>
+<li><Link to="/categories">Categories</Link></li>
+
+</ul>
+</div>
+
+{/* TOP TOOLS */}
+
+<div>
+<h4 className="font-semibold mb-3 text-slate-800">
+Top Tools
+</h4>
+
+<ul className="space-y-2 text-slate-500">
+
+<li><Link to="/tools/ai-chatbot">AI Chatbot</Link></li>
+<li><Link to="/tools/ai-caption-generator">Caption Generator</Link></li>
+<li><Link to="/tools/ai-email-writer">Email Writer</Link></li>
+<li><Link to="/tools/image-compressor">Image Compressor</Link></li>
+
+</ul>
+</div>
+
+{/* LEGAL */}
+
+<div>
+<h4 className="font-semibold mb-3 text-slate-800">
+Legal
+</h4>
+
+<ul className="space-y-2 text-slate-500">
+
+<li><Link to="/privacy-policy">Privacy Policy</Link></li>
+<li><Link to="/terms-and-conditions">Terms</Link></li>
+<li><Link to="/disclaimer">Disclaimer</Link></li>
+<li><Link to="/contact">Contact</Link></li>
+
+</ul>
+</div>
+
+</div>
+
+{/* BOTTOM */}
+
+<div className="border-t border-slate-100 text-center py-6 text-xs text-slate-400">
+
+© {new Date().getFullYear()} AI Tools Platform • All rights reserved
 
 </div>
 
 </footer>
-
 </div>
 
 )
