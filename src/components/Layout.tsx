@@ -1,23 +1,12 @@
-import React,{useState,KeyboardEvent} from "react"
+import React,{useState,KeyboardEvent,useMemo} from "react"
 import {Link,Outlet,useNavigate} from "react-router-dom"
 import {
-Menu,
-X,
-Bot,
-FileText,
-Mail,
-PenTool,
-Hash,
-User,
-Image,
-FileImage,
-File,
-Scissors,
-Search
+Menu,X,Bot,FileText,Mail,Image,FileImage,File,Search
 } from "lucide-react"
 
 import {AdPlaceholder} from "./AdPlaceholder"
 import PageTransition from "./PageTransition"
+import { getAllTools } from "../data/tools"
 
 export function Layout(){
 
@@ -28,17 +17,22 @@ const navigate=useNavigate()
 
 const toggleMenu=()=>setIsMenuOpen(prev=>!prev)
 
+/* ✅ DYNAMIC TOOLS */
+const tools = useMemo(()=>getAllTools(),[])
+
+const topTools = tools.slice(0,5)
+
 const navLinks=[
 {name:"Home",path:"/"},
 {name:"Tools",path:"/tools"},
-{name:"About",path:"/about"},
+{name:"Blog",path:"/blog"},
 {name:"Contact",path:"/contact"}
 ]
 
 const toolItem="flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-indigo-200 hover:bg-indigo-50 transition"
 const iconBox="p-2 rounded-lg bg-slate-100"
 
-/* ✅ TYPE SAFE SEARCH */
+/* SEARCH */
 const handleSearch=(e:KeyboardEvent<HTMLInputElement>)=>{
 if(e.key==="Enter" && search.trim()){
 navigate(`/search?q=${encodeURIComponent(search.trim())}`)
@@ -51,7 +45,7 @@ return(
 <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
 
 {/* HEADER */}
-<header className="bg-white border-b border-slate-100 sticky top-0 z-50">
+<header className="bg-white border-b sticky top-0 z-50">
 
 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
@@ -64,7 +58,6 @@ return(
 <div className="hidden md:flex items-center bg-slate-100 px-3 py-2 rounded-lg w-72">
 <Search size={18} className="text-slate-400 mr-2"/>
 <input
-type="text"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
 onKeyDown={handleSearch}
@@ -77,63 +70,49 @@ className="bg-transparent outline-none text-sm w-full"
 <nav className="hidden md:flex items-center gap-6">
 
 {navLinks.map(link=>(
-<Link
-key={link.name}
-to={link.path}
-className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
->
+<Link key={link.name} to={link.path} className="text-slate-600 hover:text-indigo-600">
 {link.name}
 </Link>
 ))}
 
-<Link
-to="/tools"
-className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
->
-Explore Tools
+<Link to="/tools" className="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+Explore
 </Link>
 
 </nav>
 
-<button
-onClick={toggleMenu}
-className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
->
+<button onClick={toggleMenu} className="md:hidden p-2">
 {isMenuOpen?<X/>:<Menu/>}
 </button>
 
 </div>
 
-{/* MOBILE MENU */}
+{/* MOBILE */}
 {isMenuOpen &&(
 
-<div className="md:hidden bg-white border-t border-slate-200 p-4 space-y-4">
+<div className="md:hidden bg-white border-t p-4 space-y-4">
 
 <div className="flex items-center bg-slate-100 px-3 py-2 rounded-lg">
 <Search size={18} className="text-slate-400 mr-2"/>
 <input
-type="text"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
 onKeyDown={handleSearch}
-placeholder="Search tools..."
-className="bg-transparent outline-none text-sm w-full"
+placeholder="Search..."
+className="bg-transparent outline-none w-full"
 />
 </div>
 
-<nav className="flex flex-col gap-4">
-
+<nav className="flex flex-col gap-3">
 {navLinks.map(link=>(
 <Link
 key={link.name}
 to={link.path}
-className="text-slate-600 hover:text-indigo-600 font-medium py-2"
 onClick={()=>setIsMenuOpen(false)}
 >
 {link.name}
 </Link>
 ))}
-
 </nav>
 
 </div>
@@ -150,7 +129,7 @@ onClick={()=>setIsMenuOpen(false)}
 {/* MAIN */}
 <main className="flex-grow max-w-7xl mx-auto px-4 py-8">
 
-<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div className="grid lg:grid-cols-12 gap-8">
 
 {/* CONTENT */}
 <div className="lg:col-span-9">
@@ -160,61 +139,35 @@ onClick={()=>setIsMenuOpen(false)}
 </div>
 
 {/* SIDEBAR */}
-<aside className="lg:col-span-3 space-y-8 sticky top-24 h-fit">
+<aside className="lg:col-span-3 space-y-6 sticky top-24">
 
-{/* AI TOOLS */}
-<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
+<div className="bg-white p-6 rounded-2xl border">
 
-<h3 className="font-bold text-lg mb-5">AI Tools</h3>
-
-<div className="space-y-2">
-
-<Link to="/tools/ai-chatbot" className={toolItem}>
-<div className={iconBox}><Bot size={16}/></div>
-<span className="text-sm font-medium">AI Chatbot</span>
-</Link>
-
-<Link to="/tools/ai-caption-generator" className={toolItem}>
-<div className={iconBox}><FileText size={16}/></div>
-<span className="text-sm font-medium">Caption Generator</span>
-</Link>
-
-<Link to="/tools/ai-email-writer" className={toolItem}>
-<div className={iconBox}><Mail size={16}/></div>
-<span className="text-sm font-medium">Email Writer</span>
-</Link>
-
-</div>
-
-</div>
-
-{/* IMAGE TOOLS */}
-<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
-
-<h3 className="font-bold text-lg mb-5">Image Tools</h3>
+<h3 className="font-bold mb-4">
+🔥 Top Tools
+</h3>
 
 <div className="space-y-2">
 
-<Link to="/tools/image-compressor" className={toolItem}>
-<div className={iconBox}><FileImage size={16}/></div>
-<span className="text-sm font-medium">Image Compressor</span>
-</Link>
+{topTools.map(tool=>{
 
+const Icon = tool.icon
+
+return(
+
+<Link key={tool.id} to={tool.path} className={toolItem}>
+
+<div className={iconBox}>
+<Icon size={16}/>
 </div>
 
-</div>
+<span className="text-sm">{tool.name}</span>
 
-{/* PDF TOOLS */}
-<div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
-
-<h3 className="font-bold text-lg mb-5">PDF Tools</h3>
-
-<div className="space-y-2">
-
-<Link to="/tools/merge-pdf" className={toolItem}>
-<div className={iconBox}><File size={16}/></div>
-<span className="text-sm font-medium">Merge PDF</span>
 </Link>
+
+)
+
+})}
 
 </div>
 
@@ -234,52 +187,52 @@ onClick={()=>setIsMenuOpen(false)}
 </div>
 
 {/* FOOTER */}
-<footer className="bg-white border-t border-slate-100 mt-16">
+<footer className="bg-white border-t mt-16">
 
-<div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
+<div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-4 gap-10 text-sm">
 
 <div>
-<h3 className="font-bold text-lg text-indigo-600 mb-3">
+<h3 className="font-bold text-indigo-600 mb-2">
 AI Tools Platform
 </h3>
 <p className="text-slate-500">
-Free AI tools for content creation, business, and productivity.
+Free AI tools for creators & businesses.
 </p>
 </div>
 
 <div>
-<h4 className="font-semibold mb-3">Quick Links</h4>
-<ul className="space-y-2 text-slate-500">
+<h4 className="font-semibold mb-2">Links</h4>
+<ul className="space-y-2">
 <li><Link to="/">Home</Link></li>
-<li><Link to="/tools">All Tools</Link></li>
+<li><Link to="/tools">Tools</Link></li>
 <li><Link to="/blog">Blog</Link></li>
 <li><Link to="/categories">Categories</Link></li>
 </ul>
 </div>
 
 <div>
-<h4 className="font-semibold mb-3">Top Tools</h4>
-<ul className="space-y-2 text-slate-500">
-<li><Link to="/tools/ai-chatbot">AI Chatbot</Link></li>
-<li><Link to="/tools/ai-caption-generator">Caption Generator</Link></li>
-<li><Link to="/tools/ai-email-writer">Email Writer</Link></li>
-<li><Link to="/tools/image-compressor">Image Compressor</Link></li>
+<h4 className="font-semibold mb-2">Top Tools</h4>
+<ul className="space-y-2">
+{topTools.slice(0,4).map(t=>(
+<li key={t.id}>
+<Link to={t.path}>{t.name}</Link>
+</li>
+))}
 </ul>
 </div>
 
 <div>
-<h4 className="font-semibold mb-3">Legal</h4>
-<ul className="space-y-2 text-slate-500">
-<li><Link to="/privacy-policy">Privacy Policy</Link></li>
+<h4 className="font-semibold mb-2">Legal</h4>
+<ul className="space-y-2">
+<li><Link to="/privacy-policy">Privacy</Link></li>
 <li><Link to="/terms-and-conditions">Terms</Link></li>
 <li><Link to="/disclaimer">Disclaimer</Link></li>
-<li><Link to="/contact">Contact</Link></li>
 </ul>
 </div>
 
 </div>
 
-<div className="border-t border-slate-100 text-center py-6 text-xs text-slate-400">
+<div className="text-center py-6 text-xs text-slate-400 border-t">
 © {new Date().getFullYear()} AI Tools Platform
 </div>
 
@@ -288,5 +241,4 @@ Free AI tools for content creation, business, and productivity.
 </div>
 
 )
-
 }
