@@ -1,4 +1,4 @@
-import React from "react";
+ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
@@ -6,6 +6,7 @@ import { Layout } from "./components/Layout";
 import { HomePage } from "./pages/HomePage";
 import { ToolPage } from "./pages/ToolPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
+import { BlogPage } from "./pages/BlogPage"; // ✅ NEW
 
 import {
   AboutPage,
@@ -36,7 +37,7 @@ export default function App() {
             {/* HOME */}
             <Route index element={<HomePage />} />
 
-            {/* ✅ TOOL PAGE (OLD + NEW SEO SAFE) */}
+            {/* TOOL PAGE (OLD + NEW SEO SAFE) */}
             <Route path="tools/:toolId" element={<ToolPage />} />
             <Route path="tool/:toolId" element={<ToolPage />} />
 
@@ -47,6 +48,9 @@ export default function App() {
             <Route path="categories" element={<ToolCategoriesPage />} />
             <Route path="category/:category" element={<CategoryPage />} />
 
+            {/* BLOG SYSTEM ✅ */}
+            <Route path="blog/:slug" element={<BlogPage />} />
+
             {/* STATIC */}
             <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
@@ -55,7 +59,7 @@ export default function App() {
             <Route path="disclaimer" element={<DisclaimerPage />} />
             <Route path="sitemap" element={<SitemapPage />} />
 
-            {/* ✅ PROGRAMMATIC SEO */}
+            {/* PROGRAMMATIC SEO */}
             <Route path="ai-:slug" element={<DynamicSEOPage />} />
 
             {/* 404 */}
