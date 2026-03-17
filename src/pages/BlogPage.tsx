@@ -6,31 +6,42 @@ import {Loader2} from "lucide-react"
 
 export function BlogPage(){
 
-const {slug}=useParams<{slug:string}>()
+  const {slug}=useParams<{slug:string}>()
 
-const [content,setContent]=useState("")
-const [loading,setLoading]=useState(false)
+  const [content,setContent]=useState("")
+  const [loading,setLoading]=useState(false)
 
-/* TITLE */
-const title = slug ? slug.replaceAll("-"," ") : "AI Guide"
+  /* ✅ SAFE TITLE */
+  const title = slug ? slug.replaceAll("-"," ") : "AI Guide"
 
-/* GENERATE WITH CACHE */
-const generateBlog=async(currentTitle:string)=>{
+  /* ✅ CACHE TIME (24h) */
+  const CACHE_TIME = 24 * 60 * 60 * 1000
 
-const key = "blog-" + currentTitle
+  /* GENERATE BLOG */
+  const generateBlog=async(currentTitle:string,force=false)=>{
 
-const cached = localStorage.getItem(key)
+    const key = "blog-" + currentTitle
 
-if(cached){
-setContent(cached)
-return
-}
+    try{
 
-setLoading(true)
+      if(typeof window !== "undefined" && !force){
 
-try{
+        const cached = localStorage.getItem(key)
 
-const prompt = `
+        if(cached){
+          const parsed = JSON.parse(cached)
+
+          /* ✅ CHECK EXPIRY */
+          if(Date.now() - parsed.time < CACHE_TIME){
+            setContent(parsed.data)
+            return
+          }
+        }
+      }
+
+      setLoading(true)
+
+      const prompt = `
 Write a detailed SEO optimized blog article about "${currentTitle}".
 
 Include:
@@ -42,130 +53,152 @@ Include:
 - Easy English language
 `
 
-const res = await generateContent(prompt)
+      const res = await generateContent(prompt)
 
-localStorage.setItem(key,res)
+      /* ✅ SAVE CACHE */
+      if(typeof window !== "undefined"){
+        localStorage.setItem(key, JSON.stringify({
+          data: res,
+          time: Date.now()
+        }))
+      }
 
-setContent(res)
+      setContent(res)
 
-}catch{
-setContent("Error generating blog")
-}
+    }catch{
+      setContent("ERROR")
+    }
 
-setLoading(false)
+    setLoading(false)
 
-}
+  }
 
-/* AUTO LOAD */
-useEffect(()=>{
-if(title){
-generateBlog(title)
-}
-},[title])
+  /* AUTO LOAD */
+  useEffect(()=>{
+    if(title){
+      generateBlog(title)
+    }
+  },[title])
 
-return(
+  return(
 
-<div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6">
 
-<SEOHead
-title={`${title} - AI Guide`}
-description={`Complete guide about ${title}. Learn benefits, usage and tips.`}
-canonicalUrl={`https://free-ai-tools-lac.vercel.app/blog/${slug}`}
-/>
+      <SEOHead
+        title={`${title} - AI Guide`}
+        description={`Complete guide about ${title}. Learn benefits, usage and tips.`}
+        canonicalUrl={`https://free-ai-tools-lac.vercel.app/blog/${slug}`}
+      />
 
-<h1 className="text-3xl font-bold capitalize mb-4">
-{title}
-</h1>
+      <h1 className="text-3xl font-bold capitalize mb-4">
+        {title}
+      </h1>
 
-<button
-onClick={()=>generateBlog(title)}
-className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
->
-{loading ? <Loader2 className="animate-spin"/> : "Regenerate Article"}
-</button>
+      {/* REGENERATE */}
+      <button
+        onClick={()=>generateBlog(title,true)}
+        className="bg-indigo-600 text-white px-6 py-2 rounded-lg mb-6"
+      >
+        {loading ? <Loader2 className="animate-spin"/> : "Regenerate Article"}
+      </button>
 
-{/* CONTENT */}
-<div className="prose max-w-none whitespace-pre-wrap">
+      {/* CONTENT */}
 
-{loading ? (
-<div className="flex items-center gap-2 text-slate-500">
-<Loader2 className="animate-spin"/>
-Generating content...
-</div>
-) : content}
+      <div className="prose max-w-none whitespace-pre-wrap">
 
-</div>
+        {loading ? (
 
-{/* 💰 AFFILIATE CTA (HIGH CONVERSION) */}
-<div className="mt-12 p-6 bg-indigo-50 border rounded-xl text-center">
+          <div className="space-y-3 animate-pulse">
 
-<h2 className="text-xl font-bold mb-2">
-Best AI Tool for this task
-</h2>
+            <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+            <div className="h-4 bg-slate-200 rounded"></div>
+            <div className="h-4 bg-slate-200 rounded w-5/6"></div>
 
-<p className="text-sm text-slate-600 mb-4">
-Get faster and more accurate results using premium AI tools
-</p>
+          </div>
 
-<a
-href="https://your-affiliate-link.com"
-target="_blank"
-rel="nofollow sponsored"
-className="bg-indigo-600 text-white px-6 py-3 rounded-xl inline-block hover:bg-indigo-700"
->
-🚀 Try Premium AI Tool
-</a>
+        ) : content === "ERROR" ? (
 
-</div>
+          <div className="text-red-500">
+            Something went wrong. Please try again.
+          </div>
 
-{/* 🔗 RELATED BLOGS */}
-<div className="mt-12">
+        ) : content}
 
-<h2 className="text-xl font-bold mb-4">
-Related Guides
-</h2>
+      </div>
 
-<div className="grid md:grid-cols-2 gap-4">
+      {/* 💰 AFFILIATE CTA */}
 
-{[
-"ai-tools-for-students",
-"best-free-ai-tools",
-"ai-tools-for-business",
-"ai-content-generator-free"
-].map((item,i)=>(
+      <div className="mt-12 p-6 bg-indigo-50 border rounded-xl text-center">
 
-<Link
-key={i}
-to={`/blog/${item}`}
-className="border p-4 rounded-xl hover:shadow"
->
-{item.replaceAll("-"," ")}
-</Link>
+        <h2 className="text-xl font-bold mb-2">
+          Best AI Tool for this task
+        </h2>
 
-))}
+        <p className="text-sm text-slate-600 mb-4">
+          Get faster and more accurate results using premium AI tools
+        </p>
 
-</div>
+        <a
+          href="https://your-affiliate-link.com"
+          target="_blank"
+          rel="nofollow sponsored"
+          className="bg-indigo-600 text-white px-6 py-3 rounded-xl inline-block hover:bg-indigo-700"
+        >
+          🚀 Try Premium AI Tool
+        </a>
 
-</div>
+      </div>
 
-{/* 🔗 TOOL CTA */}
-<div className="mt-12 text-center">
+      {/* 🔗 RELATED BLOGS */}
 
-<h2 className="text-xl font-bold mb-4">
-Try AI Tools
-</h2>
+      <div className="mt-12">
 
-<Link
-to="/tools/ai-chatbot"
-className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl"
->
-Open AI Chatbot →
-</Link>
+        <h2 className="text-xl font-bold mb-4">
+          Related Guides
+        </h2>
 
-</div>
+        <div className="grid md:grid-cols-2 gap-4">
 
-</div>
+          {[
+            "ai-tools-for-students",
+            "best-free-ai-tools",
+            "ai-tools-for-business",
+            "ai-content-generator-free"
+          ].map((item,i)=>(
 
-)
+            <Link
+              key={i}
+              to={`/blog/${item}`}
+              className="border p-4 rounded-xl hover:shadow"
+            >
+              {item.replaceAll("-"," ")}
+            </Link>
+
+          ))}
+
+        </div>
+
+      </div>
+
+      {/* 🔗 TOOL CTA */}
+
+      <div className="mt-12 text-center">
+
+        <h2 className="text-xl font-bold mb-4">
+          Try AI Tools
+        </h2>
+
+        <Link
+          to="/tools/ai-chatbot"
+          className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl"
+        >
+          Open AI Chatbot →
+        </Link>
+
+      </div>
+
+    </div>
+
+  )
 
 }
