@@ -45,8 +45,10 @@ path:"/tools/ai-chatbot",
 promptTemplate:"You are a helpful AI assistant. Answer: {{query}}",
 inputs:[{name:"query",label:"Your Question",type:"textarea"}],
 category:"general",
+tags:["ai chatbot","chatgpt alternative","ai assistant"],
 featured:true,
-trending:true
+trending:true,
+link:"https://chat.openai.com"
 },
 
 {
@@ -62,7 +64,9 @@ inputs:[
 {name:"platform",label:"Platform",type:"select",options:["Instagram","TikTok"]},
 {name:"tone",label:"Tone",type:"select",options:["Funny","Professional"]}
 ],
-category:"social"
+category:"social",
+tags:["instagram caption","social media ai","caption generator"],
+link:"https://www.copy.ai"
 },
 
 {
@@ -77,7 +81,9 @@ inputs:[
 {name:"recipient",label:"Recipient",type:"text"},
 {name:"subject",label:"Subject",type:"text"}
 ],
-category:"business"
+category:"business",
+tags:["email generator","business email ai","email writer"],
+link:"https://writesonic.com"
 },
 
 {
@@ -89,7 +95,9 @@ icon:FileImage,
 path:"/tools/image-compressor",
 promptTemplate:"",
 inputs:[],
-category:"general"
+category:"general",
+tags:["image compress","optimize image","reduce size"],
+link:"https://tinypng.com"
 }
 
 ]
@@ -108,10 +116,11 @@ if(!stored) return tools
 
 const parsed = JSON.parse(stored)
 
-/* FIX: icon fallback (important ⚠️) */
+/* FIX: icon fallback */
 const fixed = parsed.map((t:any)=>({
 ...t,
-icon:Sparkles // fallback icon
+icon:Sparkles,
+tags: t.tags || ["custom ai tool"]
 }))
 
 return [...tools, ...fixed]
