@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react"
+ import React,{useState,useEffect} from "react"
 import {useParams,Navigate} from "react-router-dom"
 import { getAllTools, ToolConfig } from "../data/tools"
 import {generateContent} from "../services/aiRouter"
@@ -77,13 +77,13 @@ Recommended for best results
 )
 
 /* VALIDATION */
-const isValid = tool.inputs?.every(i => formData[i.name]?.trim()) ?? true
+const isValid = tool.inputs?.every(i => (formData[i.name] || "").trim().length > 0) ?? true
 
 /* GENERATE */
 const submit=async(e:React.FormEvent)=>{
 e.preventDefault()
 
-if(!isValid) return
+if(!isValid || loading) return
 
 setLoading(true)
 setResult("")
@@ -92,16 +92,25 @@ try{
 
 let prompt = tool.promptTemplate || ""
 
+/* Replace inputs */
 tool.inputs?.forEach(input=>{
 prompt = prompt.replaceAll(`{{${input.name}}}`, formData[input.name] || "")
 })
 
+/* Extra safety */
+if(!prompt.trim()){
+setResult("Please enter valid input")
+setLoading(false)
+return
+}
+
 const res = await generateContent(prompt)
 
-setResult(res)
+setResult(res || "No response generated")
 
-}catch{
-setResult("Error generating result")
+}catch(err){
+console.error(err)
+setResult("Error generating result. Please try again.")
 }
 
 setLoading(false)
