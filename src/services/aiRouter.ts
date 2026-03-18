@@ -1,52 +1,67 @@
-import { geminiGenerate } from "./gemini"
+ import { geminiGenerate } from "./gemini"
 import { openaiGenerate } from "./openai"
- 
+import { groqGenerate } from "./groq"
+
 import { getCache, setCache } from "./cache"
 
 export async function generateContent(prompt: string){
 
+/* 🛑 EMPTY PROMPT PROTECTION */
+if(!prompt || !prompt.trim()){
+return "Please enter valid input"
+}
+
+/* ✅ CACHE CHECK */
 const cached = getCache(prompt)
 
 if(cached){
-console.log("CACHE HIT")
+console.log("✅ CACHE HIT")
 return cached
 }
 
-console.log("CACHE MISS")
+console.log("❌ CACHE MISS")
 
-let result:any = null
+let result:string | null = null
 
-/* 🔥 TRY 1: GROQ (FAST & FREE) */
+/* 🔥 TRY 1: GROQ (FASTEST) */
 try{
-result = await groqGenerate(prompt)
+const res = await groqGenerate(prompt)
+if(res && res.trim()) result = res
 }catch(err){
-console.error("Groq Error:", err)
+console.error("❌ Groq Error:", err)
 }
 
 /* 🔥 TRY 2: GEMINI */
 if(!result){
 try{
-result = await geminiGenerate(prompt)
+const res = await geminiGenerate(prompt)
+if(res && res.trim()) result = res
 }catch(err){
-console.error("Gemini Error:", err)
+console.error("❌ Gemini Error:", err)
 }
 }
 
-/* 🔥 TRY 3: OPENAI (FINAL BACKUP) */
+/* 🔥 TRY 3: OPENAI */
 if(!result){
 try{
-result = await openaiGenerate(prompt)
+const res = await openaiGenerate(prompt)
+if(res && res.trim()) result = res
 }catch(err){
-console.error("OpenAI Error:", err)
+console.error("❌ OpenAI Error:", err)
 }
 }
 
-/* ❌ FINAL FAIL */
+/* ❌ FINAL FAIL SAFE */
 if(!result){
-result = "Server busy. Please try again."
+result = "⚠️ Server busy. Please try again."
 }
 
+/* ✅ SAVE CACHE */
+try{
 setCache(prompt,result)
+}catch(err){
+console.error("Cache Save Error:", err)
+}
 
 return result
 
