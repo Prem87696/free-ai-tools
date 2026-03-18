@@ -1,7 +1,4 @@
-//import { geminiGenerate } from "./gemini"
-import { openaiGenerate } from "./openai"
-//import { huggingfaceGenerate } from "./huggingface"
-
+import { geminiGenerate } from "./gemini"
 import { getCache, setCache } from "./cache"
 
 export async function generateContent(prompt: string){
