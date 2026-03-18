@@ -1,8 +1,7 @@
- export async function groqGenerate(prompt: string){
+export async function groqGenerate(prompt: string){
 
 try{
 
-/* ✅ VITE ENV FIX */
 const API_KEY = import.meta.env.VITE_GROQ_API_KEY
 
 if(!API_KEY){
@@ -25,28 +24,22 @@ messages:[
 role:"user",
 content:prompt
 }
-],
-temperature:0.7
+]
 })
 }
 )
 
-/* ❌ RESPONSE FAIL */
 if(!res.ok){
-console.error("❌ Groq Response Error:", res.status)
+
+const err = await res.text()
+console.error("❌ Groq Response Error:", err)
+
 return null
 }
 
 const data = await res.json()
 
-/* ✅ SAFE RETURN */
-const text = data?.choices?.[0]?.message?.content
-
-if(!text || !text.trim()){
-return null
-}
-
-return text
+return data?.choices?.[0]?.message?.content || null
 
 }catch(error){
 
