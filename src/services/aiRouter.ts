@@ -20,25 +20,7 @@ console.log("❌ CACHE MISS")
 
 let result:string | null = null
 
-/* 🔥 HUGGINGFACE (PRIMARY) */
-try{
-console.log("🚀 TRY HUGGINGFACE")
-
-const res = await huggingfaceGenerate(prompt)
-
-if(res && res.trim()){
-console.log("✅ HF SUCCESS")
-result = res
-}else{
-console.log("❌ HF EMPTY")
-}
-
-}catch(err){
-console.error("❌ HF ERROR:", err)
-}
-
-/* 🔥 GEMINI (BACKUP) */
-if(!result){
+/* 🔥 GEMINI (MAIN ENGINE) */
 try{
 console.log("🚀 TRY GEMINI")
 
@@ -54,30 +36,10 @@ console.log("❌ GEMINI EMPTY")
 }catch(err){
 console.error("❌ GEMINI ERROR:", err)
 }
-}
-
-/* 🔥 OPENAI (FINAL BACKUP) */
-if(!result){
-try{
-console.log("🚀 TRY OPENAI")
-
-const res = await openaiGenerate(prompt)
-
-if(res && res.trim()){
-console.log("✅ OPENAI SUCCESS")
-result = res
-}else{
-console.log("❌ OPENAI EMPTY")
-}
-
-}catch(err){
-console.error("❌ OPENAI ERROR:", err)
-}
-}
 
 /* ❌ FINAL FAIL */
 if(!result){
-console.log("❌ ALL API FAILED")
+console.log("❌ ALL FAILED")
 result = "⚠️ Server busy. Please try again."
 }
 
