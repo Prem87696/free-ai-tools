@@ -1,6 +1,6 @@
 import { geminiGenerate } from "./gemini"
 import { openaiGenerate } from "./openai"
-import { groqGenerate } from "./groq"
+import { huggingfaceGenerate } from "./huggingface"
 
 import { getCache, setCache } from "./cache"
 
@@ -23,26 +23,28 @@ console.log("❌ CACHE MISS")
 
 let result:string | null = null
 
-/* 🔥 GROQ */
+/* 🔥 HUGGINGFACE (PRIMARY) */
 try{
-console.log("🚀 TRY GROQ")
-const res = await groqGenerate(prompt)
+console.log("🚀 TRY HUGGINGFACE")
+
+const res = await huggingfaceGenerate(prompt)
 
 if(res && res.trim()){
-console.log("✅ GROQ SUCCESS")
+console.log("✅ HF SUCCESS")
 result = res
 }else{
-console.log("❌ GROQ EMPTY")
+console.log("❌ HF EMPTY")
 }
 
 }catch(err){
-console.error("❌ GROQ ERROR:", err)
+console.error("❌ HF ERROR:", err)
 }
 
-/* 🔥 GEMINI */
+/* 🔥 GEMINI (BACKUP) */
 if(!result){
 try{
 console.log("🚀 TRY GEMINI")
+
 const res = await geminiGenerate(prompt)
 
 if(res && res.trim()){
@@ -57,10 +59,11 @@ console.error("❌ GEMINI ERROR:", err)
 }
 }
 
-/* 🔥 OPENAI */
+/* 🔥 OPENAI (FINAL BACKUP) */
 if(!result){
 try{
 console.log("🚀 TRY OPENAI")
+
 const res = await openaiGenerate(prompt)
 
 if(res && res.trim()){
