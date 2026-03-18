@@ -1,6 +1,6 @@
-import { geminiGenerate } from "./gemini"
+//import { geminiGenerate } from "./gemini"
 import { openaiGenerate } from "./openai"
-import { huggingfaceGenerate } from "./huggingface"
+//import { huggingfaceGenerate } from "./huggingface"
 
 import { getCache, setCache } from "./cache"
 
