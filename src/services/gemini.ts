@@ -1,25 +1,26 @@
-export async function geminiGenerate(prompt: string) {
+ export async function geminiGenerate(prompt: string){
 
-try {
+try{
 
-const API_KEY = process.env.GEMINI_API_KEY
+/* ✅ VITE ENV FIX */
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
-if (!API_KEY) {
-console.error("Missing GEMINI_API_KEY")
+if(!API_KEY){
+console.error("❌ GEMINI API KEY missing")
 return null
 }
 
 const res = await fetch(
 `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
 {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
+method:"POST",
+headers:{
+"Content-Type":"application/json"
 },
 body: JSON.stringify({
-contents: [
+contents:[
 {
-parts: [
+parts:[
 { text: prompt }
 ]
 }
@@ -28,18 +29,27 @@ parts: [
 }
 )
 
-if (!res.ok) {
-console.error("Gemini API error:", await res.text())
+/* ❌ RESPONSE FAIL */
+if(!res.ok){
+const errText = await res.text()
+console.error("❌ Gemini API Error:", errText)
 return null
 }
 
 const data = await res.json()
 
-return data?.candidates?.[0]?.content?.parts?.[0]?.text || null
+/* ✅ SAFE RETURN */
+const text = data?.candidates?.[0]?.content?.parts?.[0]?.text
 
-} catch (error) {
+if(!text || !text.trim()){
+return null
+}
 
-console.error("Gemini fetch error:", error)
+return text
+
+}catch(error){
+
+console.error("❌ Gemini Fetch Error:", error)
 
 return null
 
