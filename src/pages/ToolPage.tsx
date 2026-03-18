@@ -1,166 +1,3 @@
-import React,{useState,useEffect} from "react"
-import {useParams,Navigate} from "react-router-dom"
-import { getAllTools, ToolConfig } from "../data/tools"
-import {generateContent} from "../services/aiRouter"
-import {SEOHead} from "../components/SEOHead"
-import {AdPlaceholder} from "../components/AdPlaceholder"
-import {RelatedTools} from "../components/RelatedTools"
-import {Loader2,Copy,Check} from "lucide-react"
-
-export function ToolPage(){
-
-const {toolId}=useParams<{toolId:string}>()
-
-const allTools = getAllTools()
-const tool:ToolConfig | undefined = allTools.find(t=>t.id===toolId)
-
-const [formData,setFormData]=useState<Record<string,string>>({})
-const [result,setResult]=useState("")
-const [loading,setLoading]=useState(false)
-const [copied,setCopied]=useState<number|null>(null)
-
-/* RESET */
-useEffect(()=>{
-setFormData({})
-setResult("")
-},[toolId])
-
-/* ANALYTICS */
-useEffect(()=>{
-if(!tool || typeof window==="undefined") return
-try{
-const stats = JSON.parse(localStorage.getItem("analytics") || "{}")
-stats[tool.name] = (stats[tool.name] || 0) + 1
-localStorage.setItem("analytics", JSON.stringify(stats))
-}catch{}
-},[tool])
-
-if(!tool) return <Navigate to="/404"/>
-
-/* CLICK TRACK */
-const trackClick=()=>{
-try{
-const clicks = JSON.parse(localStorage.getItem("clicks") || "{}")
-clicks[tool.name] = (clicks[tool.name] || 0) + 1
-localStorage.setItem("clicks", JSON.stringify(clicks))
-}catch{}
-}
-
-/* CTA */
-const CTA=()=>(
-
-tool.link ? (
-
-<div className="mt-6 p-5 bg-indigo-50 border rounded-xl text-center">
-
-<p className="text-sm text-slate-600 mb-2">
-⚡ Want better & faster results?
-</p>
-
-<a
-href={tool.link}
-target="_blank"
-rel="nofollow sponsored"
-onClick={trackClick}
-className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition"
->
-🚀 Try Premium AI Tool
-</a>
-
-<p className="text-xs text-slate-400 mt-2">
-Recommended for best results
-</p>
-
-</div>
-
-):null
-)
-
-/* VALIDATION */
-const isValid = tool.inputs?.every(i => (formData[i.name] || "").trim().length > 0) ?? true
-
-/* GENERATE */
-const submit=async(e:React.FormEvent)=>{
-e.preventDefault()
-
-if(!isValid || loading) return
-
-setLoading(true)
-setResult("")
-
-try{
-
-let prompt = tool.promptTemplate || ""
-
-/* Replace inputs */
-tool.inputs?.forEach(input=>{
-prompt = prompt.replaceAll(`{{${input.name}}}`, formData[input.name] || "")
-})
-
-/* Extra safety */
-if(!prompt.trim()){
-setResult("Please enter valid input")
-setLoading(false)
-return
-}
-
-const res = await generateContent(prompt)
-
-setResult(res || "No response generated")
-
-}catch(err){
-console.error(err)
-setResult("Error generating result. Please try again.")
-}
-
-setLoading(false)
-}
-
-/* COPY */
-const copy=(text:string,index:number)=>{
-try{
-navigator.clipboard.writeText(text)
-setCopied(index)
-setTimeout(()=>setCopied(null),2000)
-}catch{}
-}
-
-const Icon = tool.icon
-
-return(
-
-<>
-
-<SEOHead
-title={`${tool.name} - Free AI Tool | Generate Instantly`}
-description={`${tool.description} Use ${tool.name} online free. No signup required.`}
-canonicalUrl={`https://free-ai-tools-lac.vercel.app/tools/${tool.id}`}
-/>
-
-<AdPlaceholder slot="top"/>
-
-<div className="max-w-6xl mx-auto">
-
-{/* HEADER */}
-<div className="text-center mb-10">
-
-<Icon className="w-8 h-8 mx-auto mb-4"/>
-
-<h1 className="text-3xl font-bold">
-{tool.name}
-</h1>
-
-<p className="text-slate-600">
-{tool.description}
-</p>
-
-<CTA/>
-
-</div>
-
-{/* TOOL */}
-<div className="bg-white border rounded-2xl p-8">
-
 <form onSubmit={submit} className="space-y-6">
 
 {tool.inputs?.map(input=>(
@@ -204,6 +41,9 @@ onChange={(e)=>setFormData(prev=>({...prev,[input.name]:e.target.value}))}
 
 ))}
 
+{/* ✅ SHOW BUTTON ONLY IF INPUT EXISTS */}
+{tool.inputs?.length > 0 && (
+
 <button
 disabled={!isValid || loading}
 className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center items-center gap-2 disabled:opacity-50"
@@ -218,45 +58,15 @@ Generating...
 
 </button>
 
-</form>
+)}
 
-{/* RESULT */}
-{result &&(
+{/* ✅ NO INPUT TOOL MESSAGE */}
+{tool.inputs?.length === 0 && (
 
-<div className="mt-6 border p-6 rounded-xl">
-
-<div className="flex justify-between mb-2">
-
-<strong>Result</strong>
-
-<button onClick={()=>copy(result,0)}>
-{copied===0 ? <Check size={16}/> : <Copy size={16}/>}
-</button>
-
-</div>
-
-<div className="text-sm whitespace-pre-wrap">
-{result}
-</div>
-
-<CTA/>
-
+<div className="text-center text-slate-500 text-sm py-4">
+⚙️ This tool works differently. Feature coming soon.
 </div>
 
 )}
 
-</div>
-
-<AdPlaceholder slot="content"/>
-
-<RelatedTools currentId={tool.id} category={tool.category}/>
-
-<AdPlaceholder slot="bottom"/>
-
-</div>
-
-</>
-
-)
-
-}
+</form>
