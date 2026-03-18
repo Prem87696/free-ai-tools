@@ -1,3 +1,5 @@
+const GROQ_MODEL = "mixtral-8x7b-32768" // 🔥 easily changeable
+
 export async function groqGenerate(prompt: string){
 
 try{
@@ -18,7 +20,7 @@ headers:{
 Authorization:`Bearer ${API_KEY}`
 },
 body: JSON.stringify({
-model:"mixtral-8x7b-32768", // ✅ UPDATED MODEL
+model: GROQ_MODEL,
 messages:[
 {
 role:"user",
