@@ -1,30 +1,30 @@
-import React,{useState,useMemo} from "react"
+ import React,{useState,useMemo} from "react"
 import {Link} from "react-router-dom"
 import { getAllTools, ToolConfig } from "../data/tools"
 import {SEOHead} from "../components/SEOHead"
-import {TrendingTools} from "../components/TrendingTools"
-import {PopularTools} from "../components/PopularTools"
 import {ArrowRight,Sparkles,TrendingUp,Zap,Shield} from "lucide-react"
 
 export function HomePage(){
 
-/* ✅ MEMO FIX */
+/* LOAD TOOLS */
 const allTools:ToolConfig[] = useMemo(()=>getAllTools(),[])
 
+/* CATEGORY */
 const categories = ["All","Social","Business","Writing","General"]
 
 const [activeCategory,setActiveCategory]=useState<string>("All")
 
 /* FILTER */
 const filteredTools = useMemo(()=>{
-
 if(activeCategory==="All") return allTools
-
 return allTools.filter(t =>
 t.category?.toLowerCase()===activeCategory.toLowerCase()
 )
-
 },[activeCategory,allTools])
+
+/* 🔥 TRENDING + POPULAR (FIXED) */
+const trendingTools = useMemo(()=>allTools.filter(t=>t.trending),[allTools])
+const popularTools = useMemo(()=>allTools.filter(t=>t.featured),[allTools])
 
 return(
 
@@ -98,10 +98,48 @@ Try AI Chatbot
 </section>
 
 {/* 🔥 TRENDING */}
-<TrendingTools/>
+{trendingTools.length > 0 && (
+<section className="mt-16">
+<h2 className="text-2xl font-bold mb-6">🔥 Trending Tools</h2>
+
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+{trendingTools.map(tool=>{
+const Icon = tool.icon
+return(
+<Link key={tool.id} to={tool.path} className="bg-white p-6 rounded-xl border hover:shadow">
+<Icon className="mb-3"/>
+<h3 className="font-semibold">{tool.name}</h3>
+<p className="text-sm text-slate-500">{tool.description}</p>
+</Link>
+)
+})}
+
+</div>
+</section>
+)}
 
 {/* ⭐ POPULAR */}
-<PopularTools/>
+{popularTools.length > 0 && (
+<section className="mt-16">
+<h2 className="text-2xl font-bold mb-6">⭐ Popular Tools</h2>
+
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+{popularTools.map(tool=>{
+const Icon = tool.icon
+return(
+<Link key={tool.id} to={tool.path} className="bg-white p-6 rounded-xl border hover:shadow">
+<Icon className="mb-3"/>
+<h3 className="font-semibold">{tool.name}</h3>
+<p className="text-sm text-slate-500">{tool.description}</p>
+</Link>
+)
+})}
+
+</div>
+</section>
+)}
 
 {/* CATEGORY FILTER */}
 <div className="flex flex-wrap justify-center gap-3 mt-16 mb-10">
