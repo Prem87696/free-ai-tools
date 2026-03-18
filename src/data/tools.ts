@@ -1,4 +1,4 @@
-import {
+ import {
 Bot, Mail, Image, Sparkles, FileImage
 } from "lucide-react"
 import { LucideIcon } from "lucide-react"
@@ -34,7 +34,6 @@ trending?:boolean
 
 export const tools:ToolConfig[]=[
 
-/* 1 */
 {
 id:"ai-chatbot",
 slug:"ai-chatbot",
@@ -49,7 +48,6 @@ featured:true,
 trending:true
 },
 
-/* 2 */
 {
 id:"ai-caption-generator",
 slug:"ai-caption-generator",
@@ -67,7 +65,6 @@ category:"social",
 trending:true
 },
 
-/* 3 */
 {
 id:"ai-email-writer",
 slug:"ai-email-writer",
@@ -84,7 +81,6 @@ category:"business",
 featured:true
 },
 
-/* 4 */
 {
 id:"image-compressor",
 slug:"image-compressor",
@@ -97,7 +93,6 @@ inputs:[],
 category:"general"
 },
 
-/* 5 */
 {
 id:"ai-blog-writer",
 slug:"ai-blog-writer",
@@ -106,14 +101,11 @@ description:"Generate SEO optimized blog posts.",
 icon:Sparkles,
 path:"/tools/ai-blog-writer",
 promptTemplate:"Write a blog about {{topic}}",
-inputs:[
-{name:"topic",label:"Blog Topic",type:"textarea"}
-],
+inputs:[{name:"topic",label:"Blog Topic",type:"textarea"}],
 category:"writing",
 trending:true
 },
 
-/* 6 */
 {
 id:"ai-hashtag-generator",
 slug:"ai-hashtag-generator",
@@ -122,13 +114,10 @@ description:"Generate trending hashtags.",
 icon:Sparkles,
 path:"/tools/ai-hashtag-generator",
 promptTemplate:"Generate hashtags for {{topic}}",
-inputs:[
-{name:"topic",label:"Topic",type:"text"}
-],
+inputs:[{name:"topic",label:"Topic",type:"text"}],
 category:"social"
 },
 
-/* 7 */
 {
 id:"ai-product-description",
 slug:"ai-product-description",
@@ -137,13 +126,10 @@ description:"Create product descriptions.",
 icon:Sparkles,
 path:"/tools/ai-product-description",
 promptTemplate:"Write product description for {{product}}",
-inputs:[
-{name:"product",label:"Product Name",type:"text"}
-],
+inputs:[{name:"product",label:"Product Name",type:"text"}],
 category:"business"
 },
 
-/* 8 */
 {
 id:"ai-youtube-title",
 slug:"ai-youtube-title",
@@ -152,13 +138,10 @@ description:"Generate viral titles.",
 icon:Sparkles,
 path:"/tools/ai-youtube-title",
 promptTemplate:"Generate youtube title for {{topic}}",
-inputs:[
-{name:"topic",label:"Video Topic",type:"text"}
-],
+inputs:[{name:"topic",label:"Video Topic",type:"text"}],
 category:"social"
 },
 
-/* 9 */
 {
 id:"ai-instagram-bio",
 slug:"ai-instagram-bio",
@@ -167,13 +150,10 @@ description:"Create attractive bio.",
 icon:Sparkles,
 path:"/tools/ai-instagram-bio",
 promptTemplate:"Write instagram bio for {{niche}}",
-inputs:[
-{name:"niche",label:"Niche",type:"text"}
-],
+inputs:[{name:"niche",label:"Niche",type:"text"}],
 category:"social"
 },
 
-/* 10 */
 {
 id:"ai-story-generator",
 slug:"ai-story-generator",
@@ -182,13 +162,10 @@ description:"Generate creative stories.",
 icon:Sparkles,
 path:"/tools/ai-story-generator",
 promptTemplate:"Write a story about {{topic}}",
-inputs:[
-{name:"topic",label:"Story Topic",type:"text"}
-],
+inputs:[{name:"topic",label:"Story Topic",type:"text"}],
 category:"writing"
 },
 
-/* 11 */
 {
 id:"ai-summary-tool",
 slug:"ai-summary-tool",
@@ -197,13 +174,10 @@ description:"Summarize long text instantly.",
 icon:Sparkles,
 path:"/tools/ai-summary-tool",
 promptTemplate:"Summarize this text: {{text}}",
-inputs:[
-{name:"text",label:"Enter Text",type:"textarea"}
-],
+inputs:[{name:"text",label:"Enter Text",type:"textarea"}],
 category:"general"
 },
 
-/* 12 */
 {
 id:"ai-rewrite-tool",
 slug:"ai-rewrite-tool",
@@ -212,9 +186,7 @@ description:"Rewrite content in better way.",
 icon:Sparkles,
 path:"/tools/ai-rewrite-tool",
 promptTemplate:"Rewrite this text: {{text}}",
-inputs:[
-{name:"text",label:"Enter Text",type:"textarea"}
-],
+inputs:[{name:"text",label:"Enter Text",type:"textarea"}],
 category:"writing"
 }
 
@@ -234,6 +206,7 @@ if(!stored) return tools
 
 const parsed:Partial<ToolConfig>[] = JSON.parse(stored)
 
+/* SAFE MAP (NO DUPLICATE) */
 const map = new Map<string,ToolConfig>()
 
 tools.forEach(t=>map.set(t.id,t))
@@ -253,7 +226,12 @@ icon: Sparkles,
 path: t.path || `/tools/${id}`,
 promptTemplate: t.promptTemplate || "",
 inputs: t.inputs || [],
-category: (t.category as ToolConfig["category"]) || "general"
+category: (t.category as ToolConfig["category"]) || "general",
+tags: t.tags || ["custom tool"],
+image: t.image,
+link: t.link,
+featured: t.featured || false,
+trending: t.trending || false
 })
 
 })
@@ -269,6 +247,13 @@ return tools
 /* ---------- SEO MODIFIERS ---------- */
 
 export const seoModifiers = {
-"caption-generator":[{slug:"instagram",name:"Instagram"}],
-"email-writer":[{slug:"business",name:"Business"}]
+
+"caption-generator":[
+{slug:"instagram",name:"Instagram"}
+],
+
+"email-writer":[
+{slug:"business",name:"Business"}
+]
+
 }
