@@ -6,7 +6,7 @@ export default function ToolPage() {
 const [formData, setFormData] = useState({});
 const [loading, setLoading] = useState(false);
 
-// dummy tool data (test ke liye)
+// dummy tool data
 const tool = {
 inputs: [
 { name: "text", type: "text", label: "Enter Text" },
@@ -29,43 +29,64 @@ setTimeout(() => {
 
 }
 
-return ( <div className="max-w-2xl mx-auto p-4">
+return ( <div className="max-w-3xl mx-auto px-4 py-10">
 
  
-  <h1 className="text-2xl font-bold mb-4">Tool Page</h1>
+  {/* CARD */}
+  <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8">
 
-  <form onSubmit={submit} className="space-y-6">
+    <h1 className="text-2xl font-semibold mb-6 text-center">
+      Tool Page
+    </h1>
 
-    {tool.inputs?.map((input) => {
+    <form onSubmit={submit} className="space-y-5">
 
-      if (input.type === "select") {
+      {tool.inputs?.map((input) => {
+
+        if (input.type === "select") {
+          return (
+            <select
+              key={input.name}
+              className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={formData[input.name] || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  [input.name]: e.target.value
+                }))
+              }
+            >
+              <option value="">Select {input.label}</option>
+              {input.options?.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          );
+        }
+
+        if (input.type === "text") {
+          return (
+            <input
+              key={input.name}
+              type="text"
+              placeholder={input.label}
+              className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={formData[input.name] || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  [input.name]: e.target.value
+                }))
+              }
+            />
+          );
+        }
+
         return (
-          <select
+          <textarea
             key={input.name}
-            className="w-full border rounded-lg px-4 py-3"
-            value={formData[input.name] || ""}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                [input.name]: e.target.value
-              }))
-            }
-          >
-            <option value="">Select {input.label}</option>
-            {input.options?.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-        );
-      }
-
-      if (input.type === "text") {
-        return (
-          <input
-            key={input.name}
-            type="text"
             placeholder={input.label}
-            className="w-full border rounded-lg px-4 py-3"
+            className="w-full border border-slate-300 rounded-xl px-4 py-3 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-indigo-500"
             value={formData[input.name] || ""}
             onChange={(e) =>
               setFormData((prev) => ({
@@ -75,47 +96,33 @@ return ( <div className="max-w-2xl mx-auto p-4">
             }
           />
         );
-      }
 
-      return (
-        <textarea
-          key={input.name}
-          placeholder={input.label}
-          className="w-full border rounded-lg px-4 py-3"
-          value={formData[input.name] || ""}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              [input.name]: e.target.value
-            }))
-          }
-        />
-      );
+      })}
 
-    })}
+      {tool.inputs?.length > 0 ? (
+        <button
+          type="submit"
+          disabled={!isValid || loading}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl flex justify-center items-center gap-2 disabled:opacity-50 transition"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin w-5 h-5" />
+              Generating...
+            </>
+          ) : (
+            "Generate"
+          )}
+        </button>
+      ) : (
+        <div className="text-center text-slate-500 text-sm py-4">
+          ⚙️ This tool works differently. Feature coming soon.
+        </div>
+      )}
 
-    {tool.inputs?.length > 0 ? (
-      <button
-        type="submit"
-        disabled={!isValid || loading}
-        className="w-full bg-indigo-600 text-white py-3 rounded-lg flex justify-center items-center gap-2 disabled:opacity-50"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="animate-spin w-5 h-5" />
-            Generating...
-          </>
-        ) : (
-          "Generate"
-        )}
-      </button>
-    ) : (
-      <div className="text-center text-slate-500 text-sm py-4">
-        ⚙️ This tool works differently. Feature coming soon.
-      </div>
-    )}
+    </form>
 
-  </form>
+  </div>
 
 </div>
  
