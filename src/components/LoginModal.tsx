@@ -1,47 +1,70 @@
 import React, { useState } from "react";
 import { supabase } from "../supabase";
+import { Loader2, X } from "lucide-react";
 
 export default function LoginModal({ onClose }) {
 
+const [isLogin, setIsLogin] = useState(true);
+
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
+
 const [loading, setLoading] = useState(false);
+const [errorMsg, setErrorMsg] = useState("");
 
-async function handleLogin(e) {
+async function handleAuth(e) {
 e.preventDefault();
-setLoading(true);
-
  
-const { error } = await supabase.auth.signInWithPassword({
-  email,
-  password,
-});
+if (!email || !password) {
+  setErrorMsg("All fields required");
+  return;
+}
+
+setLoading(true);
+setErrorMsg("");
+
+let result;
+
+if (isLogin) {
+  result = await supabase.auth.signInWithPassword({ email, password });
+} else {
+  result = await supabase.auth.signUp({ email, password });
+}
 
 setLoading(false);
 
-if (error) {
-  alert(error.message);
+if (result.error) {
+  setErrorMsg(result.error.message);
 } else {
-  alert("Login successful ✅");
+  alert(isLogin ? "Login successful ✅" : "Account created 🎉");
   onClose();
 }
  
 
 }
 
-return ( <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-
+return ( <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 px-4">
  
-  <div className="bg-white p-6 rounded-2xl w-full max-w-md">
+  <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative">
 
-    <h2 className="text-xl font-semibold mb-4 text-center">Login</h2>
+    <button onClick={onClose} className="absolute top-4 right-4">
+      <X size={20} />
+    </button>
 
-    <form onSubmit={handleLogin} className="space-y-4">
+    <h2 className="text-2xl font-semibold text-center mb-2">
+      {isLogin ? "Welcome Back 👋" : "Create Account 🚀"}
+    </h2>
+
+    <p className="text-center text-sm text-slate-500 mb-6">
+      {isLogin ? "Login to continue" : "Signup to get started"}
+    </p>
+
+    <form onSubmit={handleAuth} className="space-y-4">
 
       <input
         type="email"
         placeholder="Email"
-        className="w-full border px-4 py-2 rounded-lg"
+        className="w-full border px-4 py-3 rounded-xl"
         value={email}
         onChange={(e)=>setEmail(e.target.value)}
       />
@@ -49,31 +72,43 @@ return ( <div className="fixed inset-0 bg-black/50 flex justify-center items-cen
       <input
         type="password"
         placeholder="Password"
-        className="w-full border px-4 py-2 rounded-lg"
+        className="w-full border px-4 py-3 rounded-xl"
         value={password}
         onChange={(e)=>setPassword(e.target.value)}
       />
 
+      {errorMsg && (
+        <div className="text-red-500 text-sm text-center">
+          {errorMsg}
+        </div>
+      )}
+
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-indigo-600 text-white py-2 rounded-lg"
+        className="w-full bg-indigo-600 text-white py-3 rounded-xl flex justify-center items-center gap-2"
       >
-        {loading ? "Logging in..." : "Login"}
+        {loading ? <Loader2 className="animate-spin w-5 h-5" /> :
+          (isLogin ? "Login" : "Signup")}
       </button>
 
     </form>
 
-    <button
-      onClick={onClose}
-      className="mt-4 text-sm text-gray-500 w-full"
-    >
-      Close
-    </button>
+    {/* SWITCH */}
+    <p className="text-center text-sm mt-4">
+      {isLogin ? "Don't have account?" : "Already have account?"}
+      <button
+        onClick={()=>setIsLogin(!isLogin)}
+        className="text-indigo-600 ml-1"
+      >
+        {isLogin ? "Signup" : "Login"}
+      </button>
+    </p>
 
   </div>
 
 </div>
  
+
 );
 }
