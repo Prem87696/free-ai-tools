@@ -1,109 +1,107 @@
-import React from "react"
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom"
-import { HelmetProvider } from "react-helmet-async"
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 
-import { Layout } from "./components/Layout"
-import { HomePage } from "./pages/HomePage"
-import { ToolPage } from "./pages/ToolPage"
-import { ToolsPage } from "./pages/ToolsPage"
-import { DynamicSEOPage } from "./pages/DynamicSEOPage"
-import { BlogPage } from "./pages/BlogPage"
-import { BlogListPage } from "./pages/BlogListPage"
-import { AdminPage } from "./pages/AdminPage"
-import { AnalyticsPage } from "./pages/AnalyticsPage"
+import { Layout } from "./components/Layout";
+import { HomePage } from "./pages/HomePage";
+import { ToolPage } from "./pages/ToolPage";
+import { ToolsPage } from "./pages/ToolsPage";
+import { DynamicSEOPage } from "./pages/DynamicSEOPage";
+import { BlogPage } from "./pages/BlogPage";
+import { BlogListPage } from "./pages/BlogListPage";
+import { AdminPage } from "./pages/AdminPage";
+import { AnalyticsPage } from "./pages/AnalyticsPage";
 
 import {
-  AboutPage,
-  ContactPage,
-  PrivacyPage,
-  TermsPage,
-  DisclaimerPage
-} from "./pages/StaticPages"
+AboutPage,
+ContactPage,
+PrivacyPage,
+TermsPage,
+DisclaimerPage
+} from "./pages/StaticPages";
 
-import { SitemapPage } from "./pages/SitemapPage"
-import { ToolCategoriesPage } from "./pages/ToolCategoriesPage"
-import { ToolSearchPage } from "./pages/ToolSearchPage"
-import { CategoryPage } from "./pages/CategoryPage"
+import { SitemapPage } from "./pages/SitemapPage";
+import { ToolCategoriesPage } from "./pages/ToolCategoriesPage";
+import { ToolSearchPage } from "./pages/ToolSearchPage";
+import { CategoryPage } from "./pages/CategoryPage";
 
-import ScrollToTop from "./components/ScrollToTop"
+/* 🔥 NEW (Supabase data page) */
+import { ContactData } from "./pages/ContactData";
+
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
 
-  /* ✅ FIX: dynamic redirect */
-  function ToolRedirect(){
-    const { toolId } = useParams()
-    return <Navigate to={`/tools/${toolId}`} replace />
-  }
+/* 🔁 Redirect old tool URL */
+function ToolRedirect() {
+const { toolId } = useParams();
+return <Navigate to={`/tools/${toolId}`} replace />;
+}
 
-  /* ✅ 404 PAGE */
-  function NotFound(){
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-slate-500 mb-6">Page Not Found</p>
-        <a href="/" className="text-indigo-600 font-medium">
-          Go Home →
-        </a>
-      </div>
-    )
-  }
+/* ❌ 404 Page */
+function NotFound() {
+return ( <div className="flex flex-col items-center justify-center py-20 text-center"> <h1 className="text-4xl font-bold mb-4">404</h1> <p className="text-slate-500 mb-6">Page Not Found</p> <a href="/" className="text-indigo-600 font-medium">
+Go Home → </a> </div>
+);
+}
 
-  return (
-    <HelmetProvider>
-      <BrowserRouter>
-        <ScrollToTop />
+return ( <HelmetProvider> <BrowserRouter> <ScrollToTop />
 
-        <Routes>
+```
+    <Routes>
 
-          <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout />}>
 
-            {/* HOME */}
-            <Route index element={<HomePage />} />
+        {/* HOME */}
+        <Route index element={<HomePage />} />
 
-            {/* TOOLS */}
-            <Route path="tools" element={<ToolsPage />} />
-            <Route path="tools/:toolId" element={<ToolPage />} />
+        {/* TOOLS */}
+        <Route path="tools" element={<ToolsPage />} />
+        <Route path="tools/:toolId" element={<ToolPage />} />
+        <Route path="tool/:toolId" element={<ToolRedirect />} />
 
-            {/* OLD URL REDIRECT (FIXED) */}
-            <Route path="tool/:toolId" element={<ToolRedirect />} />
+        {/* SEARCH */}
+        <Route path="search" element={<ToolSearchPage />} />
 
-            {/* SEARCH */}
-            <Route path="search" element={<ToolSearchPage />} />
+        {/* CATEGORIES */}
+        <Route path="categories" element={<ToolCategoriesPage />} />
+        <Route path="category/:category" element={<CategoryPage />} />
 
-            {/* CATEGORIES */}
-            <Route path="categories" element={<ToolCategoriesPage />} />
-            <Route path="category/:category" element={<CategoryPage />} />
+        {/* BLOG */}
+        <Route path="blog" element={<BlogListPage />} />
+        <Route path="blog/:slug" element={<BlogPage />} />
 
-            {/* BLOG */}
-            <Route path="blog" element={<BlogListPage />} />
-            <Route path="blog/:slug" element={<BlogPage />} />
+        {/* ADMIN */}
+        <Route path="admin" element={<AdminPage />} />
 
-            {/* ADMIN */}
-            <Route path="admin" element={<AdminPage />} />
+        {/* 📊 NEW: CONTACT DATA (Admin Messages Page) */}
+        <Route path="messages" element={<ContactData />} />
 
-            {/* ANALYTICS */}
-            <Route path="analytics" element={<AnalyticsPage />} />
+        {/* ANALYTICS */}
+        <Route path="analytics" element={<AnalyticsPage />} />
 
-            {/* STATIC */}
-            <Route path="about" element={<AboutPage />} />
-            <Route path="contact" element={<ContactPage />} />
-            <Route path="privacy-policy" element={<PrivacyPage />} />
-            <Route path="terms-and-conditions" element={<TermsPage />} />
-            <Route path="disclaimer" element={<DisclaimerPage />} />
-            <Route path="sitemap" element={<SitemapPage />} />
+        {/* STATIC */}
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="privacy-policy" element={<PrivacyPage />} />
+        <Route path="terms-and-conditions" element={<TermsPage />} />
+        <Route path="disclaimer" element={<DisclaimerPage />} />
+        <Route path="sitemap" element={<SitemapPage />} />
 
-            {/* PROGRAMMATIC SEO */}
-            <Route path="ai-:slug" element={<DynamicSEOPage />} />
+        {/* PROGRAMMATIC SEO */}
+        <Route path="ai-:slug" element={<DynamicSEOPage />} />
 
-            {/* 404 */}
-            <Route path="404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
+        {/* 404 */}
+        <Route path="404" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
 
-          </Route>
+      </Route>
 
-        </Routes>
+    </Routes>
 
-      </BrowserRouter>
-    </HelmetProvider>
-  )
+  </BrowserRouter>
+</HelmetProvider>
+```
+
+);
 }
