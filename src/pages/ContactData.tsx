@@ -11,11 +11,11 @@ const { data, error } = await supabase
 .select("*")
 .order("id", { ascending: false });
 
-```
+ 
 if (!error) {
   setData(data);
 }
-```
+ 
 
 }
 
