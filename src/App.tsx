@@ -2,9 +2,13 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
+/* 🔐 AUTH */
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 import { Layout } from "./components/Layout";
 import { HomePage } from "./pages/HomePage";
-import ToolPage from "./pages/ToolPage"; // ✅ fixed
+import ToolPage from "./pages/ToolPage";
 
 import { ToolsPage } from "./pages/ToolsPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
@@ -31,58 +35,90 @@ import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
 
+/* 🔁 Redirect old tool URL */
 function ToolRedirect() {
 const { toolId } = useParams();
 return <Navigate to={`/tools/${toolId}`} replace />;
 }
 
+/* ❌ 404 Page */
 function NotFound() {
 return ( <div className="flex flex-col items-center justify-center py-20 text-center"> <h1 className="text-4xl font-bold mb-4">404</h1> <p className="text-slate-500 mb-6">Page Not Found</p> <a href="/" className="text-indigo-600 font-medium">
 Go Home → </a> </div>
 );
 }
 
-return ( <HelmetProvider> <BrowserRouter> <ScrollToTop />
+return ( <HelmetProvider>
 
  
-    <Routes>
-      <Route path="/" element={<Layout />}>
+  {/* 🔥 AUTH WRAPPER */}
+  <AuthProvider>
 
-        <Route index element={<HomePage />} />
+    <BrowserRouter>
+      <ScrollToTop />
 
-        <Route path="tools" element={<ToolsPage />} />
-        <Route path="tools/:toolId" element={<ToolPage />} />
-        <Route path="tool/:toolId" element={<ToolRedirect />} />
+      <Routes>
 
-        <Route path="search" element={<ToolSearchPage />} />
+        <Route path="/" element={<Layout />}>
 
-        <Route path="categories" element={<ToolCategoriesPage />} />
-        <Route path="category/:category" element={<CategoryPage />} />
+          {/* HOME */}
+          <Route index element={<HomePage />} />
 
-        <Route path="blog" element={<BlogListPage />} />
-        <Route path="blog/:slug" element={<BlogPage />} />
+          {/* TOOLS */}
+          <Route path="tools" element={<ToolsPage />} />
+          <Route path="tools/:toolId" element={<ToolPage />} />
+          <Route path="tool/:toolId" element={<ToolRedirect />} />
 
-        <Route path="admin" element={<AdminPage />} />
-        <Route path="messages" element={<ContactData />} />
+          {/* SEARCH */}
+          <Route path="search" element={<ToolSearchPage />} />
 
-        <Route path="analytics" element={<AnalyticsPage />} />
+          {/* CATEGORIES */}
+          <Route path="categories" element={<ToolCategoriesPage />} />
+          <Route path="category/:category" element={<CategoryPage />} />
 
-        <Route path="about" element={<AboutPage />} />
-        <Route path="contact" element={<ContactPage />} />
-        <Route path="privacy-policy" element={<PrivacyPage />} />
-        <Route path="terms-and-conditions" element={<TermsPage />} />
-        <Route path="disclaimer" element={<DisclaimerPage />} />
-        <Route path="sitemap" element={<SitemapPage />} />
+          {/* BLOG */}
+          <Route path="blog" element={<BlogListPage />} />
+          <Route path="blog/:slug" element={<BlogPage />} />
 
-        <Route path="ai-:slug" element={<DynamicSEOPage />} />
+          {/* ADMIN */}
+          <Route path="admin" element={<AdminPage />} />
 
-        <Route path="404" element={<NotFound />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
+          {/* 🔐 PROTECTED ROUTE */}
+          <Route
+            path="messages"
+            element={
+              <ProtectedRoute>
+                <ContactData />
+              </ProtectedRoute>
+            }
+          />
 
-      </Route>
-    </Routes>
+          {/* ANALYTICS */}
+          <Route path="analytics" element={<AnalyticsPage />} />
 
-  </BrowserRouter>
+          {/* STATIC */}
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="privacy-policy" element={<PrivacyPage />} />
+          <Route path="terms-and-conditions" element={<TermsPage />} />
+          <Route path="disclaimer" element={<DisclaimerPage />} />
+          <Route path="sitemap" element={<SitemapPage />} />
+
+          {/* SEO */}
+          <Route path="ai-:slug" element={<DynamicSEOPage />} />
+
+          {/* 404 */}
+          <Route path="404" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+
+        </Route>
+
+      </Routes>
+
+    </BrowserRouter>
+
+  </AuthProvider>
+
 </HelmetProvider>
  
 
