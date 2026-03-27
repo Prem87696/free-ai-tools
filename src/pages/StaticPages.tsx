@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { supabase } from "../supabase"; // ⚠️ path check karo
+import { supabase } from "../supabase";
 
+/* ✅ ABOUT */
+export function AboutPage() {
+return <div className="p-4">About Page</div>;
+}
+
+/* ✅ CONTACT (YOUR CODE) */
 export function ContactPage() {
 
 const [name, setName] = useState("");
@@ -11,8 +17,7 @@ const [loading, setLoading] = useState(false);
 async function saveData(e) {
 e.preventDefault();
 
-
-// validation
+```
 if (!name || !email || !message) {
   alert("Please fill all fields ❗");
   return;
@@ -34,13 +39,13 @@ if (error) {
   setEmail("");
   setMessage("");
 }
-
+```
 
 }
 
 return ( <div className="max-w-2xl mx-auto p-4">
 
-
+```
   <h1 className="text-3xl font-bold mb-6">Contact Us</h1>
 
   <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
@@ -82,7 +87,20 @@ return ( <div className="max-w-2xl mx-auto p-4">
 
   </div>
 </div>
-
+```
 
 );
+}
+
+/* ✅ OTHER PAGES */
+export function PrivacyPage() {
+return <div className="p-4">Privacy Policy</div>;
+}
+
+export function TermsPage() {
+return <div className="p-4">Terms & Conditions</div>;
+}
+
+export function DisclaimerPage() {
+return <div className="p-4">Disclaimer</div>;
 }
