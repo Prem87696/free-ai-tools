@@ -2,8 +2,7 @@
 
 {tool.inputs?.map((input) => {
 
-```
-if (input.type === "select") {
+ if (input.type === "select") {
   return (
     <select
       key={input.name}
@@ -58,7 +57,7 @@ return (
     }
   />
 );
-```
+ 
 
 })}
 
