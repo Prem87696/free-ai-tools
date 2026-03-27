@@ -4,7 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 
 import { Layout } from "./components/Layout";
 import { HomePage } from "./pages/HomePage";
-import { ToolPage } from "./pages/ToolPage";
+import ToolPage from "./pages/ToolPage";;
 import { ToolsPage } from "./pages/ToolsPage";
 import { DynamicSEOPage } from "./pages/DynamicSEOPage";
 import { BlogPage } from "./pages/BlogPage";
