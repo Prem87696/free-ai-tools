@@ -1,17 +1,21 @@
 import React,{useState,KeyboardEvent,useMemo} from "react"
 import {Link,Outlet,useNavigate} from "react-router-dom"
 import {
-Menu,X,Bot,FileText,Mail,Image,FileImage,File,Search
+Menu,X,Bot,Search
 } from "lucide-react"
 
 import {AdPlaceholder} from "./AdPlaceholder"
 import PageTransition from "./PageTransition"
 import { getAllTools } from "../data/tools"
 
+/* 🔥 NEW */
+import LoginModal from "../components/LoginModal"
+
 export function Layout(){
 
 const [isMenuOpen,setIsMenuOpen]=useState(false)
 const [search,setSearch]=useState("")
+const [showLogin,setShowLogin]=useState(false) // 🔥
 
 const navigate=useNavigate()
 
@@ -19,7 +23,6 @@ const toggleMenu=()=>setIsMenuOpen(prev=>!prev)
 
 /* ✅ DYNAMIC TOOLS */
 const tools = useMemo(()=>getAllTools(),[])
-
 const topTools = tools.slice(0,5)
 
 const navLinks=[
@@ -45,6 +48,7 @@ return(
 <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
 
 {/* HEADER */}
+
 <header className="bg-white border-b sticky top-0 z-50">
 
 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -55,6 +59,7 @@ return(
 </Link>
 
 {/* SEARCH */}
+
 <div className="hidden md:flex items-center bg-slate-100 px-3 py-2 rounded-lg w-72">
 <Search size={18} className="text-slate-400 mr-2"/>
 <input
@@ -67,13 +72,24 @@ className="bg-transparent outline-none text-sm w-full"
 </div>
 
 {/* NAV */}
+
 <nav className="hidden md:flex items-center gap-6">
 
 {navLinks.map(link=>(
+
 <Link key={link.name} to={link.path} className="text-slate-600 hover:text-indigo-600">
 {link.name}
 </Link>
 ))}
+
+{/* 🔥 LOGIN BUTTON */}
+<button
+onClick={()=>setShowLogin(true)}
+className="border px-4 py-2 rounded-lg hover:bg-slate-100"
+
+>
+
+Login </button>
 
 <Link to="/tools" className="bg-indigo-600 text-white px-4 py-2 rounded-lg">
 Explore
@@ -104,7 +120,9 @@ className="bg-transparent outline-none w-full"
 </div>
 
 <nav className="flex flex-col gap-3">
+
 {navLinks.map(link=>(
+
 <Link
 key={link.name}
 to={link.path}
@@ -113,6 +131,16 @@ onClick={()=>setIsMenuOpen(false)}
 {link.name}
 </Link>
 ))}
+
+{/* 🔥 MOBILE LOGIN */}
+<button
+onClick={()=>setShowLogin(true)}
+className="text-left"
+
+>
+
+Login </button>
+
 </nav>
 
 </div>
@@ -121,17 +149,25 @@ onClick={()=>setIsMenuOpen(false)}
 
 </header>
 
+{/* 🔥 LOGIN MODAL */}
+{showLogin && (
+<LoginModal onClose={()=>setShowLogin(false)} />
+)}
+
 {/* HEADER ADS */}
+
 <div className="max-w-7xl mx-auto px-4">
 <AdPlaceholder slot="header"/>
 </div>
 
 {/* MAIN */}
+
 <main className="flex-grow max-w-7xl mx-auto px-4 py-8">
 
 <div className="grid lg:grid-cols-12 gap-8">
 
 {/* CONTENT */}
+
 <div className="lg:col-span-9">
 <PageTransition>
 <Outlet/>
@@ -139,6 +175,7 @@ onClick={()=>setIsMenuOpen(false)}
 </div>
 
 {/* SIDEBAR */}
+
 <aside className="lg:col-span-3 space-y-6 sticky top-24">
 
 <div className="bg-white p-6 rounded-2xl border">
@@ -182,11 +219,13 @@ return(
 </main>
 
 {/* FOOTER ADS */}
+
 <div className="max-w-7xl mx-auto px-4">
 <AdPlaceholder slot="footer"/>
 </div>
 
 {/* FOOTER */}
+
 <footer className="bg-white border-t mt-16">
 
 <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-4 gap-10 text-sm">
