@@ -46,8 +46,7 @@ Go Home → </a> </div>
 }
 
 return ( <HelmetProvider> <BrowserRouter> <ScrollToTop />
-
-```
+ 
     <Routes>
 
       <Route path="/" element={<Layout />}>
@@ -101,7 +100,6 @@ return ( <HelmetProvider> <BrowserRouter> <ScrollToTop />
 
   </BrowserRouter>
 </HelmetProvider>
-```
-
+ 
 );
 }
