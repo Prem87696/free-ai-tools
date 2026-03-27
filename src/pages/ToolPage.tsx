@@ -20,7 +20,7 @@ inputs: [
 ]
 },
 
-```
+ 
 "image-compressor": {
   title: "Image Compressor",
   color: "bg-green-600",
@@ -37,7 +37,7 @@ inputs: [
     { name: "message", type: "textarea", label: "Message" }
   ]
 }
-```
+ 
 
 };
 
@@ -53,19 +53,18 @@ const isValid = true;
 function submit(e) {
 e.preventDefault();
 setLoading(true);
-
-```
+ 
 setTimeout(() => {
   setLoading(false);
   alert(tool.title + " Generated ✅");
 }, 1000);
-```
+ 
 
 }
 
 return ( <div className="max-w-3xl mx-auto px-4 py-10">
 
-```
+ 
   <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8">
 
     {/* 🔥 Dynamic Title */}
@@ -159,7 +158,7 @@ return ( <div className="max-w-3xl mx-auto px-4 py-10">
   </div>
 
 </div>
-```
+ 
 
 );
 }
