@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { supabase } from "../supabase";
 import { Loader2, X } from "lucide-react";
 
-export default function LoginModal({ onClose }) {
+export default function AuthModal({ onClose }) {
 
 const [isLogin, setIsLogin] = useState(true);
 
@@ -10,18 +10,19 @@ const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
 
 const [loading, setLoading] = useState(false);
-const [errorMsg, setErrorMsg] = useState("");
+const [error, setError] = useState("");
 
-async function handleAuth(e) {
+async function handleSubmit(e) {
 e.preventDefault();
+
  
 if (!email || !password) {
-  setErrorMsg("All fields required");
+  setError("All fields required ❗");
   return;
 }
 
+setError("");
 setLoading(true);
-setErrorMsg("");
 
 let result;
 
@@ -34,7 +35,7 @@ if (isLogin) {
 setLoading(false);
 
 if (result.error) {
-  setErrorMsg(result.error.message);
+  setError(result.error.message);
 } else {
   alert(isLogin ? "Login successful ✅" : "Account created 🎉");
   onClose();
@@ -44,13 +45,16 @@ if (result.error) {
 }
 
 return ( <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+
  
   <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative">
 
+    {/* CLOSE */}
     <button onClick={onClose} className="absolute top-4 right-4">
-      <X size={20} />
+      <X size={20}/>
     </button>
 
+    {/* TITLE */}
     <h2 className="text-2xl font-semibold text-center mb-2">
       {isLogin ? "Welcome Back 👋" : "Create Account 🚀"}
     </h2>
@@ -59,7 +63,8 @@ return ( <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify
       {isLogin ? "Login to continue" : "Signup to get started"}
     </p>
 
-    <form onSubmit={handleAuth} className="space-y-4">
+    {/* FORM */}
+    <form onSubmit={handleSubmit} className="space-y-4">
 
       <input
         type="email"
@@ -77,10 +82,8 @@ return ( <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify
         onChange={(e)=>setPassword(e.target.value)}
       />
 
-      {errorMsg && (
-        <div className="text-red-500 text-sm text-center">
-          {errorMsg}
-        </div>
+      {error && (
+        <div className="text-red-500 text-sm text-center">{error}</div>
       )}
 
       <button
@@ -88,8 +91,14 @@ return ( <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify
         disabled={loading}
         className="w-full bg-indigo-600 text-white py-3 rounded-xl flex justify-center items-center gap-2"
       >
-        {loading ? <Loader2 className="animate-spin w-5 h-5" /> :
-          (isLogin ? "Login" : "Signup")}
+        {loading ? (
+          <>
+            <Loader2 className="animate-spin w-5 h-5"/>
+            Processing...
+          </>
+        ) : (
+          isLogin ? "Login" : "Signup"
+        )}
       </button>
 
     </form>
